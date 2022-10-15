@@ -10,6 +10,14 @@
 #include <string.h>
 #include <fstream>
 #include <vector>
+#include <chrono>
+#include <time.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include  <CGAL/Polygon_2.h>
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Point_2<K> Point;
+typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Segment_2<K> Segment;
 
 using namespace std;
 
@@ -61,6 +69,7 @@ int main(int argc, char* argv[]){
     }
 
     //read contents of input file, ignoring lines that start with "#"
+    vector<Point> allPoints;//vector of type Point_2(from CGAL) to store coordinates of points given
     fstream in;
     in.open(input, ios::in);
     if(!in){
@@ -77,12 +86,46 @@ int main(int argc, char* argv[]){
 
         if(text[0] == '#')
             continue;
-        else
-            totalPoints++;
         
+        totalPoints++;
+        int x, y;
+
+        x=stoi(&text[4]);
+        y=stoi(&text[8]);
+        Point temp(x, y);
+        allPoints.push_back(temp);
+        cout <<"aaa" << endl;
         cout << text << endl;//all numbers are separated by \t(tab) so they are in positions 0, 4, 8 of the string
-        
     }
     in.close();
+    for(int i=0; i<totalPoints; i++)
+        cout << allPoints[i] << endl;
+
+
+    // Timer clock; // Timer<milliseconds, steady_clock>
+    // clock.tick();
+    
+
+    // //code
+    // Polygon p;
+    // clock.tock();
+
+
+
+    //output
+    cout << "Polygonization" << endl;
+
+    // for (VertexIterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
+    //     std::cout << "vertex " << n++ << " = " << *vi << std::endl;
+    // std::cout << std::endl;
+    // n=0;
+    // for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
+    //     std::cout << "edge " << n++ << " = " << *ei << std::endl;
+
+    cout << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">" << endl;
+    cout <<"Area: " << "replace with variable that stores area of polygon" << endl;
+    cout << "Ration: " << "replace with variable" << endl;
+    //cout << "Construction time in miliseconds: " << clock.duration().count() << " ms\n";
+
     return 0;
 }
