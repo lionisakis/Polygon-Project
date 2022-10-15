@@ -14,7 +14,3 @@ double triangularAreaCalculation(Point point0, Point point1, Point point2){
     
     return det/2;
 }
-
-int main(void){
-    printf("%f\n",triangularAreaCalculation(Point(0,0),Point(0,1),Point(1,1)));
-}
