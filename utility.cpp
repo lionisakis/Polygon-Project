@@ -67,12 +67,12 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment> vector, int type){
 }
 
 
-int main(void){
+// int main(void){
 
-    vector<Segment> vector;
-    vector.push_back(Segment(Point(5,5),Point(5,10)));
-    vector.push_back(Segment(Point(5,10),Point(10,5)));
-    vector.push_back(Segment(Point(10,5),Point(5,5)));
-    Segment what=visibleEdgeSelector(Point(0,0),vector,2);
-    cout<<what<<"\n";
-}
+//     vector<Segment> vector;
+//     vector.push_back(Segment(Point(5,5),Point(5,10)));
+//     vector.push_back(Segment(Point(5,10),Point(10,5)));
+//     vector.push_back(Segment(Point(10,5),Point(5,5)));
+//     Segment what=visibleEdgeSelector(Point(0,0),vector,2);
+//     cout<<what<<"\n";
+// }
