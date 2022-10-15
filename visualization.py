@@ -1,13 +1,22 @@
 from matplotlib import pyplot as plt
 
-f=open("file","r")
+f=open("output.txt","r")
 
 Polygon=[]
 # read file
-for line in f.readlines():
+for line in f.readlines(): 
     # split to get the edge
     line=line.split("\n")
     points=line[0].split(" ")
+    print(points)
+    print(len(points))
+    if len(points)!=4:
+        continue
+    try: 
+        x=int(points[0])
+    except:
+        continue
+
     edge=[]
     # make an edge
     for point in points:

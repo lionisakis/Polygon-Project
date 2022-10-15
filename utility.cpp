@@ -2,9 +2,15 @@
 #include <cstdlib>
 #include <list>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_2.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 typedef CGAL::Segment_2<K> Segment;
+typedef CGAL::Polygon_2<K> Polygon;
+typedef Polygon::Vertex_iterator VertexIterator;
+typedef Polygon::Edge_const_iterator EdgeIterator;
+
 
 using namespace std;
 double triangularAreaCalculation(Point point0, Point point1, Point point2){
@@ -24,12 +30,12 @@ double triangularAreaCalculation(Point point0, Point point1, Point point2){
 
 Segment visibleEdgeSelector(Point newPoint,vector<Segment> vector, int type){
     Segment theValue;
-    if (type==0){
+    if (type==1){
         srand((unsigned) time(NULL)); 
         int random= rand()%vector.size();
         theValue=vector.at(random);
     }
-    else if (type==1){
+    else if (type==2){
         // initialize the first max
         Segment edge=vector.at(0);
         double max= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
@@ -66,13 +72,94 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment> vector, int type){
     return theValue;
 }
 
+//1: x decreasing y decreasing
+//2: x increasing y decreasing
+//3: x decreasing y increasing
+//4: x increasing y increasing
+void swap(Point* a, Point* b,int type){
+    // x decreasing y decreasing
+    if (type==1){
+        if(a->x()<b->x()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+        else if(a->x()==b->x() && a->y()<b->y()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+    }
+    // x increasing y decreasing
+    else if (type==2){
+        if(a->x()>b->x()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+        else if(a->x()==b->x() && a->y()<b->y()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+    }
+    // x decreasing y increasing
+    else if(type==3){
+        if(a->x()<b->x()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+        else if(a->x()==b->x() && a->y()>b->y()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+    }
+    // x increasing y increasing
+    else{
+        if(a->x()>b->x()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+        else if(a->x()==b->x() && a->y()>b->y()){
+            Point temp=*a;
+            *a=*b;
+            *b=temp;
+        }
+    }
+}
+Polygon coordinatesSorting(vector<Point>* points,int type){
+    for (int i=0;i<points->size();i++){
+        for(int j=i+1;j<points->size();j++){
+            swap(&points->at(i),&points->at(j),type);
+        }
+    }    
+    Polygon polygon;
+    polygon.push_back(points->at(0));
+    polygon.push_back(points->at(1));
+    polygon.push_back(points->at(2));
+    return polygon;
+}
 
 int main(void){
 
-    vector<Segment> vector;
-    vector.push_back(Segment(Point(5,5),Point(5,10)));
-    vector.push_back(Segment(Point(5,10),Point(10,5)));
-    vector.push_back(Segment(Point(10,5),Point(5,5)));
-    Segment what=visibleEdgeSelector(Point(0,0),vector,2);
-    cout<<what<<"\n";
+    vector<Point> vector;
+    vector.push_back(Point(1,1));
+    vector.push_back(Point(2,2));
+    vector.push_back(Point(2,3));
+    vector.push_back(Point(3,3));
+    Polygon polygon= coordinatesSorting(&vector,3);
+    for(const Segment& e  : polygon.edges()){
+        std::cout << e << std::endl;
+  }
+
+    for (int i=0;i<vector.size();i++){
+        cout<<vector.at(i)<<"\n";
+    }
 }
+//1: x decreasing y decreasing
+//2: x increasing y decreasing
+//3: x decreasing y increasing
+//4: x increasing y increasing
