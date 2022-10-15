@@ -2,24 +2,24 @@
 //#include <CGAL/Polygon_2.h>
 //#include <list>
 //typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-//typedef CGAL::Point_2<K> Point;
-//typedef CGAL::Polygon_2<K> Polygon_2;
-//typedef Polygon_2::Vertex_iterator VertexIterator;
-//typedef Polygon_2::Edge_const_iterator EdgeIterator;
+
 #include <iostream>
 #include <string.h>
 #include <fstream>
 #include <vector>
 #include <chrono>
-#include <time.h>
+#include <unistd.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include  <CGAL/Polygon_2.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Segment_2<K> Segment;
+typedef Polygon::Vertex_iterator VertexIterator;
+typedef Polygon::Edge_const_iterator EdgeIterator;
 
 using namespace std;
+
 
 int main(int argc, char* argv[]){ 
 
@@ -89,43 +89,48 @@ int main(int argc, char* argv[]){
         
         totalPoints++;
         int x, y;
-
+        //all numbers are separated by \t(tab) so they are in positions 0, 4, 8 of the string
         x=stoi(&text[4]);
         y=stoi(&text[8]);
         Point temp(x, y);
         allPoints.push_back(temp);
-        cout <<"aaa" << endl;
-        cout << text << endl;//all numbers are separated by \t(tab) so they are in positions 0, 4, 8 of the string
     }
     in.close();
-    for(int i=0; i<totalPoints; i++)
-        cout << allPoints[i] << endl;
 
 
-    // Timer clock; // Timer<milliseconds, steady_clock>
-    // clock.tick();
-    
+    auto start = chrono::steady_clock::now();
 
-    // //code
-    // Polygon p;
-    // clock.tock();
+    //code
+    Polygon p;
+    // p.push_back(Point(4,0));
+    // p.push_back(Point(4,4));
+    // p.push_back(Point(2,2));
+    // p.push_back(Point(0,4));
+
+    auto end = chrono::steady_clock::now();
 
 
 
     //output
-    cout << "Polygonization" << endl;
 
-    // for (VertexIterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
-    //     std::cout << "vertex " << n++ << " = " << *vi << std::endl;
-    // std::cout << std::endl;
-    // n=0;
-    // for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
-    //     std::cout << "edge " << n++ << " = " << *ei << std::endl;
+    //create file where output is to be written
+    ofstream outfile(output);
 
-    cout << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">" << endl;
-    cout <<"Area: " << "replace with variable that stores area of polygon" << endl;
-    cout << "Ration: " << "replace with variable" << endl;
-    //cout << "Construction time in miliseconds: " << clock.duration().count() << " ms\n";
+    outfile << "Polygonization" << endl;
+    int n=0;
+    for (VertexIterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
+        outfile << "vertex " << n++ << " = " << *vi << endl;
+    outfile << endl;
+    n=0;
+    for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
+        outfile << "edge " << n++ << " = " << *ei << endl;
+
+    outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">" << endl;
+    outfile << "Area: " << "replace with variable that stores area of polygon" << endl;
+    outfile << "Ration: " << "replace with variable" << endl;
+    outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
+    outfile.close();
+
 
     return 0;
 }
