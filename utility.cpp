@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>
-#include <list>
+#include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 
@@ -121,23 +121,23 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type){
     polygon->push_back(points->at(2));
 }
 
-int main(void){
+// int main(void){
 
-    vector<Point> vector;
-    vector.push_back(Point(1,1));
-    vector.push_back(Point(2,2));
-    vector.push_back(Point(2,3));
-    vector.push_back(Point(3,3));
-    Polygon polygon;
-    coordinatesSorting(&polygon,&vector,4);
-    for(const Segment& e  : polygon.edges()){
-        std::cout << e << std::endl;
-    }
+//     vector<Point> vector;
+//     vector.push_back(Point(1,1));
+//     vector.push_back(Point(2,2));
+//     vector.push_back(Point(2,3));
+//     vector.push_back(Point(3,3));
+//     Polygon polygon;
+//     coordinatesSorting(&polygon,&vector,4);
+//     for(const Segment& e  : polygon.edges()){
+//         std::cout << e << std::endl;
+//     }
 
-    for (int i=0;i<vector.size();i++){
-        cout<<vector.at(i)<<"\n";
-    }
-}
+//     for (int i=0;i<vector.size();i++){
+//         cout<<vector.at(i)<<"\n";
+//     }
+// }
 //1: x decreasing 
 //2: x increasing 
 //3: y decreasing

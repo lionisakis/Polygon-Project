@@ -11,6 +11,10 @@
 #include <unistd.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include  <CGAL/Polygon_2.h>
+
+#include  "mainFunctions.hpp"
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 typedef CGAL::Polygon_2<K> Polygon;
@@ -102,10 +106,12 @@ int main(int argc, char* argv[]){
 
     //code
     Polygon p;
-    // p.push_back(Point(4,0));
-    // p.push_back(Point(4,4));
-    // p.push_back(Point(2,2));
-    // p.push_back(Point(0,4));
+
+    // TODO:: add more if
+    cout<<"WHAT1"<<endl;
+    if (algo==1)
+        incremental(&p,&allPoints,init,edge);
+    cout<<"WHAT2"<<endl;
 
     auto end = chrono::steady_clock::now();
 
