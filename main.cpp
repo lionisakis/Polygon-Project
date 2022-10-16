@@ -125,7 +125,7 @@ int main(int argc, char* argv[]){
     for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
         outfile << "edge " << n++ << " = " << *ei << endl;
 
-    outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">" << endl;
+    outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
     outfile << "Area: " << "replace with variable that stores area of polygon" << endl;
     outfile << "Ration: " << "replace with variable" << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
