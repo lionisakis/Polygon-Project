@@ -23,7 +23,7 @@ int checkVisibility(Polygon* p, Point newPoint, Point checkPoint){
         // as it is the reachable edge
         if (ei->point(0)==checkPoint || ei->point(1)==checkPoint)
             continue;
-            
+
         cout<<"newPoint: "<<raycast<<endl;
         if(intersection(raycast, *ei)){
             cout<<"0"<<endl;
@@ -66,7 +66,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
         }
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge);
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-            if(*vi==newEdge.point(0)){
+            if(*vi==newEdge.point(1)){
                 polygon->insert(vi, currentPoint);
                 break;
             }
