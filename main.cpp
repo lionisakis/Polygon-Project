@@ -148,11 +148,11 @@ int main(int argc, char* argv[]){
     outfile << "Polygonization" << endl;
     int n=0;
     for (VertexIterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
-        outfile << "vertex " << n++ << " = " << *vi << endl;
+        outfile  << *vi << endl;
     outfile << endl;
     n=0;
     for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
-        outfile << "edge " << n++ << " = " << *ei << endl;
+        outfile << *ei << endl;
 
     outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
     outfile << "Area: " << "replace with variable that stores area of polygon" << endl;
