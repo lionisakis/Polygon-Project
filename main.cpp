@@ -131,7 +131,6 @@ int main(int argc, char* argv[]){
         }
 
         Point temp(x, y);
-        cout << temp << endl;
         allPoints.push_back(temp);
     }
     in.close();
@@ -161,11 +160,9 @@ int main(int argc, char* argv[]){
     ofstream outfile(output);
 
     outfile << "Polygonization" << endl;
-    int n=0;
     for (VertexIterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
         outfile  << *vi << endl;
     outfile << endl;
-    n=0;
     for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
         outfile << *ei << endl;
 
