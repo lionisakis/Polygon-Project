@@ -12,6 +12,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include  <CGAL/Polygon_2.h>
 #include <sstream>
+#include <cstring>
 
 #include  "mainFunctions.hpp"
 
@@ -82,7 +83,7 @@ int main(int argc, char* argv[]){
     }
     int totalPoints=0;//variable to store the total amount of 2D points given in input file
     int count=0;
-    int chArea=0;//area of convex hull 
+    int chArea;//area of convex hull 
     while(!in.eof()){
         string text;
         getline(in, text);
@@ -90,21 +91,17 @@ int main(int argc, char* argv[]){
         if(text == "-1")
             break;
         if(text[0] == '#' && count==1){
-            stringstream ss;
-            ss << text;
-            string temp;
-            int found;
-            while (!ss.eof()) {
-                ss >> temp;
-                if(temp.size() > 3){
-                    temp.erase(0,1);
-                    temp.erase(temp.size()-1);
-                    temp.erase(temp.size()-1);
+            char delim[2] = "\"";
+            char tmp[text.size() + 1];
+            strcpy(tmp, text.c_str());
+            char *token2 = strtok(tmp,delim);
+            int wordcounter=0;
+            while (token2) {
+                wordcounter++;
+                if(wordcounter==6){
+                    chArea=stoi(token2);
                 }
-                if (stringstream(temp) >> found){
-                    chArea=found;
-                }
-                temp = "";
+                token2 = strtok(NULL,delim);
             }
             count++;
             continue;
@@ -113,12 +110,26 @@ int main(int argc, char* argv[]){
             count++;
             continue;
         }
-
+        
         totalPoints++;
-        int x, y;
-        //all numbers are separated by \t(tab) so they are in positions 0, 4, 8 of the string
-        x=stoi(&text[4]);
-        y=stoi(&text[8]);
+        double x, y;
+        //all numbers are separated by \t(tab) so i use strtok to get the coordinates of each point
+        char delim[2] = "\t";
+        char tmp[text.size() + 1];
+        strcpy(tmp, text.c_str());
+        char *token = strtok(tmp,delim);
+        int counter=0;
+        while (token) {
+            if(counter==1){
+                x = stod(token);
+            }
+            else if(counter==2){
+                y = stod(token);
+            }
+            token = strtok(NULL,delim);
+            counter++;
+        }
+
         Point temp(x, y);
         allPoints.push_back(temp);
     }
@@ -132,8 +143,10 @@ int main(int argc, char* argv[]){
 
     // TODO:: add more if
     cout<<"WHAT1"<<endl;
-    if (algo==1)
-        incremental(&p,&allPoints,init,edge);
+    // if (algo==1)
+    //     incremental(&p,&allPoints,init,edge);
+    //double pArea      = p.area();
+    //double ratio = ((double)pArea/(double)chArea);
     cout<<"WHAT2"<<endl;
 
     auto end = chrono::steady_clock::now();
@@ -155,8 +168,8 @@ int main(int argc, char* argv[]){
         outfile << *ei << endl;
 
     outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
-    outfile << "Area: " << "replace with variable that stores area of polygon" << endl;
-    outfile << "Ration: " << "replace with variable" << endl;
+    outfile << "Area: " << "replace with variable pArea" << endl;
+    outfile << "Ration: " << "replace with variable ratio" << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
     outfile.close();
 
