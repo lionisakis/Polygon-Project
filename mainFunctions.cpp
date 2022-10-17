@@ -48,7 +48,6 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
         Point previousPoint=points->at(i-1);
 
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            //cout << ei->point(0) << endl;
             if(ei->point(1) == previousPoint){//we found the left red line 
                 //reachable.push_back(*ei);
                 //cout << "first  " << *ei << "  prev = "<< previousPoint << " curr = " << currentPoint << endl;
@@ -57,13 +56,15 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
                 EdgeIterator ei3=ei;
                 // check until the first edge is not visible
                 while(ei2!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
-                    
+                    int flag1=1;
                     if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1))){
                         //cout << "found reachable 1  " << *ei2 << endl;
+                        flag1=0;
                         reachable.push_back(*ei2);
                     }
-                    // else
-                    //     break;
+                    else
+                        if(!flag1)//flag1=0: we have found reachable edges can stop searching cause we stuble upon blue line, flag1=1: no reachable edges found must continue searching even after blue line
+                            break;
                     //cout << "before " << *ei2 << endl;
                     ei2--;
                     // cout << "after " << *ei2 << endl;
@@ -79,12 +80,15 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
                 }
                 //cout << "22222" << endl;
                 while(ei3!=polygon->edges_end()){//check for reachable edges from right side of preivous point
+                    int flag2=1;
                     if(checkVisibility(polygon, currentPoint, ei3->point(0)) && checkVisibility(polygon, currentPoint, ei3->point(1))){
                         //cout << "found reachable 3   " << *ei3 << endl;
+                        flag2=0;
                         reachable.push_back(*ei3);
                     }
-                    // else
-                    //     break;
+                    else
+                        if(!flag2)//flag2=0: we have found reachable edges can stop searching cause we stuble upon blue line, flag2=1: no reachable edges found must continue searching even after blue line
+                            break;
                     ei3++;
                 }
                 //cout <<"33333"<<endl;

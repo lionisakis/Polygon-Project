@@ -145,8 +145,8 @@ int main(int argc, char* argv[]){
     cout<<"WHAT1"<<endl;
     if (algo==1)
         incremental(&p,&allPoints,init,edge);
-    //double pArea      = p.area();
-    //double ratio = ((double)pArea/(double)chArea);
+    int pArea = p.area();
+    double ratio = ((double)pArea/(double)chArea);
     cout << "simple = " << p.is_simple() << endl;
     cout<<"WHAT2"<<endl;
 
@@ -167,8 +167,8 @@ int main(int argc, char* argv[]){
         outfile << *ei << endl;
 
     outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
-    outfile << "Area: " << "replace with variable pArea" << endl;
-    outfile << "Ration: " << "replace with variable ratio" << endl;
+    outfile << "Area: " << pArea << endl;
+    outfile << "Ratio: " << ratio << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
     outfile.close();
 
