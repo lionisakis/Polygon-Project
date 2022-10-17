@@ -17,21 +17,21 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 int checkVisibility(Polygon* p, Point newPoint, Point checkPoint){
     Segment raycast(newPoint, checkPoint);
-    cout<<"raycast: "<<raycast<<endl;
+    //cout<<"raycast: "<<raycast<<endl;
     for(EdgeIterator ei=p->edges_begin();ei!=p->edges_end();ei++){
         // if the checkpoint is in the segment then do not consider it
         // as it is the reachable edge
         if (ei->point(0)==checkPoint || ei->point(1)==checkPoint)
             continue;
 
-        cout<<"newPoint: "<<raycast<<endl;
+        //cout<<"newPoint: "<<raycast<<endl;
         if(intersection(raycast, *ei)){
-            cout<<"0"<<endl;
+            //cout<<"0"<<endl;
             return 0;
 
         }
     }
-    cout<<"1"<<endl;
+    //cout<<"1"<<endl;
     return 1;
 }
 
@@ -47,30 +47,38 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
         Point currentPoint= points->at(i);
         Point previousPoint=points->at(i-1);
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            if(ei->point(1) == previousPoint){//we found the left red line 
-                reachable.push_back(*ei);
+            if(ei->point(0) == previousPoint){//we found the left red line 
+                //reachable.push_back(*ei);
+                //cout << "first  " << *ei << "  prev = "<< previousPoint <<endl;
                 // ei2-1 so we do not start from the same point
                 EdgeIterator ei2=ei-1;
                 EdgeIterator ei3=ei;
                 // check until the first edge is not visible
                 while(ei2!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
-                    if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1)))
+                    cout << *ei2 << endl;
+                    if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1))){
+                        //cout << "found reachable 1  " << *ei2 << endl;
                         reachable.push_back(*ei2);
-                    else
-                        break;
+                    }
+                    // else
+                    //     break;
                     ei2--;
                 }
                 // check if the first edges is visibly as we cannot check it in the while
-                if (ei2==polygon->edges_begin())
+                if (ei2==polygon->edges_begin()){
                     if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1))){
+                        //cout << "found reachable 2   " << *ei2 << endl;
                         reachable.push_back(*ei2);
                     }
+                }
                 
                 while(ei3!=polygon->edges_end()){//check for reachable edges from right side of preivous point
-                    if(checkVisibility(polygon, currentPoint, ei3->point(0)) && checkVisibility(polygon, currentPoint, ei3->point(1)))
+                    if(checkVisibility(polygon, currentPoint, ei3->point(0)) && checkVisibility(polygon, currentPoint, ei3->point(1))){
+                        //cout << "found reachable 3   " << *ei3 << endl;
                         reachable.push_back(*ei3);
-                    else
-                        break;
+                    }
+                    // else
+                    //     break;
                     ei3++;
                 }
 
@@ -78,6 +86,11 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
 
             }
         }
+        // cout <<"---------" << endl;
+        // for(int i=0; i<reachable.size(); i++){
+        //     cout << reachable.at(i) << endl;
+        // }
+        // cout << "finished" << endl;
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge);
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
             if(*vi==newEdge.point(1)){
@@ -85,6 +98,14 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
                 break;
             }
         }
+        cout <<"start------------"<<endl;
+        for (VertexIterator vi5 = polygon->vertices_begin(); vi5 != polygon->vertices_end(); ++vi5)
+        cout  << *vi5 << endl;
+        cout << endl;
+        for (EdgeIterator ei5 = polygon->edges_begin(); ei5 != polygon->edges_end(); ++ei5)
+            cout << *ei5 << endl;
+        cout <<"end ----------"<<endl;
+
     }
     
 }

@@ -112,25 +112,26 @@ int main(int argc, char* argv[]){
         }
         
         totalPoints++;
-        double x, y;
+        int x, y;
         //all numbers are separated by \t(tab) so i use strtok to get the coordinates of each point
-        char delim[2] = "\t";
+        char delim2[2] = "\t";
         char tmp[text.size() + 1];
         strcpy(tmp, text.c_str());
-        char *token = strtok(tmp,delim);
+        char *token = strtok(tmp,delim2);
         int counter=0;
         while (token) {
             if(counter==1){
-                x = stod(token);
+                x = stoi(token);
             }
             else if(counter==2){
-                y = stod(token);
+                y = stoi(token);
             }
-            token = strtok(NULL,delim);
+            token = strtok(NULL,delim2);
             counter++;
         }
 
         Point temp(x, y);
+        cout << temp << endl;
         allPoints.push_back(temp);
     }
     in.close();
@@ -143,10 +144,11 @@ int main(int argc, char* argv[]){
 
     // TODO:: add more if
     cout<<"WHAT1"<<endl;
-    // if (algo==1)
-    //     incremental(&p,&allPoints,init,edge);
+    if (algo==1)
+        incremental(&p,&allPoints,init,edge);
     //double pArea      = p.area();
     //double ratio = ((double)pArea/(double)chArea);
+    cout << "simple = " << p.is_simple() << endl;
     cout<<"WHAT2"<<endl;
 
     auto end = chrono::steady_clock::now();
