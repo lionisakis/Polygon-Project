@@ -37,15 +37,16 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             if(ei->point(1) == previousPoint){//we found the left red line 
                 EdgeIterator ei2=ei;
-                while(ei!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
-                    if(checkVisibility(polygon, currentPoint, ei->point(0)) && checkVisibility(polygon, currentPoint, ei->point(1)))
-                        reachable.push_back(*ei);
-                    ei--;
-                }
-                while(ei2!=polygon->edges_end()){//check for reachable edges from right side of preivous point
+                EdgeIterator ei3=ei;
+                while(ei2!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
                     if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1)))
                         reachable.push_back(*ei2);
-                    ei2++;
+                    ei2--;
+                }
+                while(ei3!=polygon->edges_end()){//check for reachable edges from right side of preivous point
+                    if(checkVisibility(polygon, currentPoint, ei3->point(0)) && checkVisibility(polygon, currentPoint, ei3->point(1)))
+                        reachable.push_back(*ei3);
+                    ei3++;
                 }
             }
         }
