@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include  <CGAL/Polygon_2.h>
+#include <sstream>
 
 #include  "mainFunctions.hpp"
 
@@ -80,17 +81,39 @@ int main(int argc, char* argv[]){
         cout <<"error while opening file" << endl;
     }
     int totalPoints=0;//variable to store the total amount of 2D points given in input file
-
+    int count=0;
+    int chArea=0;//area of convex hull 
     while(!in.eof()){
         string text;
         getline(in, text);
 
         if(text == "-1")
             break;
-
-        if(text[0] == '#')
+        if(text[0] == '#' && count==1){
+            stringstream ss;
+            ss << text;
+            string temp;
+            int found;
+            while (!ss.eof()) {
+                ss >> temp;
+                if(temp.size() > 3){
+                    temp.erase(0,1);
+                    temp.erase(temp.size()-1);
+                    temp.erase(temp.size()-1);
+                }
+                if (stringstream(temp) >> found){
+                    chArea=found;
+                }
+                temp = "";
+            }
+            count++;
             continue;
-        
+        }
+        else if(text[0] == '#' && count==0){
+            count++;
+            continue;
+        }
+
         totalPoints++;
         int x, y;
         //all numbers are separated by \t(tab) so they are in positions 0, 4, 8 of the string
@@ -106,6 +129,11 @@ int main(int argc, char* argv[]){
 
     //code
     Polygon p;
+    p.push_back(Point(0,0));
+    p.push_back(Point(0,1));
+    p.push_back(Point(1,0));
+    p.push_back(Point(1,1));
+    p.insert(p.vertices_begin()+2,Point(4,4));
 
     // // TODO:: add more if
     // cout<<"WHAT1"<<endl;
