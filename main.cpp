@@ -107,11 +107,11 @@ int main(int argc, char* argv[]){
     //code
     Polygon p;
 
-    // TODO:: add more if
-    cout<<"WHAT1"<<endl;
-    if (algo==1)
-        incremental(&p,&allPoints,init,edge);
-    cout<<"WHAT2"<<endl;
+    // // TODO:: add more if
+    // cout<<"WHAT1"<<endl;
+    // if (algo==1)
+    //     incremental(&p,&allPoints,init,edge);
+    // cout<<"WHAT2"<<endl;
 
     auto end = chrono::steady_clock::now();
 
