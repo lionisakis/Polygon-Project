@@ -17,10 +17,21 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 int checkVisibility(Polygon* p, Point newPoint, Point checkPoint){
     Segment raycast(newPoint, checkPoint);
+    cout<<"raycast: "<<raycast<<endl;
     for(EdgeIterator ei=p->edges_begin();ei!=p->edges_end();ei++){
-        if(const auto res = intersection(raycast, *ei))
+        // if the checkpoint is in the segment then do not consider it
+        // as it is the reachable edge
+        if (ei->point(0)==checkPoint || ei->point(1)==checkPoint)
+            continue;
+            
+        cout<<"newPoint: "<<raycast<<endl;
+        if(intersection(raycast, *ei)){
+            cout<<"0"<<endl;
             return 0;
+
+        }
     }
+    cout<<"1"<<endl;
     return 1;
 }
 
