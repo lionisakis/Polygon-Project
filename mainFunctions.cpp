@@ -26,12 +26,13 @@ int checkVisibility(Polygon* p, Point newPoint, Point checkPoint){
 
 
 void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
-    // initialize the vector with size for complexity 
-    vector<Segment> reachable(points->size());
     
     // make the triangle and short the points
     coordinatesSorting(polygon,points,sorting);
     for (int i=3;i<points->size();i++){
+        // initialize the vector with size for complexity 
+        vector<Segment> reachable;
+
         Point currentPoint= points->at(i);
         Point previousPoint=points->at(i-1);
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
@@ -47,15 +48,13 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
                 while(ei3!=polygon->edges_end()){//check for reachable edges from right side of preivous point
                     if(checkVisibility(polygon, currentPoint, ei3->point(0)) && checkVisibility(polygon, currentPoint, ei3->point(1)))
                         reachable.push_back(*ei3);
+
                     ei3++;
                 }
             }
         }
-        cout<<"TYPE"<<edge<<endl;
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge);
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-            cout<<*vi<<"END"<<endl;
-            cout<<newEdge<<endl;
             if(*vi==newEdge.point(0)){
                 polygon->insert(vi, currentPoint);
                 break;

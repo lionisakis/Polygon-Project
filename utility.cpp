@@ -38,12 +38,14 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type){
     else if (type==2){
         // initialize the first max
         Segment edge=vector->at(0);
+
         double max= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
         Segment maxEdge=edge;
 
         // find the new max
         for (int i=1;i<vector->size();i++){
             edge=vector->at(i);
+
             double area= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
             if (area>max){
                 max=area;
@@ -121,24 +123,3 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type){
     polygon->push_back(points->at(2));
 }
 
-// int main(void){
-
-//     vector<Point> vector;
-//     vector.push_back(Point(1,1));
-//     vector.push_back(Point(2,2));
-//     vector.push_back(Point(2,3));
-//     vector.push_back(Point(3,3));
-//     Polygon polygon;
-//     coordinatesSorting(&polygon,&vector,4);
-//     for(const Segment& e  : polygon.edges()){
-//         std::cout << e << std::endl;
-//     }
-
-//     for (int i=0;i<vector.size();i++){
-//         cout<<vector.at(i)<<"\n";
-//     }
-// }
-//1: x decreasing 
-//2: x increasing 
-//3: y decreasing
-//4: y increasing
