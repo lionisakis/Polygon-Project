@@ -129,17 +129,12 @@ int main(int argc, char* argv[]){
 
     //code
     Polygon p;
-    p.push_back(Point(0,0));
-    p.push_back(Point(0,1));
-    p.push_back(Point(1,0));
-    p.push_back(Point(1,1));
-    p.insert(p.vertices_begin()+2,Point(4,4));
 
-    // // TODO:: add more if
-    // cout<<"WHAT1"<<endl;
-    // if (algo==1)
-    //     incremental(&p,&allPoints,init,edge);
-    // cout<<"WHAT2"<<endl;
+    // TODO:: add more if
+    cout<<"WHAT1"<<endl;
+    if (algo==1)
+        incremental(&p,&allPoints,init,edge);
+    cout<<"WHAT2"<<endl;
 
     auto end = chrono::steady_clock::now();
 
