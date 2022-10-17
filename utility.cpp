@@ -28,22 +28,22 @@ double triangularAreaCalculation(Point point0, Point point1, Point point2){
     return det/2;
 }
 
-Segment visibleEdgeSelector(Point newPoint,vector<Segment> vector, int type){
+Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type){
     Segment theValue;
     if (type==1){
         srand((unsigned) time(NULL)); 
-        int random= rand()%vector.size();
-        theValue=vector.at(random);
+        int random= rand()%vector->size();
+        theValue=vector->at(random);
     }
     else if (type==2){
         // initialize the first max
-        Segment edge=vector.at(0);
+        Segment edge=vector->at(0);
         double max= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
         Segment maxEdge=edge;
 
         // find the new max
-        for (int i=1;i<vector.size();i++){
-            edge=vector.at(i);
+        for (int i=1;i<vector->size();i++){
+            edge=vector->at(i);
             double area= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
             if (area>max){
                 max=area;
@@ -54,13 +54,13 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment> vector, int type){
     }
     else{
         // initialize the first min
-        Segment edge=vector.at(0);
+        Segment edge=vector->at(0);
         double min= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
         Segment minEdge=edge;
 
         // find the new min
-        for (int i=1;i<vector.size();i++){
-            edge=vector.at(i);
+        for (int i=1;i<vector->size();i++){
+            edge=vector->at(i);
             double area= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
             if (area<min){
                 min=area;

@@ -14,4 +14,4 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 
 void coordinatesSorting(Polygon* polygon,std::vector<Point>* points,int type);
-Segment visibleEdgeSelector(Point newPoint,std::vector<Segment> vector, int type);
+Segment visibleEdgeSelector(Point newPoint,std::vector<Segment>* vector, int type);

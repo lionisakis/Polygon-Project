@@ -36,6 +36,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
         Point previousPoint=points->at(i-1);
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             if(ei->point(1) == previousPoint){//we found the left red line 
+                reachable.push_back(*ei);
                 EdgeIterator ei2=ei;
                 EdgeIterator ei3=ei;
                 while(ei2!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
@@ -50,8 +51,11 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
                 }
             }
         }
-        Segment newEdge = visibleEdgeSelector(currentPoint, reachable, edge);
+        cout<<"TYPE"<<edge<<endl;
+        Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge);
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+            cout<<*vi<<"END"<<endl;
+            cout<<newEdge<<endl;
             if(*vi==newEdge.point(0)){
                 polygon->insert(vi, currentPoint);
                 break;
