@@ -18,7 +18,7 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 int checkVisibility(Polygon* p, Point newPoint, Point checkPoint){
     Segment raycast(newPoint, checkPoint);
     for(EdgeIterator ei=p->edges_begin();ei!=p->edges_end();ei++){
-        if(const auto res = intersection(raycast, ei))
+        if(const auto res = intersection(raycast, *ei))
             return 0;
     }
     return 1;
