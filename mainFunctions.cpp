@@ -49,19 +49,33 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             if(ei->point(1) == previousPoint){//we found the left red line 
                 reachable.push_back(*ei);
-                EdgeIterator ei2=ei;
+                // ei2-1 so we do not start from the same point
+                EdgeIterator ei2=ei-1;
                 EdgeIterator ei3=ei;
+                // check until the first edge is not visible
                 while(ei2!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
                     if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1)))
                         reachable.push_back(*ei2);
+                    else
+                        break;
                     ei2--;
                 }
+                // check if the first edges is visibly as we cannot check it in the while
+                if (ei2==polygon->edges_begin())
+                    if(checkVisibility(polygon, currentPoint, ei2->point(0)) && checkVisibility(polygon, currentPoint, ei2->point(1))){
+                        reachable.push_back(*ei2);
+                    }
+                
                 while(ei3!=polygon->edges_end()){//check for reachable edges from right side of preivous point
                     if(checkVisibility(polygon, currentPoint, ei3->point(0)) && checkVisibility(polygon, currentPoint, ei3->point(1)))
                         reachable.push_back(*ei3);
-
+                    else
+                        break;
                     ei3++;
                 }
+
+                
+
             }
         }
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge);

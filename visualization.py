@@ -8,8 +8,6 @@ for line in f.readlines():
     # split to get the edge
     line=line.split("\n")
     points=line[0].split(" ")
-    print(points)
-    print(len(points))
     if len(points)!=4:
         continue
     try: 
