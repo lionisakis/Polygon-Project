@@ -53,7 +53,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge){
                 //cout << "first  " << *ei << "  prev = "<< previousPoint << " curr = " << currentPoint << endl;
                 // ei2-1 so we do not start from the same point
                 EdgeIterator ei2=ei;
-                EdgeIterator ei3=ei;
+                EdgeIterator ei3=ei+1;
                 // check until the first edge is not visible
                 while(ei2!=polygon->edges_begin()){//check for reachable edges from left side of preivous point
                     int flag1=1;
