@@ -12,6 +12,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 typedef CGAL::Segment_2<K> Segment;
 typedef CGAL::Polygon_2<K> Polygon;
+typedef K::Intersect_2 Intersect;
 // typedef CGAL::convex_hull_2 convexHull;
 typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
@@ -72,7 +73,6 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                 }
             }
         }    
-
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
         //cout << "adding " << newEdge << endl;
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
@@ -82,5 +82,58 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             }
         }
     }
+}
+
+void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area){
+    
+    //create KP
+    vector<Point> KP;
+    CGAL::convex_hull_2(points->begin(), points->end(), back_inserter(KP));
+    for(int i=0; i<KP.size(); i++){
+        polygon->push_back(KP.at(i));
+
+    }
+    vector<Point> remainingPoints;//store points that are not part of convex hull
+    for(int k=0; k<points->size(); k++){
+        int flag=1;
+        for(int l=0; l<KP.size(); l++){
+            if(points->at(k) == KP.at(l)){
+                flag=0;
+                break;
+            }
+        }
+        if(flag){
+            remainingPoints.push_back(points->at(k));
+        }
+    }
+    for (int i=0;i<remainingPoints.size();i++){
+        for(int j=i+1;j<remainingPoints.size();j++){
+            swap(&remainingPoints.at(i),&remainingPoints.at(j),2);
+        }
+    }
+    for(int w=0; w<remainingPoints.size(); w++){
+        cout <<"searching  " << remainingPoints.at(w)<< endl;
+        Point currentPoint= remainingPoints.at(w);
+        vector<Segment> reachable;
+        for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){
+            
+            //const auto res = intersection(*ei, currentPoint);
+            //if(res){  
+                cout <<"aaa" << endl;
+                reachable.push_back(*ei);
+                cout << *ei << endl;
+            }
+        
+        }
+        Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
+        cout << "chosen   " << newEdge << endl;
+        for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+            if(*vi==newEdge.point(1)){
+                polygon->insert(vi, currentPoint);
+                break;
+            }
+        }
+    }  
 }
 

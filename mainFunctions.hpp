@@ -13,3 +13,4 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 
 void incremental(Polygon* polygon,std::vector<Point>* points, int sorting, int edge,double* area);
+void convexHull(Polygon* polygon, std::vector<Point>* points, int edge, double* area);

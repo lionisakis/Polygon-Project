@@ -18,3 +18,4 @@ Segment visibleEdgeSelector(Point newPoint,std::vector<Segment>* vector, int typ
 int isItRed(std::vector<Point>* KP,Point a,Point b,Point p);
 int isItReachable(Polygon* polygon,Point a,Point b,Point p);
 int checkEdgeInsideRedLine(Segment polygonSegment,Segment redline,int sorting);
+void swap(Point* a, Point* b,int type);

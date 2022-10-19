@@ -144,6 +144,8 @@ int main(int argc, char* argv[]){
     double ourArea=0;
     if (algo==1)
         incremental(&p,&allPoints,init,edge,&ourArea);
+    else
+        convexHull(&p, &allPoints, edge, &ourArea);
     int pArea = p.area();
     double ratio = ((double)pArea/(double)chArea);
     cout << "simple = " << p.is_simple() << endl;
@@ -163,8 +165,10 @@ int main(int argc, char* argv[]){
     outfile << endl;
     for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
         outfile << *ei << endl;
-
-    outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
+    if(argc==11)
+        outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
+    else if(argc==9)
+        outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] <<  ">" << endl;
     outfile << "Area: " << pArea << endl;
     outfile << "Our Area: " << ourArea << endl;
     outfile << "Ratio: " << ratio << endl;

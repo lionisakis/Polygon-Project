@@ -151,7 +151,7 @@ int isItRed(vector<Point>* KP,Point a,Point b,Point p){
     return 1;
 }
 
-// check if the KP point is red or not
+// check if the polygon point is red or not
 int isItReachable(Polygon* polygon,Point a,Point b,Point p){
     int positive=a.x()*b.y()*1+a.y()*1*p.x()+1*b.x()*p.y();
     int negative=p.x()*b.y()*1+p.y()*1*a.x()+1*b.x()*a.y();
