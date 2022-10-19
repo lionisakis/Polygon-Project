@@ -12,4 +12,4 @@ typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 
 
-void incremental(Polygon* polygon,std::vector<Point>* points, int sorting, int edge);
+void incremental(Polygon* polygon,std::vector<Point>* points, int sorting, int edge,double* area);

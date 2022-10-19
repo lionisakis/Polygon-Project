@@ -28,12 +28,13 @@ double triangularAreaCalculation(Point point0, Point point1, Point point2){
     return det/2;
 }
 
-Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type){
+Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,double* area){
     Segment theValue;
     if (type==1){
         srand((unsigned) time(NULL)); 
         int random= rand()%vector->size();
         theValue=vector->at(random);
+        *area+=triangularAreaCalculation(newPoint,theValue.point(0),theValue.point(1));
     }
     else if (type==2){
         // initialize the first max
@@ -52,6 +53,7 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type){
                 maxEdge=edge;
             }
         }
+        *area+=max;
         theValue=maxEdge;
     }
     else{
@@ -69,6 +71,7 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type){
                 minEdge=edge;
             }
         }
+        *area+=min;
         theValue=minEdge;
     }
     return theValue;
@@ -112,7 +115,7 @@ void swap(Point* a, Point* b,int type){
         }
     }
 }
-void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type){
+void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* area){
     for (int i=0;i<points->size();i++){
         for(int j=i+1;j<points->size();j++){
             swap(&points->at(i),&points->at(j),type);
@@ -121,5 +124,15 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type){
     polygon->push_back(points->at(0));
     polygon->push_back(points->at(1));
     polygon->push_back(points->at(2));
+    *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
+}
+
+int isItRed(Point a,Point b,Point p){
+    int positive=a.x()*b.y()*1+a.y()*1*p.x()+1*b.x()*p.y();
+    int negative=p.x()*p.y()*1+p.y()*1*a.x()+1*b.x()*a.y();
+    int det=positive-negative;
+    if (det>=0)
+        return 1;
+    return 0;    
 }
 

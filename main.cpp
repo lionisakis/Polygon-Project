@@ -129,7 +129,6 @@ int main(int argc, char* argv[]){
             token = strtok(NULL,delim2);
             counter++;
         }
-
         Point temp(x, y);
         allPoints.push_back(temp);
     }
@@ -142,13 +141,12 @@ int main(int argc, char* argv[]){
     Polygon p;
 
     // TODO:: add more if
-    cout<<"WHAT1"<<endl;
+    double ourArea=0;
     if (algo==1)
-        incremental(&p,&allPoints,init,edge);
+        incremental(&p,&allPoints,init,edge,&ourArea);
     int pArea = p.area();
     double ratio = ((double)pArea/(double)chArea);
     cout << "simple = " << p.is_simple() << endl;
-    cout<<"WHAT2"<<endl;
 
     auto end = chrono::steady_clock::now();
 
@@ -168,6 +166,7 @@ int main(int argc, char* argv[]){
 
     outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
     outfile << "Area: " << pArea << endl;
+    outfile << "Our Area: " << ourArea << endl;
     outfile << "Ratio: " << ratio << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
     outfile.close();

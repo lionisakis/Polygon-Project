@@ -13,5 +13,6 @@ typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 
 
-void coordinatesSorting(Polygon* polygon,std::vector<Point>* points,int type);
-Segment visibleEdgeSelector(Point newPoint,std::vector<Segment>* vector, int type);
+void coordinatesSorting(Polygon* polygon,std::vector<Point>* points,int type,double* area);
+Segment visibleEdgeSelector(Point newPoint,std::vector<Segment>* vector, int type,double* area);
+int isItRed(Point a,Point b,Point p);
