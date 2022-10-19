@@ -15,4 +15,6 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 void coordinatesSorting(Polygon* polygon,std::vector<Point>* points,int type,double* area);
 Segment visibleEdgeSelector(Point newPoint,std::vector<Segment>* vector, int type,double* area);
-int isItRed(Point a,Point b,Point p);
+int isItRed(std::vector<Point>* KP,Point a,Point b,Point p);
+int isItReachable(Polygon* polygon,Point a,Point b,Point p);
+int checkEdgeInsideRedLine(Segment polygonSegment,Segment redline,int sorting);

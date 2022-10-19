@@ -49,27 +49,27 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         Point previous=KP.at(KP.size()-1);
         for(int i=0;i<KP.size();i++){
             // if positive then it is red
-            if(isItRed(previous,KP[i],currentPoint)>0)
+            if(isItRed(&KP,previous,KP.at(i),currentPoint)){
                 redLine.push_back(Segment(previous,KP.at(i)));
-            
+            }
             previous=KP.at(i);
         }
+        cout<<"!!"<<endl;
 
         vector<Segment> reachable;
         for(int i=0;i<redLine.size();i++){
-            Point leftPoint=redLine.at(i).point(0);
-            Point rightPoint=redLine.at(i).point(1);
-            int flagStartCheck=0;
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                // BUG HERE
+                if(checkEdgeInsideRedLine(*ei,redLine.at(i),sorting)==0){
+                    cout<<"Continue:"<<*ei<<" redline"<<redLine.at(i)<<endl;
+                    continue;
+                }
+                cout<<*ei<<" "<<redLine.at(i)<<endl;
+
                 // we are in red line area and start checking
-                if(ei->point(0)==leftPoint)
-                    flagStartCheck=1;
-                if(checkVisibility(*ei,currentPoint, ei->point(0))&& checkVisibility(*ei,currentPoint, ei->point(1))){
+                if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){
                     reachable.push_back(*ei);
                 }
-                // we will go out of the red line
-                if(ei->point(1)==rightPoint)
-                    break;
             }
         }    
 
@@ -81,12 +81,6 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                 break;
             }
         }
-        // cout << "new polygon" << endl;
-        // for (EdgeIterator ei5 = polygon->edges_begin(); ei5 != polygon->edges_end(); ++ei5)
-        //     cout << *ei5 << endl;
-        // cout << "simple = " << polygon->is_simple() << endl;
-        // cout << "end" << endl;
-
     }
 }
 
