@@ -127,12 +127,85 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* 
     *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
 }
 
-int isItRed(Point a,Point b,Point p){
+// check if the KP point is red or not
+int isItRed(vector<Point>* KP,Point a,Point b,Point p){
     int positive=a.x()*b.y()*1+a.y()*1*p.x()+1*b.x()*p.y();
-    int negative=p.x()*p.y()*1+p.y()*1*a.x()+1*b.x()*a.y();
-    int det=positive-negative;
-    if (det>=0)
-        return 1;
-    return 0;    
+    int negative=p.x()*b.y()*1+p.y()*1*a.x()+1*b.x()*a.y();
+    int det1=positive-negative;
+    
+    // for all KP point (so random KP point)
+    // check if it is blue or red
+    for(int i=0;i<KP->size();i++){
+        Point q=KP->at(i);
+        if(q==a||q==b)
+            continue;
+        positive=a.x()*b.y()*1+a.y()*1*1+q.x()+1*b.x()*1+q.y();
+        negative=q.x()*b.y()*1+q.y()*1*a.x()+1*b.x()*a.y();
+        int det2=positive-negative;
+        // I am blue
+        if ((det2>=0 && det1>=0) || (det2<0 && det1<0))
+            return 0;
+    }
+
+    // else I am red
+    return 1;
 }
 
+// check if the KP point is red or not
+int isItReachable(Polygon* polygon,Point a,Point b,Point p){
+    int positive=a.x()*b.y()*1+a.y()*1*p.x()+1*b.x()*p.y();
+    int negative=p.x()*b.y()*1+p.y()*1*a.x()+1*b.x()*a.y();
+    int det1=positive-negative;
+    
+    // for all polygon points 
+    // check if it is reachable or not
+    for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
+        Point q=*vi;
+        positive=a.x()*b.y()*1+a.y()*1*1+q.x()+1*b.x()*1+q.y();
+        negative=q.x()*b.y()*1+q.y()*1*a.x()+1*b.x()*a.y();
+        int det2=positive-negative;
+        // I am not reachable
+        if ((det2>=0 && det1>=0) || (det2<0 && det1<0))
+            return 0;
+    }
+
+    // I am reachable
+    return 1;
+}
+
+int checkEdgeInsideRedLine(Segment polygonSegment,Segment redline,int sorting){
+    Point a=polygonSegment.point(0);
+    Point b=polygonSegment.point(1);
+    Point redline1=redline.point(0);
+    Point redline2=redline.point(1);
+    int lower=0;
+    int upper=0;
+    // sort by x
+    if(sorting<=2){        
+        if (redline1.y()<redline2.y()){
+            lower=redline1.y();
+            upper=redline2.y();
+        }
+        else{
+            lower=redline2.y();
+            upper=redline1.y();
+        }
+        if(lower<=a.y()&& a.y()<=upper && lower<=b.y()&& b.y()<=upper)
+            return 1;
+
+    }
+    // sort by y
+    else{
+        if (redline1.x()<redline2.x()){
+            lower=redline1.x();
+            upper=redline2.x();
+        }
+        else{
+            lower=redline2.x();
+            upper=redline1.x();
+        }
+        if(a.x()>=lower&& a.x()<=upper && b.x()>=lower&& b.x()<=upper)
+            return 1;
+    }
+    return 0;
+}
