@@ -106,18 +106,20 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
             remainingPoints.push_back(points->at(k));
         }
     }
+    //sort remaining points , x increasing,may delete later
     for (int i=0;i<remainingPoints.size();i++){
         for(int j=i+1;j<remainingPoints.size();j++){
             swap(&remainingPoints.at(i),&remainingPoints.at(j),2);
         }
     }
+
+    //for each remaining point find its reachable edges and choose one to replace
     for(int w=0; w<remainingPoints.size(); w++){
         cout <<"searching  " << remainingPoints.at(w)<< endl;
         Point currentPoint= remainingPoints.at(w);
         vector<Segment> reachable;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){
-            
+            if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
             //const auto res = intersection(*ei, currentPoint);
             //if(res){  
                 cout <<"aaa" << endl;
