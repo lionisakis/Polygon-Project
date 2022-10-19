@@ -161,12 +161,15 @@ int isItReachable(Polygon* polygon,Point a,Point b,Point p){
     // check if it is reachable or not
     for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
         Point q=*vi;
-        positive=a.x()*b.y()*1+a.y()*1*1+q.x()+1*b.x()*1+q.y();
+        positive=a.x()*b.y()*1+a.y()*1*q.x()+1*b.x()*q.y();
         negative=q.x()*b.y()*1+q.y()*1*a.x()+1*b.x()*a.y();
         int det2=positive-negative;
         // I am not reachable
-        if ((det2>=0 && det1>=0) || (det2<0 && det1<0))
+        cout <<"det1 =  " << det1 << "  det2 =  "<< det2<<endl;
+        if ((det2>=0 && det1>=0) || (det2<0 && det1<0)){
+            cout <<"errorrrrrr"<<endl;
             return 0;
+        }
     }
 
     // I am reachable

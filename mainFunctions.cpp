@@ -20,13 +20,13 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 int checkVisibility(Segment segment, Point newPoint, Point checkPoint){
     Segment rayCast(newPoint, checkPoint);
-
+    cout <<"raycast = " << rayCast << "edge =   "<< segment << endl;
     if(intersection(rayCast, segment)){
-        //cout<<"0"<<endl;
+        cout<<"0"<<endl;
         return 0;
     }
 
-    //cout<<"1"<<endl;
+    cout<<"1"<<endl;
     return 1;
 }
 
@@ -119,9 +119,9 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         Point currentPoint= remainingPoints.at(w);
         vector<Segment> reachable;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            cout <<"considering edge =   " << *ei << endl;
             if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
-            //const auto res = intersection(*ei, currentPoint);
-            //if(res){  
+            //if((checkVisibility(*ei, currentPoint, ei->point(0)))&&(checkVisibility(*ei, currentPoint, ei->point(1)))){  
                 cout <<"aaa" << endl;
                 reachable.push_back(*ei);
                 cout << *ei << endl;
