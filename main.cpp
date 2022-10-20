@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
     }
     int totalPoints=0;//variable to store the total amount of 2D points given in input file
     int count=0;
-    int chArea;//area of convex hull 
+    double chArea;//area of convex hull 
     while(!in.eof()){
         string text;
         getline(in, text);
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]){
             while (token2) {
                 wordcounter++;
                 if(wordcounter==6){
-                    chArea=stoi(token2);
+                    chArea=stod(token2);
                 }
                 token2 = strtok(NULL,delim);
             }
@@ -139,8 +139,6 @@ int main(int argc, char* argv[]){
 
     //code
     Polygon p;
-
-    // TODO:: add more if
     double ourArea=0;
     if (algo==1){
         incremental(&p,&allPoints,init,edge,&ourArea);
