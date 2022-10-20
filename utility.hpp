@@ -19,3 +19,4 @@ int isItRed(std::vector<Point>* KP,Point a,Point b,Point p);
 int isItReachable(Polygon* polygon,Point a,Point b,Point p);
 int checkEdgeInsideRedLine(Segment polygonSegment,Segment redline,int sorting);
 void swap(Point* a, Point* b,int type);
+int checkRed(std::vector<Point>* KP, Point newPoint, Point checkPoint);

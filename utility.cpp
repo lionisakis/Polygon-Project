@@ -126,7 +126,20 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* 
     polygon->push_back(points->at(2));
     *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
 }
-
+int checkRed(vector<Point>* KP, Point newPoint, Point checkPoint){
+    Segment rayCast(newPoint, checkPoint);
+    Point previous=KP->at(KP->size()-1);
+    for(int u=0; u<KP->size(); u++){
+        if(KP->at(u) != checkPoint && previous!=checkPoint){
+            Segment rayCast2(KP->at(u), previous);
+            if(intersection(rayCast, rayCast2)){
+                return 0;
+            }
+            }
+        previous=KP->at(u);
+    }
+    return 1;
+}
 // check if the KP point is red or not
 int isItRed(vector<Point>* KP,Point a,Point b,Point p){
     int positive=a.x()*b.y()*1+a.y()*1*p.x()+1*b.x()*p.y();
