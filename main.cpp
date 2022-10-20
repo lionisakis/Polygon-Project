@@ -142,8 +142,9 @@ int main(int argc, char* argv[]){
 
     // TODO:: add more if
     double ourArea=0;
-    if (algo==1)
+    if (algo==1){
         incremental(&p,&allPoints,init,edge,&ourArea);
+    }
     else
         convexHull(&p, &allPoints, edge, &ourArea);
     int pArea = p.area();

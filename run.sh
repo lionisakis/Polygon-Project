@@ -3,4 +3,4 @@
 cgal_create_CMakeLists -s main
 cmake -DCGAL_DIR=/usr/lib/CGAL
 make
-./main -i input.txt -o output.txt -algorithm convex_hull -edge_selection 2
+./main -i input.txt -o output.txt -algorithm incremental -edge_selection 2 -initialization 1a

@@ -32,7 +32,7 @@ int checkVisibility(Polygon* polygon, Point newPoint, Point checkPoint){
 
 
 void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area){
-    
+    polygon->reverse_orientation();
     // make the triangle and short the points
     coordinatesSorting(polygon,points,sorting,area);
     for (int i=3;i<points->size();i++){
@@ -76,7 +76,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
         //cout << "adding " << newEdge << endl;
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-            if(*vi==newEdge.point(1)){
+            if(*vi==newEdge.point(0)){//palia itan point(1)
                 polygon->insert(vi, currentPoint);
                 break;
             }
