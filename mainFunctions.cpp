@@ -18,15 +18,15 @@ typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
-int checkVisibility(Segment segment, Point newPoint, Point checkPoint){
+int checkVisibility(Polygon* polygon, Point newPoint, Point checkPoint){
     Segment rayCast(newPoint, checkPoint);
-    cout <<"raycast = " << rayCast << "edge =   "<< segment << endl;
-    if(intersection(rayCast, segment)){
-        cout<<"0"<<endl;
-        return 0;
+    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+        if(ei->point(0) != checkPoint && ei->point(1)!=checkPoint){
+            if(intersection(rayCast, *ei)){
+                return 0;
+            }
+        }
     }
-
-    cout<<"1"<<endl;
     return 1;
 }
 
@@ -106,24 +106,20 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
             remainingPoints.push_back(points->at(k));
         }
     }
-    
+
     //for each remaining point find its reachable edges and choose one to replace
     for(int w=0; w<remainingPoints.size(); w++){
-        cout <<"searching  " << remainingPoints.at(w)<< endl;
         Point currentPoint= remainingPoints.at(w);
         vector<Segment> reachable;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            cout <<"considering edge =   " << *ei << endl;
-            if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
-            //if((checkVisibility(*ei, currentPoint, ei->point(0)))&&(checkVisibility(*ei, currentPoint, ei->point(1)))){  
-                cout <<"aaa" << endl;
+            //if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
+            if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                 reachable.push_back(*ei);
                 cout << *ei << endl;
             }
         
         }
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
-        cout << "chosen   " << newEdge << endl;
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
             if(*vi==newEdge.point(1)){
                 polygon->insert(vi, currentPoint);

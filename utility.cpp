@@ -139,7 +139,7 @@ int isItRed(vector<Point>* KP,Point a,Point b,Point p){
         Point q=KP->at(i);
         if(q==a||q==b)
             continue;
-        positive=a.x()*b.y()*1+a.y()*1*1+q.x()+1*b.x()*1+q.y();
+        positive=a.x()*b.y()*1+a.y()*1*q.x()+1*b.x()*q.y();
         negative=q.x()*b.y()*1+q.y()*1*a.x()+1*b.x()*a.y();
         int det2=positive-negative;
         // I am blue
@@ -153,19 +153,24 @@ int isItRed(vector<Point>* KP,Point a,Point b,Point p){
 
 // check if the polygon point is red or not
 int isItReachable(Polygon* polygon,Point a,Point b,Point p){
-    int positive=a.x()*b.y()*1+a.y()*1*p.x()+1*b.x()*p.y();
-    int negative=p.x()*b.y()*1+p.y()*1*a.x()+1*b.x()*a.y();
+    int positive=(a.x()*b.y()*1)+(a.y()*1*p.x())+(1*b.x()*p.y());
+    int negative=(p.x()*b.y()*1)+(p.y()*1*a.x())+(1*b.x()*a.y());
     int det1=positive-negative;
     
     // for all polygon points 
     // check if it is reachable or not
     for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
         Point q=*vi;
-        positive=a.x()*b.y()*1+a.y()*1*q.x()+1*b.x()*q.y();
-        negative=q.x()*b.y()*1+q.y()*1*a.x()+1*b.x()*a.y();
+        if(q==a||q==b)
+            continue;
+        positive=(a.x()*b.y()*1)+(a.y()*1*q.x())+(1*b.x()*q.y());
+        cout <<"first =  " << a.x()*b.y()<<endl;
+        negative=(q.x()*b.y()*1)+(q.y()*1*a.x())+(1*b.x()*a.y());
+        cout <<"pos2 =  " << positive << "  neg2 =   " << negative << endl;
         int det2=positive-negative;
         // I am not reachable
         cout <<"det1 =  " << det1 << "  det2 =  "<< det2<<endl;
+        cout <<"a =  " << a << " b=    " << b <<  "  q=   "<<q<< endl;
         if ((det2>=0 && det1>=0) || (det2<0 && det1<0)){
             cout <<"errorrrrrr"<<endl;
             return 0;
