@@ -32,9 +32,10 @@ int checkVisibility(Polygon* polygon, Point newPoint, Point checkPoint){
 
 
 void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area){
-    polygon->reverse_orientation();
     // make the triangle and short the points
     coordinatesSorting(polygon,points,sorting,area);
+    cout<<"``"<<endl;
+
     for (int i=3;i<points->size();i++){
         // find the current Point we want to insert
         Point currentPoint= points->at(i);
@@ -43,7 +44,6 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         vector<Point> KP;
         const Polygon::Vertices& range = polygon->vertices();
         CGAL::convex_hull_2(range.begin(), range.end(), back_inserter(KP));
-
         // find all red lines of KP
         vector<Segment> redLine;  
         // the previous is the last point so we can do a circle
@@ -55,37 +55,55 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             }
             previous=KP.at(i);
         }
-        cout<<"!!"<<endl;
 
+        cout<<"!"<<endl;
         vector<Segment> reachable;
-        for(int i=0;i<redLine.size();i++){
-            for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-                // BUG HERE
-                if(checkEdgeInsideRedLine(*ei,redLine.at(i),sorting)==0){
-                    cout<<"Continue:"<<*ei<<" redline"<<redLine.at(i)<<endl;
-                    continue;
-                }
-                cout<<*ei<<" "<<redLine.at(i)<<endl;
+        for(int j=0;j<redLine.size();j++){
+            Point leftPoint=redLine.at(j).point(0);
+            Point rightPoint=redLine.at(j).point(1);
+            EdgeIterator positionStart,positionEnd;
+            if(polygon->is_counterclockwise_oriented()==0){
+                polygon->reverse_orientation();
+            }
 
-                // we are in red line area and start checking
-                if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){
+            for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                if (ei->point(0)==leftPoint){
+                    positionStart=ei;
+                }
+                if(ei->point(1)==rightPoint){
+                    positionEnd=ei;
+                    break;
+                }
+            }
+            for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
+                if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                     reachable.push_back(*ei);
                 }
             }
-        }    
+
+        }  
+        cout<<"!!"<<endl;
+
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
-        //cout << "adding " << newEdge << endl;
+        if(polygon->is_clockwise_oriented()==0){
+            polygon->reverse_orientation();
+        }
+
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-            if(*vi==newEdge.point(0)){//palia itan point(1)
+            if(*vi==newEdge.point(0)){
                 polygon->insert(vi, currentPoint);
                 break;
             }
         }
+        cout<<"!!!"<<endl;
+
+    }
+    if(polygon->is_clockwise_oriented()==0){
+        polygon->reverse_orientation();
     }
 }
 
 void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area){
-    
     //create KP
     vector<Point> KP;
     CGAL::convex_hull_2(points->begin(), points->end(), back_inserter(KP));
@@ -113,9 +131,9 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         vector<Segment> reachable;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             //if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
+            // if((checkVisibility(polygon, currentPoint, *ei))){  
             if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                 reachable.push_back(*ei);
-                cout << *ei << endl;
             }
         
         }

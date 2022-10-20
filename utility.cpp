@@ -37,6 +37,24 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,dou
         *area+=triangularAreaCalculation(newPoint,theValue.point(0),theValue.point(1));
     }
     else if (type==2){
+        // initialize the first min
+        Segment edge=vector->at(0);
+        double min= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
+        Segment minEdge=edge;
+
+        // find the new min
+        for (int i=1;i<vector->size();i++){
+            edge=vector->at(i);
+            double area= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
+            if (area<min){
+                min=area;
+                minEdge=edge;
+            }
+        }
+        *area+=min;
+        theValue=minEdge;
+    }
+    else{
         // initialize the first max
         Segment edge=vector->at(0);
 
@@ -55,24 +73,6 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,dou
         }
         *area+=max;
         theValue=maxEdge;
-    }
-    else{
-        // initialize the first min
-        Segment edge=vector->at(0);
-        double min= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
-        Segment minEdge=edge;
-
-        // find the new min
-        for (int i=1;i<vector->size();i++){
-            edge=vector->at(i);
-            double area= triangularAreaCalculation(newPoint,edge.point(0),edge.point(1));
-            if (area<min){
-                min=area;
-                minEdge=edge;
-            }
-        }
-        *area+=min;
-        theValue=minEdge;
     }
     return theValue;
 }
