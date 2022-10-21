@@ -17,17 +17,7 @@ typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
-int checkVisibility(Polygon* polygon, Point newPoint, Point checkPoint){
-    Segment rayCast(newPoint, checkPoint);
-    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-        if(ei->point(0) != checkPoint && ei->point(1)!=checkPoint){
-            if(intersection(rayCast, *ei)){
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
+
 
 
 void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area){
@@ -66,9 +56,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                     positionStart=ei;
                 }
                 if(ei->point(1)==rightPoint){
-                    positionEnd=ei;
-                    //break;
-                    
+                    positionEnd=ei;                    
                 }
             }
             for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){

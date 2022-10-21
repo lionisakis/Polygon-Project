@@ -1,8 +1,3 @@
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Polygon_2.h>
-//#include <list>
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
 #include <iostream>
 #include <string.h>
 #include <fstream>
