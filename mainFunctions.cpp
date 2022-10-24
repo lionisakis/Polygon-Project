@@ -13,29 +13,16 @@ typedef CGAL::Point_2<K> Point;
 typedef CGAL::Segment_2<K> Segment;
 typedef CGAL::Polygon_2<K> Polygon;
 typedef K::Intersect_2 Intersect;
-// typedef CGAL::convex_hull_2 convexHull;
 typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
-int checkVisibility(Polygon* polygon, Point newPoint, Point checkPoint){
-    Segment rayCast(newPoint, checkPoint);
-    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-        if(ei->point(0) != checkPoint && ei->point(1)!=checkPoint){
-            if(intersection(rayCast, *ei)){
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
+
 
 
 void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area){
     // make the triangle and short the points
     coordinatesSorting(polygon,points,sorting,area);
-    cout<<"``"<<endl;
-
     for (int i=3;i<points->size();i++){
         // find the current Point we want to insert
         Point currentPoint= points->at(i);
@@ -50,13 +37,12 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         Point previous=KP.at(KP.size()-1);
         for(int i=0;i<KP.size();i++){
             // if positive then it is red
-            if(isItRed(&KP,previous,KP.at(i),currentPoint)){
+            //if(isItRed(&KP,previous,KP.at(i),currentPoint)){
+            if(checkRed(&KP,currentPoint,KP.at(i)) &&checkRed(&KP,currentPoint,previous)){    
                 redLine.push_back(Segment(previous,KP.at(i)));
             }
             previous=KP.at(i);
         }
-
-        cout<<"!"<<endl;
         vector<Segment> reachable;
         for(int j=0;j<redLine.size();j++){
             Point leftPoint=redLine.at(j).point(0);
@@ -65,14 +51,12 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             if(polygon->is_counterclockwise_oriented()==0){
                 polygon->reverse_orientation();
             }
-
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 if (ei->point(0)==leftPoint){
                     positionStart=ei;
                 }
                 if(ei->point(1)==rightPoint){
-                    positionEnd=ei;
-                    break;
+                    positionEnd=ei;                    
                 }
             }
             for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
@@ -82,20 +66,16 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             }
 
         }  
-        cout<<"!!"<<endl;
-
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
         if(polygon->is_clockwise_oriented()==0){
             polygon->reverse_orientation();
         }
-
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
             if(*vi==newEdge.point(0)){
                 polygon->insert(vi, currentPoint);
                 break;
             }
         }
-        cout<<"!!!"<<endl;
 
     }
     if(polygon->is_clockwise_oriented()==0){
@@ -131,7 +111,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         vector<Segment> reachable;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             //if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
-            // if((checkVisibility(polygon, currentPoint, *ei))){  
             if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                 reachable.push_back(*ei);
             }

@@ -1,8 +1,3 @@
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Polygon_2.h>
-//#include <list>
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
 #include <iostream>
 #include <string.h>
 #include <fstream>
@@ -74,7 +69,7 @@ int main(int argc, char* argv[]){
             init=4;
     }
 
-    //read contents of input file, ignoring lines that start with "#"
+    //read contents of input file, ignoring first line with #
     vector<Point> allPoints;//vector of type Point_2(from CGAL) to store coordinates of points given
     fstream in;
     in.open(input, ios::in);
@@ -83,7 +78,7 @@ int main(int argc, char* argv[]){
     }
     int totalPoints=0;//variable to store the total amount of 2D points given in input file
     int count=0;
-    int chArea;//area of convex hull 
+    double chArea;//area of convex hull, written in second line of input line
     while(!in.eof()){
         string text;
         getline(in, text);
@@ -99,7 +94,7 @@ int main(int argc, char* argv[]){
             while (token2) {
                 wordcounter++;
                 if(wordcounter==6){
-                    chArea=stoi(token2);
+                    chArea=stod(token2);
                 }
                 token2 = strtok(NULL,delim);
             }
@@ -134,20 +129,18 @@ int main(int argc, char* argv[]){
     }
     in.close();
 
-
+    //start timer 
     auto start = chrono::steady_clock::now();
 
     //code
     Polygon p;
-
-    // TODO:: add more if
-    double ourArea=0;
+    double ourArea=0;//in this variable we store the area calculated by our algorithm
     if (algo==1){
         incremental(&p,&allPoints,init,edge,&ourArea);
     }
     else
         convexHull(&p, &allPoints, edge, &ourArea);
-    int pArea = p.area();
+    int pArea = p.area();//in this variable we store the area calculated by cgal function
     double ratio = ((double)pArea/(double)chArea);
     cout << "simple = " << p.is_simple() << endl;
 
