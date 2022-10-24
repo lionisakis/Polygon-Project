@@ -14,3 +14,18 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 void incremental(Polygon* ,std::vector<Point>* , int , int ,double* );
 void convexHull(Polygon* , std::vector<Point>* , int , double* );
+
+class edgePointPair{
+    public:
+    Point nearestPoint;
+    Segment edge;
+    int area;
+
+    edgePointPair(Point current, Segment newEdge){
+        nearestPoint = current;
+        edge = newEdge;
+    }
+    ~edgePointPair(){
+
+    }
+}
