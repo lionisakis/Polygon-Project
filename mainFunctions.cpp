@@ -31,6 +31,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         vector<Point> KP;
         const Polygon::Vertices& range = polygon->vertices();
         CGAL::convex_hull_2(range.begin(), range.end(), back_inserter(KP));
+        cout <<"c h has " << KP.size() << endl;
         // find all red lines of KP
         vector<Segment> redLine;  
         // the previous is the last point so we can do a circle
@@ -44,6 +45,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             previous=KP.at(i);
         }
         vector<Segment> reachable;
+        cout << "red lines " << redLine.size() << endl;
         for(int j=0;j<redLine.size();j++){
             Point leftPoint=redLine.at(j).point(0);
             Point rightPoint=redLine.at(j).point(1);
@@ -123,6 +125,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                 break;
             }
         }
-    }  
+    }
 }
 
