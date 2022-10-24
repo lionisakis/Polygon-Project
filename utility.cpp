@@ -102,7 +102,7 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,dou
     Segment theValue;
     if (type==1){
         unsigned int tmp = (unsigned) time(NULL);
-        cout << "tmp " << endl;
+        cout << "tmp " << tmp << endl;
         srand((unsigned) time(NULL)); 
         int random= rand()%vector->size();
         theValue=vector->at(random);
