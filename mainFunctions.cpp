@@ -38,21 +38,21 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         Point previous=KP.at(KP.size()-1);
         for(int i=0;i<KP.size();i++){
             // if positive then it is red
-            //if(isItRed(&KP,previous,KP.at(i),currentPoint)){
             if(checkRed(&KP,currentPoint,KP.at(i)) &&checkRed(&KP,currentPoint,previous)){    
                 redLine.push_back(Segment(previous,KP.at(i)));
             }
             previous=KP.at(i);
         }
         vector<Segment> reachable;
-        cout << "red lines " << redLine.size() << endl;
         for(int j=0;j<redLine.size();j++){
             Point leftPoint=redLine.at(j).point(0);
             Point rightPoint=redLine.at(j).point(1);
+
             EdgeIterator positionStart,positionEnd;
             if(polygon->is_counterclockwise_oriented()==0){
                 polygon->reverse_orientation();
             }
+            // find the begin and end
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 if (ei->point(0)==leftPoint){
                     positionStart=ei;
@@ -61,17 +61,44 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                     positionEnd=ei;                    
                 }
             }
-            for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
-                if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
-                    reachable.push_back(*ei);
+            // the red line is normal and the edges have the form of:
+            // [begin,...,start,...,end,...,finish]
+            // so we need only [start,..,end]
+            if(positionStart<=positionEnd){    
+                // the edges between the start and end check if they are visible
+                for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
+                    if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
+                        reachable.push_back(*ei);
+                    }
+                }
+            }
+            // the red line loops back and it is the form of 
+            // [begin,...,end,...,start,...finish]
+            // so we need [start,...,finish] and [begin,...,end]
+            else{
+                // [start,...,finish] 
+                for(EdgeIterator ei=positionStart;ei!=polygon->edges_end();ei++){
+                    if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
+                        reachable.push_back(*ei);
+                    }
+                }
+                // [begin,...,end]
+                for(EdgeIterator ei=polygon->edges_begin();ei<=positionEnd;ei++){
+                    if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
+                        reachable.push_back(*ei);
+                    }
                 }
             }
 
         }  
+
+        // select one edge
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
         if(polygon->is_clockwise_oriented()==0){
             polygon->reverse_orientation();
         }
+
+        // and add it in the polygon
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
             if(*vi==newEdge.point(0)){
                 polygon->insert(vi, currentPoint);
@@ -112,7 +139,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         Point currentPoint= remainingPoints.at(w);
         vector<Segment> reachable;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            //if(isItReachable(polygon,ei->point(0),ei->point(1),currentPoint)){//returns false reachable
             if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                 reachable.push_back(*ei);
             }
