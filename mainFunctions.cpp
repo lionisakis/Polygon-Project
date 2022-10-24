@@ -222,11 +222,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
             }
 
         }
-
-
-
-
-
         remaining--;
     }
 }
