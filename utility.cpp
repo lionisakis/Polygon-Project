@@ -121,9 +121,26 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* 
             swap(&points->at(i),&points->at(j),type);
         }
     }    
+    
     polygon->push_back(points->at(0));
     polygon->push_back(points->at(1));
-    polygon->push_back(points->at(2));
+    // so we are not collinear for KP reasons
+    for(int i=2;i<points->size();i++){
+        Point third=points->at(i);
+        // if they are not collinear
+        if (! CGAL::collinear(points->at(0),points->at(1),third)){
+            polygon->push_back(third);
+            // swap go to the 3rd position of points so we have almost sorted points
+            for(int j=i;j>2;j--){
+                Point temp=points->at(j);
+                points->at(j)=points->at(j-1);
+                points->at(j-1)=temp;
+            }
+            break;
+        }
+
+    }
+
     *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
 }
 
