@@ -7,6 +7,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
 #include "utility.hpp"
+#include "edgePointPair.hpp"
 
 using namespace std;
 
@@ -34,7 +35,6 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         vector<Point> KP;
         const Polygon::Vertices& range = polygon->vertices();
         CGAL::convex_hull_2(range.begin(), range.end(), back_inserter(KP));
-        cout <<"c h has " << KP.size() << endl;
         // find all red lines of KP
         vector<Segment> redLine;  
         // the previous is the last point so we can do a circle
@@ -116,7 +116,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
 }
 
 void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area){
-    //create KP
+    //create convex hull and put it in the polygon
     vector<Point> KP;
     CGAL::convex_hull_2(points->begin(), points->end(), back_inserter(KP));
     for(int i=0; i<KP.size(); i++){
@@ -137,92 +137,76 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         }
     }
 
-    //for each remaining point find its reachable edges and choose one to replace
-    // for(int w=0; w<remainingPoints.size(); w++){
-    //     Point currentPoint= remainingPoints.at(w);
-    //     vector<Segment> reachable;
-    //     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-    //         if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
-    //             reachable.push_back(*ei);
-    //         }
-        
-    //     }
-    //     Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
-    //     for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-    //         if(*vi==newEdge.point(1)){
-    //             polygon->insert(vi, currentPoint);
-    //             break;
-    //         }
-    //     }
-    // }
-    int remaining = remainingPoints().size();
-
-    while(remaining){
-        vector<edgePointPair> pairs;
+    while(remainingPoints.size()!=0){
+        vector<edgePointPair*> pairs;
         //for every edge of polygon A find its closet point and create a pair that contains the edge the closest point and the area of the polygon that will be created
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             int min=Inf;
             int place;
-            EdgeIterator ei2;
             for(int i=0; i<remaining; i++){
-                int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
+                // int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
+                double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
                     min=distance;
                     place=i;
-                    ei2=ei;
                 }
             }
-            edgePointPair newPair(remainingPoints.at(i), *ei2);
+            edgePointPair* newPair = new edgePointPair(place,remainingPoints.at(place),*ei);
             pairs.push_back(newPair);
         }
 
         //based on the type of edge selection  choose the according pair
         if(edge==1){
-            int random = rand()%pairs.size();
+            int choose = rand()%pairs.size();
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(random).edge.point(1);
+                Point tmp = pairs.at(choose).edge.point(1);
                 if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(random).nearestPoint);
+                    polygon->insert(vi, pairs.at(choose).nearestPoint);
                     break;
                 }
             }
+            remainingPoints.erase(pairs.at(choose)->getPosition());
         }
         else if(edge==2){
             int minArea=Inf;
             int choose;
             for(int j=0; j<pairs.size(); j++){
-                if(pairs.at(j).area<minArea){
-                    minArea=pairs.at(j).area;
+                if(pairs.at(j)->getArea()<minArea){
+                    minArea=pairs.at(j)->getArea();
                     choose = j;
                 }
             }
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(choose).edge.point(1);
+                Point tmp = pairs.at(choose)->getSegment().point(1);
                 if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(choose).nearestPoint);
+                    polygon->insert(vi, pairs.at(choose)->getPoint());
                     break;
                 }
             }
+            remainingPoints.erase(pairs.at(choose)->getPosition());
         }
         else if(edge==3){
             int maxArea=0;
             int choose;
             for(int j=0; j<pairs.size(); j++){
-                if(pairs.at(j).area>maxArea){
-                    maxArea=pairs.at(j).area;
+                if(pairs.at(j)->getArea()>maxArea){
+                    maxArea=pairs.at(j)->getArea();
                     choose = j;
                 }
             }
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(choose).edge.point(1);
+                Point tmp = pairs.at(choose)->getSegment().point(1);
                 if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(choose).nearestPoint);
+                    polygon->insert(vi, pairs.at(choose)->getPoint());
                     break;
                 }
             }
+            remainingPoints.erase(pairs.at(choose)->getPosition());
 
         }
-        remaining--;
+        for (int i=0;i<pairs.size();i--){
+            delete pairs.at(i);
+        }        
     }
 }
 

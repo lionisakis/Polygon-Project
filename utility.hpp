@@ -18,3 +18,4 @@ Segment visibleEdgeSelector(Point ,std::vector<Segment>* , int ,double* );
 void swap(Point* , Point* ,int );
 int checkRed(std::vector<Point>* , Point , Point );
 int checkVisibility(Polygon* , Point , Point );
+double triangularAreaCalculation(Point , Point , Point );
