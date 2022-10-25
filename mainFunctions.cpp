@@ -116,6 +116,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
 }
 
 void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area){
+    
     //create convex hull and put it in the polygon
     vector<Point> KP;
     CGAL::convex_hull_2(points->begin(), points->end(), back_inserter(KP));
@@ -123,6 +124,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         polygon->push_back(KP.at(i));
 
     }
+
     vector<Point> remainingPoints;//store points that are not part of convex hull
     for(int k=0; k<points->size(); k++){
         int flag=1;
@@ -141,7 +143,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         vector<edgePointPair*> pairs;
         //for every edge of polygon A find its closet point and create a pair that contains the edge the closest point and the area of the polygon that will be created
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            int min=INFINITY;
+            double min=INFINITY;
             int place;
             for(int i=0; i<remainingPoints.size(); i++){
                 // int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
@@ -158,21 +160,13 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                 pairs.push_back(newPair);
             }
         }
-
+        int choose;
         //based on the type of edge selection  choose the according pair
         if(edge==1){
-            int choose = rand()%pairs.size();
-            for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(choose)->getSegment().point(1);
-                if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(choose)->getPoint());
-                    break;
-                }
-            }
-            remainingPoints.erase(pairs.at(choose)->getPosition());
+            choose = rand()%pairs.size();
         }
         else if(edge==2){
-            int minArea=INFINITY;
+            double minArea=INFINITY;
             int choose;
             for(int j=0; j<pairs.size(); j++){
                 if(pairs.at(j)->getArea()<minArea){
@@ -180,14 +174,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                     choose = j;
                 }
             }
-            for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(choose)->getSegment().point(1);
-                if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(choose)->getPoint());
-                    break;
-                }
-            }
-            remainingPoints.erase(pairs.at(choose)->getPosition());
         }
         else if(edge==3){
             int maxArea=0;
@@ -198,16 +184,17 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                     choose = j;
                 }
             }
-            for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(choose)->getSegment().point(1);
-                if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(choose)->getPoint());
-                    break;
-                }
-            }
-            remainingPoints.erase(pairs.at(choose)->getPosition());
-
         }
+        
+        for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+            Point tmp = pairs.at(choose)->getSegment().point(0);
+            if(*vi==tmp){
+                polygon->insert(vi, pairs.at(choose)->getPoint());
+                break;
+            }
+        }
+        remainingPoints.erase(remainingPoints.begin()+pairs.at(choose)->getPosition());
+
         for (int i=0;i<pairs.size();i--){
             delete pairs.at(i);
         }        
