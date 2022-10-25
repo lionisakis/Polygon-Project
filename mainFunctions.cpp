@@ -167,7 +167,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         }
         else if(edge==2){
             double minArea=INFINITY;
-            int choose;
             for(int j=0; j<pairs.size(); j++){
                 if(pairs.at(j)->getArea()<minArea){
                     minArea=pairs.at(j)->getArea();
@@ -177,7 +176,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         }
         else if(edge==3){
             int maxArea=0;
-            int choose;
             for(int j=0; j<pairs.size(); j++){
                 if(pairs.at(j)->getArea()>maxArea){
                     maxArea=pairs.at(j)->getArea();
@@ -187,7 +185,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         }
         
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-            Point tmp = pairs.at(choose)->getSegment().point(0);
+            Point tmp = pairs.at(choose)->getSegment().point(1);
             if(*vi==tmp){
                 polygon->insert(vi, pairs.at(choose)->getPoint());
                 break;
