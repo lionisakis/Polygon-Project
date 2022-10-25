@@ -141,34 +141,38 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         vector<edgePointPair*> pairs;
         //for every edge of polygon A find its closet point and create a pair that contains the edge the closest point and the area of the polygon that will be created
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            int min=Inf;
+            int min=INFINITY;
             int place;
-            for(int i=0; i<remaining; i++){
+            for(int i=0; i<remainingPoints.size(); i++){
                 // int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
-                    min=distance;
-                    place=i;
+                    if((checkVisibility(polygon, remainingPoints.at(i), ei->point(0)))&&(checkVisibility(polygon,remainingPoints.at(i), ei->point(1)))){
+                        min=distance;
+                        place=i;
+                    }
                 }
             }
-            edgePointPair* newPair = new edgePointPair(place,remainingPoints.at(place),*ei);
-            pairs.push_back(newPair);
+            if (min!=INFINITY){
+                edgePointPair* newPair = new edgePointPair(place,remainingPoints.at(place),*ei);
+                pairs.push_back(newPair);
+            }
         }
 
         //based on the type of edge selection  choose the according pair
         if(edge==1){
             int choose = rand()%pairs.size();
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                Point tmp = pairs.at(choose).edge.point(1);
+                Point tmp = pairs.at(choose)->getSegment().point(1);
                 if(*vi==tmp){
-                    polygon->insert(vi, pairs.at(choose).nearestPoint);
+                    polygon->insert(vi, pairs.at(choose)->getPoint());
                     break;
                 }
             }
             remainingPoints.erase(pairs.at(choose)->getPosition());
         }
         else if(edge==2){
-            int minArea=Inf;
+            int minArea=INFINITY;
             int choose;
             for(int j=0; j<pairs.size(); j++){
                 if(pairs.at(j)->getArea()<minArea){
