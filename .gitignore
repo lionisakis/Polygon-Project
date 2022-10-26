@@ -7,3 +7,5 @@
 !run.sh
 !mainFunctions.cpp
 !mainFunctions.hpp
+!edgePointPair.cpp
+!edgePointPair.hpp
