@@ -165,7 +165,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         if(edge==1){
             choose = rand()%pairs.size();
         }
-        else if(edge==2){
+        else if(edge==3){
             double minArea=INFINITY;
             for(int j=0; j<pairs.size(); j++){
                 if(pairs.at(j)->getArea()<minArea){
@@ -174,7 +174,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                 }
             }
         }
-        else if(edge==3){
+        else if(edge==2){
             int maxArea=0;
             for(int j=0; j<pairs.size(); j++){
                 if(pairs.at(j)->getArea()>maxArea){
