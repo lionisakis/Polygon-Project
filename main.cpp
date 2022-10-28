@@ -163,8 +163,10 @@ int main(int argc, char* argv[]){
         outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
         outfile << "Our Area: " << ourArea << endl;
     }
-    else if(argc==9)
+    else if(argc==9){
         outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] <<  ">" << endl;
+        outfile << "Our Area: " << ourArea << endl;
+    }
     outfile << "Area: " << pArea << endl;
     outfile << "Ratio: " << ratio << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;

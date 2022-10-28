@@ -124,7 +124,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         polygon->push_back(KP.at(i));
 
     }
-
+    *area = polygon->area();
     vector<Point> remainingPoints;//store points that are not part of convex hull
     for(int k=0; k<points->size(); k++){
         int flag=1;
@@ -188,6 +188,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
             Point tmp = pairs.at(choose)->getSegment().point(1);
             if(*vi==tmp){
                 polygon->insert(vi, pairs.at(choose)->getPoint());
+                *area = *area - pairs.at(choose)->getArea();
                 break;
             }
         }
