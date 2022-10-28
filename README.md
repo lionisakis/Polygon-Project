@@ -38,14 +38,14 @@ There are stored the following:
   - The area calculated by us
   - The area calculated by CGAL
   - The ratio
-  - The time to finish the algorithm.
+  - Construction time of polygon in miliseconds.
 
 3. There are only 2 types of algorithms that you can use, which are: "incremental", "convex_hull".
 
 4. We can have 3 different types of edge selecion. The options are:
   - The 1 is the random
-  - The 2 is the minimum area
-  - The 3 is the maximum area.
+  - The 2 is the one adding minimum area
+  - The 3 is the one maximum area.
 
 5. The Initialization is ***only*** necessary for the ***incremental***. The options are:
   - The 1a sorts the points by decreasing the order of "x".
@@ -56,7 +56,7 @@ There are stored the following:
 ***Important the command line arguments have to be given correctly and only in that order. The Initialization is needed only for the incremental algorithm.***
 
 # Files - Description
-There are 3 different files: main,mainFunctions and utility.
+There are 4 different files: main,mainFunctions, edgePointpair and utility.
 
 ### Main 
 The main handles the input and then calls the appropriate algorithm function, and then makes the output.
@@ -68,6 +68,12 @@ The main handles the input and then calls the appropriate algorithm function, an
   The algorithm sorts the points according to Initialization from the command line and creates the initial triangle. For the remaining points, we create the Convex Hull, and then we find the reachable edges of the Convex Hull, and for each of those, we find the according visible edge of the polygon. Then we choose based on the edge selection, and we add the point to the polygon with the new edge.
 
 #### Concex Hull
+The algorithm creates the convex hull of the polygon and initializes the polygon based on that, then until there are no internal points left, for each edge of the polygon we find its closest point(for this point the edge must be visible) and based on the edge selection we choose which edge we are going to break.
+
+
+### edgePointPair
+  Here can be found our implementation of class edgePointPair, which we use in the convex hull algorithm. In this class we store 1)an edge,  2) its closest point that has not been added to the polygon yet and for which the edge is reachable and 3) the area that we will have to subtrack from the polygon if we choose to break this edge.
+
 
 ### Utility
 We have implemented some useful functions that both algorithms make use of. These functions that may be used from the other algorithms are: coordinates Sorting, visible Edge Selector, swap, check Red, and check Visibility. The local function is triangular Area Calculation. More explanation about what they do can be found in the file utility.cpp.
