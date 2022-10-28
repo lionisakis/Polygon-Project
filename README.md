@@ -56,7 +56,8 @@ There are stored the following:
 ***Important the command line arguments have to be given correctly and only in that order. The Initialization is needed only for the incremental algorithm.***
 
 # Files - Description
-There are 4 different files: main,mainFunctions, edgePointpair and utility.
+There are 4 different code files: main,mainFunctions, edgePointpair and utility.
+The last 3 have header files of the same name, in these header files can be found the definions of the functions implemented in the code files and the #include and typedef that are necessary for these functions. 
 
 ### Main 
 The main handles the input and then calls the appropriate algorithm function, and then makes the output.
@@ -77,3 +78,5 @@ The algorithm creates the convex hull of the polygon and initializes the polygon
 
 ### Utility
 We have implemented some useful functions that both algorithms make use of. These functions that may be used from the other algorithms are: coordinates Sorting, visible Edge Selector, swap, check Red, and check Visibility. The local function is triangular Area Calculation. More explanation about what they do can be found in the file utility.cpp.
+
+
