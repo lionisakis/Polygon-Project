@@ -109,7 +109,7 @@ int main(int argc, char* argv[]){
         totalPoints++;
         int x, y;
         //all numbers are separated by \t(tab) so i use strtok to get the coordinates of each point
-        char delim2[2] = "\t";
+        char delim2[3] = " \t";
         char tmp[text.size() + 1];
         strcpy(tmp, text.c_str());
         char *token = strtok(tmp,delim2);
