@@ -160,6 +160,12 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                 pairs.push_back(newPair);
             }
         }
+
+        //the program exits if no pair can be found, as was requested to do in one of the threads in eclass
+        if(pairs.size() == 0){
+            cout << "reached deadend --- about to exit"<< endl;;
+            exit(1);
+        }
         int choose;
         //based on the type of edge selection  choose the according pair
         if(edge==1){
