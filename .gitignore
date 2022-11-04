@@ -1,7 +1,6 @@
 *
 !utility.cpp
 !utility.hpp
-!visualization.py
 !main.cpp
 !README.md
 !run.sh
@@ -9,3 +8,6 @@
 !mainFunctions.hpp
 !edgePointPair.cpp
 !edgePointPair.hpp
+!CMakeList.txt
+!input.txt
+!output.txt
