@@ -1,4 +1,6 @@
 # Polygon-Project
+github link: https://github.com/lionisakis/Polygon-Project
+
 authors: 
 - Liarou Elena (sdi1900100)
 - Lionis Emmanouil Georgios(Akis) (sdi1900103)
