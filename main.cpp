@@ -128,17 +128,16 @@ int main(int argc, char* argv[]){
         Point temp(x, y);
         allPoints.push_back(temp);
     }
-    if(input[input.size()-2]=='c' && input[input.size()-1]=='e')
+    int i=0;
+    
+    string check=".instance";
+    for(i= 8; i>=0; i--){
+        if(check[i]!=input[input.size()-9+i])
+            break;
+    }
+    if (i==-1)
         allPoints.pop_back();
     in.close();
-    for(int i=0;i<allPoints.size();i++){
-        for(int j=0;j<allPoints.size();j++){
-            if(i==j)
-                continue;
-            else if (allPoints.at(i)==allPoints.at(j))
-                cout<<"ERROR"<<endl;
-        }
-    }
     //start timer 
     auto start = chrono::steady_clock::now();
 
