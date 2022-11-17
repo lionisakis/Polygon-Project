@@ -102,7 +102,7 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,dou
     Segment theValue;
     if (type==1){
         unsigned int tmp = (unsigned) time(NULL);
-        srand(1666600608); 
+        srand(tmp); 
         int random= rand()%vector->size();
         theValue=vector->at(random);
         *area+=triangularAreaCalculation(newPoint,theValue.point(0),theValue.point(1));

@@ -804,4 +804,4 @@ Algorithm: <incremental>_<3>_<2a>
 Our Area: 5.70913e+07
 Area: -57039066
 Ratio: -0.700242
-Construction time in miliseconds: 3944 ms
+Construction time in miliseconds: 2463 ms

@@ -8,6 +8,7 @@
 #include  <CGAL/Polygon_2.h>
 #include <sstream>
 #include <cstring>
+#include <cstdlib>
 
 #include  "mainFunctions.hpp"
 
@@ -26,7 +27,7 @@ int main(int argc, char* argv[]){
     unsigned int tmp = (unsigned) time(NULL);
     srand(tmp);
 
-    if(argc != 11 && argc != 9){//check if the #arguments is correct
+    if(argc != 13 ){//check if the #arguments is correct
         cout << "not enough arguments were given" ;
         return 0;
     }
@@ -38,37 +39,47 @@ int main(int argc, char* argv[]){
     output.assign(argv[4]);
     cout << "name of output file: " << output << "\n";
 
-    int algo;//1: incremental , 2: convex_hull
-    int edge;//1: random selection, 2:min_area, 3: max_area
-    int init;//1:x_decreasing(1a), 2:x_increasing(1b), 3:y_decreasing(2a), 4:y_increasing(2b)
+    int algo;//1: local_search , 2: simulated_annealing
+    int L;//L parameter, must be lower than 10 if we have local search, otherwise it shows maximum iterations
+    int max, min;//only on of these will be found in command line arguments
+
 
     //find type of algorithm
     std::string typeOfAlgo(argv[6]);
     cout << typeOfAlgo << "\n";
-    if(typeOfAlgo == "incremental")
+    if(typeOfAlgo == "local_search")
         algo=1;
-    else if (typeOfAlgo == "convex_hull")
+    else if (typeOfAlgo == "simulated_annealing")
         algo=2;
 
-    //find type of edge selector
-    if(atoi(argv[8]) == 1)
-        edge=1;
-    else if (atoi(argv[8]) == 2)
-        edge=2;
-    else if (atoi(argv[8]) == 3)
-        edge=3;
+    //save L parameter
+    L = atoi(argv[8]);
 
-    //find type of initialization only if algo=1(incremental)
+    std::string type(argv[9]);
+    //find if we want to minimize or maximize the area
+    if(type == "-max"){
+        max = 1;
+        min =0 ;
+    }
+    else if(type == "-min"){
+        max=0; 
+        min=1;
+    }
+
+    double threshold;//only for local search
     if(algo == 1){
-        std::string typeOfInit(argv[10]);
-        if(typeOfInit == "1a")
-            init=1;
-        else if (typeOfInit == "1b")
-            init=2;
-        else if (typeOfInit == "2a")
-            init=3;
-        else if (typeOfInit == "2b")
-            init=4;
+        threshold = stod(argv[12]);
+    }
+
+    int annealing; // 1:local, 2:global, 3:subdivision
+    if(algo==2){
+        std::string typeOfAnnealing(argv[12]);
+        if(typeOfAnnealing == "local")
+            annealing=1;
+        else if (typeOfAnnealing == "global")
+            annealing=2;
+        else if (typeOfAnnealing == "subdivision")
+            annealing=3;
     }
 
     //read contents of input file, ignoring first line with #
@@ -130,29 +141,48 @@ int main(int argc, char* argv[]){
     }
     int i=0;
     
-    string check=".instance";
-    for(i= 8; i>=0; i--){
-        if(check[i]!=input[input.size()-9+i])
-            break;
-    }
-    if (i==-1)
-        allPoints.pop_back();
+    // string check=".instance";
+    // for(i= 8; i>=0; i--){
+    //     if(check[i]!=input[input.size()-9+i])
+    //         break;
+    // }
+    // if (i==-1)
+    //     allPoints.pop_back();
+    
     in.close();
+
+
+
     //start timer 
     auto start = chrono::steady_clock::now();
 
     //code
     Polygon p;
     double ourArea=0;//in this variable we store the area calculated by our algorithm
+    int pArea, pArea2;//initial and final area respectively
+    double ratio, ratio2;//initial and final ratio respectively
+
+
     if (algo==1){
-        incremental(&p,&allPoints,init,edge,&ourArea);
+        if(max){//counterclockwise
+            convexHull(&p, &allPoints, 2, &ourArea);//the algorithm selection is based on the paper from eclass
+            pArea = abs(p.area());//in this variable we store the area calculated by cgal function
+            ratio = ((double)pArea/(double)chArea);
+        }
+        else if (min){//clockwise
+            int init = 1 + (rand()%3);
+            incremental(&p,&allPoints,init,3,&ourArea);
+            pArea = abs(p.area());//in this variable we store the area calculated by cgal function
+            ratio = ((double)pArea/(double)chArea);
+        }
+        
     }
-    else
-        convexHull(&p, &allPoints, edge, &ourArea);
+    else if (algo==2){
+        
+    }
 
 
-    int pArea = p.area();//in this variable we store the area calculated by cgal function
-    double ratio = ((double)pArea/(double)chArea);
+    
     cout << "simple = " << p.is_simple() << endl;
 
     auto end = chrono::steady_clock::now();
@@ -165,21 +195,21 @@ int main(int argc, char* argv[]){
     ofstream outfile(output);
 
     outfile << "Polygonization" << endl;
+
+
     for (VertexIterator vi = p.vertices_begin(); vi != p.vertices_end(); ++vi)
         outfile  << *vi << endl;
     outfile << endl;
     for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
         outfile << *ei << endl;
-    if(argc==11){
-        outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] << ">_<" << argv[10] << ">" << endl;
-        outfile << "Our Area: " << ourArea << endl;
-    }
-    else if(argc==9){
-        outfile << "Algorithm: <" << argv[6] <<">_<" << argv[8] <<  ">" << endl;
-        outfile << "Our Area: " << ourArea << endl;
-    }
-    outfile << "Area: " << pArea << endl;
-    outfile << "Ratio: " << ratio << endl;
+
+
+    outfile << "Algorithm: <" << argv[6] <<">_<" << argv[9] << ">" << endl;
+    outfile << "Our Initial Area: " << ourArea << endl;
+    outfile << "Initial Area: " << pArea << endl;
+    outfile << "Final Area: " << pArea2 << endl;
+    outfile << "Ratio Initial: " << ratio << endl;
+    outfile << "Ratio Final: " << ratio << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
     outfile.close();
 
