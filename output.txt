@@ -800,8 +800,10 @@ Polygonization
 4528 7166 8276 7164
 8276 7164 11884 7176
 11884 7176 12246 7126
-Algorithm: <incremental>_<3>_<2a>
-Our Area: 5.70913e+07
-Area: -57039066
-Ratio: -0.700242
-Construction time in miliseconds: 2463 ms
+Algorithm: <local_search>_<-min>
+Our Initial Area: 5.70913e+07
+Initial Area: 57039066
+Final Area: 4
+Ratio Initial: 0.700242
+Ratio Final: 3.03108e-314
+Construction time in miliseconds: 2453 ms

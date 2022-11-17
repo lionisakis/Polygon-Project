@@ -138,9 +138,10 @@ int main(int argc, char* argv[]){
         }
         Point temp(x, y);
         allPoints.push_back(temp);
+        cout << temp << endl;
     }
     int i=0;
-    
+    cout <<"total points = " << allPoints.size() << endl;
     // string check=".instance";
     // for(i= 8; i>=0; i--){
     //     if(check[i]!=input[input.size()-9+i])
@@ -148,7 +149,7 @@ int main(int argc, char* argv[]){
     // }
     // if (i==-1)
     //     allPoints.pop_back();
-    
+
     in.close();
 
 
@@ -209,7 +210,7 @@ int main(int argc, char* argv[]){
     outfile << "Initial Area: " << pArea << endl;
     outfile << "Final Area: " << pArea2 << endl;
     outfile << "Ratio Initial: " << ratio << endl;
-    outfile << "Ratio Final: " << ratio << endl;
+    outfile << "Ratio Final: " << ratio2 << endl;
     outfile << "Construction time in miliseconds: " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << " ms" << endl;
     outfile.close();
 
