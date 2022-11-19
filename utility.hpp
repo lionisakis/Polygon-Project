@@ -19,4 +19,4 @@ void swap(Point* , Point* ,int );
 int checkRed(std::vector<Point>* , Point , Point );
 int checkVisibility(Polygon* , Point , Point );
 double triangularAreaCalculation(Point , Point , Point );
-int calculateNewArea(Polygon* , Segment , Point , Point , vector<Point>* );
+double calculateNewArea(Polygon* , Segment , Point , Point , vector<Point>* );

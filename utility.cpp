@@ -177,8 +177,9 @@ int checkRed(vector<Point>* KP, Point newPoint, Point checkPoint){
     return 1;
 }
 
-int calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, vector<Point>* path){
-    int total=0;
+//it has to be clockwise!!!
+double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, vector<Point>* path){
+    double total=0;
     Point left2; //neighbour of left point 
     Point right2; //neighbour of right point 
     int length = path.size(); //length of path
@@ -198,7 +199,7 @@ int calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, ve
     //compute the area that we will lose
     total-=triangularAreaCalculation(path->at(0), edge.point(0), edge.point(1));
     for(int i=1; i<length; i++){
-        total-=triangularAreaCalculation(path->at(i), path.at(i-1), edge.point(1));
+        total-=triangularAreaCalculation(path->at(i), path.at(i-1), edge.point(0));
     }
     return total;
 }
