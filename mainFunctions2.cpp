@@ -22,22 +22,21 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
-void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L){
+void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea){
     // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
 
     int DA=0;
-    int flag=1;
-    int initialArea = abs(polygon->area());
     do{
+        int initialArea=abs(polygon->area());
         vector<EdgeChange*> changes;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
                 
                 // check visibility
-                if (checkVisibility(polygon,*vi,ei->point(0))&&checkVisibility(polygon,*vi,ei->point(1)))
+                if ((checkVisibility(polygon,*vi,ei->point(0))==0)||(checkVisibility(polygon,*vi,ei->point(1)))==0)
                     continue;
 
                 vector<Point> path;
@@ -49,32 +48,33 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L)
                 // until we have gone out of bounds do this
                 for (VertexIterator vi2 = vi; vi2 != polygon->vertices_end(); ++vi2){
                     path.push_back(*vi2);
-                    // check visibility
-                    if (checkVisibility(polygon,*vi,ei->point(0))&&checkVisibility(polygon,*vi,ei->point(1)))
-                        continue;
 
                     // check if the path is ok with the size
                     if(path.size()>L){
                         break;
                     }
+
+                    // check visibility
+                    if ((checkVisibility(polygon,*vi,ei->point(0))==0)||(checkVisibility(polygon,*vi,ei->point(1)))==0)
+                        continue;
 
                     double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
                     EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
                     changes.push_back(newChange);
                 }
 
-                // this do when we have to start from the starting vertex again
+                    // do this when we have to start from the starting vertex again
                 for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
                     path.push_back(*vi2);
-
-                    // check visibility
-                    if (checkVisibility(polygon,*vi,ei->point(0))&&checkVisibility(polygon,*vi,ei->point(1)))
-                        continue;
 
                     // check if the path is ok with the size
                     if(path.size()>L){
                         break;
                     }
+
+                    // check visibility
+                    if ((checkVisibility(polygon,*vi,ei->point(0))==0)||(checkVisibility(polygon,*vi,ei->point(1)))==0)
+                        continue;
 
                     double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
                     EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
@@ -101,8 +101,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L)
 
 
         // remove edge and change
-
-        // DA= abs(new area-old area) 
+        //*finalArea = abs(polygon->area);
+        // DA = abs(finalArea-initialArea) ;
 
     }while(DA>=threshold);
 

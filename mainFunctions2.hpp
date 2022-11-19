@@ -7,3 +7,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 typedef CGAL::Polygon_2<K> Polygon;
+
+
+void localSearch(Polygon* , int , int , int , int* );

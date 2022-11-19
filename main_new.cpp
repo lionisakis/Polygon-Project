@@ -165,18 +165,24 @@ int main(int argc, char* argv[]){
 
 
     if (algo==1){
-        if(max){//counterclockwise
+
+        //this has to be changed
+        if(max){
             convexHull(&p, &allPoints, 2, &ourArea);//the algorithm selection is based on the paper from eclass
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
         }
-        else if (min){//clockwise
+        else if (min){/
             int init = 1 + (rand()%3);
             incremental(&p,&allPoints,init,3,&ourArea);
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
         }
-        
+
+        if(max)
+            localSearch(&p, 1, threshold,  L, &pArea2);
+        else if(min)
+            localSearch(&p, 2, threshold,  L, &pArea2);
     }
     else if (algo==2){
         
