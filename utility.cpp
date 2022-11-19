@@ -176,3 +176,29 @@ int checkRed(vector<Point>* KP, Point newPoint, Point checkPoint){
     }
     return 1;
 }
+
+int calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, vector<Point>* path){
+    int total=0;
+    Point left2; //neighbour of left point 
+    Point right2; //neighbour of right point 
+    int length = path.size(); //length of path
+    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+        if(ei->point(0) == right)
+            right2 = ei->point(1);
+
+        if(ei->point(1) == left )
+            left2 = ei->point(0);
+    }
+    //compute the area that we have to add
+    total+=triangularAreaCalculation(path->at(0), left2, right2);
+    for(int i=1; i<length; i++){
+        total+=triangularAreaCalculation(path->at(i), path.at(i-1), right2);
+    }
+
+    //compute the area that we will lose
+    total-=triangularAreaCalculation(path->at(0), edge.point(0), edge.point(1));
+    for(int i=1; i<length; i++){
+        total-=triangularAreaCalculation(path->at(i), path.at(i-1), edge.point(1));
+    }
+    return total;
+}

@@ -15,3 +15,5 @@
 !input.txt
 !output.txt
 !Report.pdf
+!edgeChange.cpp
+!edgeChange.hpp
