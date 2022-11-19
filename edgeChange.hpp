@@ -9,14 +9,14 @@ typedef CGAL::Point_2<K> Point;
 typedef CGAL::Segment_2<K> Segment;
 
 
-class edgeChange{
+class EdgeChange{
     private:
         Segment segment;
         Point right;
         Point left;
         int area;
     public:
-        edgeChange(Point ,Point, Segment, int);//left right edge area
+        EdgeChange(Point ,Point, Segment, int);//left right edge area
         const Point getLeft();
         const Point getRight();
         const Segment getSegment();

@@ -18,25 +18,25 @@ typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
-edgePointPair::edgePointPair(Point l,Point r, Segment currentEdge, int newArea){
+EdgeChange::EdgeChange(Point l,Point r, Segment currentEdge, int newArea){
     left = l;
     right = r;
     segment = currentEdge;
     area = newArea;
 }
 
-const Point edgeChange::getLeft(){
+const Point EdgeChange::getLeft(){
     return this->left;
 }
 
-const Point edgeChange::getRight(){
+const Point EdgeChange::getRight(){
     return this->right;
 }
 
-const double edgePointPair::getArea(){
+const double EdgeChange::getArea(){
     return this->area;
 }
 
-const Segment edgeChange::getSegment(){
+const Segment EdgeChange::getSegment(){
     return this->segment;
 }
