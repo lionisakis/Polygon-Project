@@ -203,3 +203,13 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     }
     return total;
 }
+
+int maxEnergy(int n , int polygonArea, int chArea){
+    int tmp = polygonArea/chArea;
+    return n*tmp;
+}
+
+int minEnergy(int n, int polygonArea ,int chArea){
+    int tmp = polygonArea/chArea;
+    return n*(1-tmp);
+}
