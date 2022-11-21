@@ -28,7 +28,7 @@ int main(int argc, char* argv[]){
     unsigned int tmp = (unsigned) time(NULL);
     srand(tmp);
 
-    if(argc != 13 ){//check if the #arguments is correct
+    if(argc != 12 ){//check if the #arguments is correct
         cout << "not enough arguments were given" ;
         return 0;
     }
@@ -69,12 +69,12 @@ int main(int argc, char* argv[]){
 
     double threshold;//only for local search
     if(algo == 1){
-        threshold = stod(argv[12]);
+        threshold = stod(argv[11]);
     }
 
     int annealing; // 1:local, 2:global, 3:subdivision
     if(algo==2){
-        std::string typeOfAnnealing(argv[12]);
+        std::string typeOfAnnealing(argv[11]);
         if(typeOfAnnealing == "local")
             annealing=1;
         else if (typeOfAnnealing == "global")
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
             break;
     }
     if (i==-1){
-        allPoints.pop_back();
+        //allPoints.pop_back();
     }
 
     cout <<"total points = " << allPoints.size() << endl;
@@ -181,12 +181,14 @@ int main(int argc, char* argv[]){
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
         }
-        cout<<"!!"<<endl;
-
+        for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
+            cout << *ei << endl;
+        cout << "--------" << endl;
         if(max)
             localSearch(&p, 1, threshold,  L, &pArea2,allPoints.size());
         else if(min)
             localSearch(&p, 2, threshold,  L, &pArea2,allPoints.size());
+        ratio = ((double)pArea2/(double)chArea);
     }
     else if (algo==2){
         

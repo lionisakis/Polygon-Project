@@ -22,28 +22,40 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei){
-    // check visibility that the last point is visible
-    if ((checkVisibility(polygon,*viPathLast,ei->point(0))==0)||(checkVisibility(polygon,*viPathLast,ei->point(1)))==0)
-        return 1;
+
     // and not in our edge
     if(ei->point(0)==*viPathLast||ei->point(1)==*viPathLast){
         return 1;
     }
+    // check visibility that the last point is visible
+    if ((checkVisibility(polygon,*viPathLast,ei->point(0))==0)||(checkVisibility(polygon,*viPathLast,ei->point(1)))==0)
+        return 1;
+    
     // check the change does not change our simplicity
     Segment segLeft=Segment(ei->point(0),*viPathFirst);
     Segment segRight=Segment(*viPathLast,ei->point(1));
-    Segment newEi;                                       
+    Segment newEi;    
+
     if(viPathLast==polygon->vertices_end()-1){
-        newEi=Segment(*(viPathFirst-1),*(polygon->vertices_begin()));                                       
+        newEi=Segment(*(viPathFirst-1),*(polygon->vertices_begin()));  
     }
     else if (viPathFirst==polygon->vertices_begin()){
-        newEi=Segment(*(polygon->vertices_end()-1),*(viPathLast+1));                                       
+        newEi=Segment(*(polygon->vertices_end()-1),*(viPathLast+1));                                      
     }
     else{
-        newEi=Segment(*(viPathFirst-1),*(viPathLast+1));                                       
+        newEi=Segment(*(viPathFirst-1),*(viPathLast+1));                             
     }
     if(intersection(newEi,segLeft)||intersection(newEi,segRight))
         return 1;
+
+    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+        if(ei->point(0)==newEi.point(0)||ei->point(1)==newEi.point(0))
+            continue;
+        if(ei->point(0)==newEi.point(1)||ei->point(1)==newEi.point(1))
+            continue;
+        if(intersection(newEi,*ei))
+            return 1;
+    }
     return 0;
 }
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
@@ -60,7 +72,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
         int initialArea=abs(polygon->area());
         vector<EdgeChange*> changes;
-        if (countPoints<=50){
+        if (countPoints<=10){
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
                     if(checkPath(polygon,vi,vi,ei))
@@ -166,6 +178,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 }
             }
         }
+        cout << "vector size " << changes.size() << endl;
         // pick the correct change
         int temp=changes.at(0)->getArea();
         EdgeChange* theChange=changes.at(0);
@@ -188,9 +201,17 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         changeEdge(polygon,theChange);
         *finalArea = abs(polygon->area());
         DA = (double)abs(*finalArea-initialArea) ;
-        cout<<"DA: "<<DA<<endl;
+        // cout<<"DA: "<<DA<<endl;
+        cout << "edge to be broken " << theChange->getSegment()<<endl;
+        cout << "point to break the edge " << theChange->getLeft()<<endl;
+        cout << "point to break the edge " << theChange->getRight()<<endl;
+        cout << "simple = " << polygon->is_simple() << endl;
+        
+        for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
+            cout << *ei << endl;
         cout<<"!---!"<<endl;
         prev=DA;
+        
     }
 
 }
