@@ -20,5 +20,5 @@ class EdgeChange{
         const Point getLeft();
         const Point getRight();
         const Segment getSegment();
-        const int getArea();
+        const double getArea();
 };

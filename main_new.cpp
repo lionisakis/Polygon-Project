@@ -11,6 +11,7 @@
 #include <cstdlib>
 
 #include  "mainFunctions.hpp"
+#include  "mainFunctions2.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -172,7 +173,7 @@ int main(int argc, char* argv[]){
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
         }
-        else if (min){/
+        else if (min){
             int init = 1 + (rand()%3);
             incremental(&p,&allPoints,init,3,&ourArea);
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function

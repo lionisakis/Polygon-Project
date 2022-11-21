@@ -182,7 +182,7 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     double total=0;
     Point left2; //neighbour of left point 
     Point right2; //neighbour of right point 
-    int length = path.size(); //length of path
+    int length = path->size(); //length of path
     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
         if(ei->point(0) == right)
             right2 = ei->point(1);
@@ -193,13 +193,13 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     //compute the area that we have to add
     total+=triangularAreaCalculation(path->at(0), left2, right2);
     for(int i=1; i<length; i++){
-        total+=triangularAreaCalculation(path->at(i), path.at(i-1), right2);
+        total+=triangularAreaCalculation(path->at(i), path->at(i-1), right2);
     }
 
     //compute the area that we will lose
     total-=triangularAreaCalculation(path->at(0), edge.point(0), edge.point(1));
     for(int i=1; i<length; i++){
-        total-=triangularAreaCalculation(path->at(i), path.at(i-1), edge.point(0));
+        total-=triangularAreaCalculation(path->at(i), path->at(i-1), edge.point(0));
     }
     return total;
 }
