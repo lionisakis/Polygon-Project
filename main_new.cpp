@@ -176,8 +176,7 @@ int main(int argc, char* argv[]){
             ratio = ((double)pArea/(double)chArea);
         }
         else if (min){
-            // int init = 1 + (rand()%3);
-            int init=1;
+            int init = 1 + (rand()%3);
             incremental(&p,&allPoints,init,3,&ourArea);
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
@@ -185,9 +184,9 @@ int main(int argc, char* argv[]){
         cout<<"!!"<<endl;
 
         if(max)
-            localSearch(&p, 1, threshold,  L, &pArea2);
+            localSearch(&p, 1, threshold,  L, &pArea2,allPoints.size());
         else if(min)
-            localSearch(&p, 2, threshold,  L, &pArea2);
+            localSearch(&p, 2, threshold,  L, &pArea2,allPoints.size());
     }
     else if (algo==2){
         

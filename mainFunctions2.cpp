@@ -47,7 +47,7 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
     return 0;
 }
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
-void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea){
+void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea,int countPoints){
     // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -60,46 +60,109 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
         int initialArea=abs(polygon->area());
         vector<EdgeChange*> changes;
-        for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
-                if(checkPath(polygon,vi,vi,ei))
-                    continue;
-                vector<Point> path;
-                path.push_back(*vi);
-                double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
-                EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
-                changes.push_back(newChange);
-
-                // until we have gone out of bounds do this
-                for (VertexIterator vi2 = vi; vi2 != polygon->vertices_end(); ++vi2){
-                    path.push_back(*vi2);
-
-                    // check if the path is ok with the size
-                    if(path.size()>L){
-                        break;
-                    }
-                    if(checkPath(polygon,vi,vi2,ei))
+        if (countPoints<=50){
+            for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                    if(checkPath(polygon,vi,vi,ei))
                         continue;
-
+                    vector<Point> path;
+                    path.push_back(*vi);
                     double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
                     EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
                     changes.push_back(newChange);
+
+                    // until we have gone out of bounds do this
+                    for (VertexIterator vi2 = vi; vi2 != polygon->vertices_end(); ++vi2){
+                        path.push_back(*vi2);
+
+                        // check if the path is ok with the size
+                        if(path.size()>L){
+                            break;
+                        }
+                        if(checkPath(polygon,vi,vi2,ei))
+                            continue;
+
+                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
+                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                        changes.push_back(newChange);
+                    }
+
+                        // do this when we have to start from the starting vertex again
+                    for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
+                        path.push_back(*vi2);
+
+                        // check if the path is ok with the size
+                        if(path.size()>L){
+                            break;
+                        }
+                        if(checkPath(polygon,vi,vi2,ei))
+                            continue;
+
+                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
+                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                        changes.push_back(newChange);
+                    }
                 }
-
-                    // do this when we have to start from the starting vertex again
-                for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
-                    path.push_back(*vi2);
-
-                    // check if the path is ok with the size
-                    if(path.size()>L){
-                        break;
+            }
+        }
+        else {
+            vector<EdgeIterator>see;
+            while(see.size()<=10){
+                int flag;
+                do{
+                    flag=0;
+                    int random=rand()%countPoints;
+                    for(int i=0;i<see.size();i++){
+                        if(see.at(i)==polygon->edges_begin()+random){
+                            flag=1;
+                            break;
+                        }
                     }
-                    if(checkPath(polygon,vi,vi2,ei))
+                    if (flag==0){
+                        see.push_back(polygon->edges_begin()+random);
+                    }
+                }while(flag==1);
+                EdgeIterator ei=see.back();
+                for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                    if(checkPath(polygon,vi,vi,ei))
                         continue;
-
+                    vector<Point> path;
+                    path.push_back(*vi);
                     double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
                     EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
                     changes.push_back(newChange);
+
+                    // until we have gone out of bounds do this
+                    for (VertexIterator vi2 = vi; vi2 != polygon->vertices_end(); ++vi2){
+                        path.push_back(*vi2);
+
+                        // check if the path is ok with the size
+                        if(path.size()>L){
+                            break;
+                        }
+                        if(checkPath(polygon,vi,vi2,ei))
+                            continue;
+
+                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
+                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                        changes.push_back(newChange);
+                    }
+
+                        // do this when we have to start from the starting vertex again
+                    for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
+                        path.push_back(*vi2);
+
+                        // check if the path is ok with the size
+                        if(path.size()>L){
+                            break;
+                        }
+                        if(checkPath(polygon,vi,vi2,ei))
+                            continue;
+
+                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
+                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                        changes.push_back(newChange);
+                    }
                 }
             }
         }
