@@ -47,7 +47,7 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
     }
     if(intersection(newEi,segLeft)||intersection(newEi,segRight))
         return 1;
-
+    //check if the new edge newEi intersects with the other edges of the polygon
     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
         if(ei->point(0)==newEi.point(0)||ei->point(1)==newEi.point(0))
             continue;
@@ -66,7 +66,6 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
     double DA=threshold+1;
-    double prev=0;
     int countDA=0;
     while(DA>threshold){
 
@@ -75,6 +74,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         if (countPoints<=10){
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                    int stop=0;
                     if(checkPath(polygon,vi,vi,ei))
                         continue;
                     vector<Point> path;
@@ -91,20 +91,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         if(path.size()>L){
                             break;
                         }
-                        if(checkPath(polygon,vi,vi2,ei))
-                            continue;
-
-                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
-                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
-                        changes.push_back(newChange);
-                    }
-
-                        // do this when we have to start from the starting vertex again
-                    for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
-                        path.push_back(*vi2);
-
-                        // check if the path is ok with the size
-                        if(path.size()>L){
+                        if(ei->point(0)==*vi2||ei->point(1)==*vi2){
+                            stop=1;
                             break;
                         }
                         if(checkPath(polygon,vi,vi2,ei))
@@ -114,6 +102,29 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
                         changes.push_back(newChange);
                     }
+                    if(stop)
+                        continue;
+                        // do this when we have to start from the starting vertex again
+                    for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
+                        path.push_back(*vi2);
+
+                        // check if the path is ok with the size
+                        if(path.size()>L){
+                            break;
+                        }
+                        if(ei->point(0)==*vi2||ei->point(1)==*vi2){
+                            stop=1;
+                            break;
+                        }
+                        if(checkPath(polygon,vi,vi2,ei))
+                            continue;
+
+                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
+                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                        changes.push_back(newChange);
+                    }
+                    if(stop)
+                        continue;
                 }
             }
         }
@@ -123,7 +134,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 int flag;
                 do{
                     flag=0;
-                    int random=rand()%countPoints;
+                    int random=rand()%(countPoints-1);
                     for(int i=0;i<see.size();i++){
                         if(see.at(i)==polygon->edges_begin()+random){
                             flag=1;
@@ -136,6 +147,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 }while(flag==1);
                 EdgeIterator ei=see.back();
                 for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                    int stop=0;
                     if(checkPath(polygon,vi,vi,ei))
                         continue;
                     vector<Point> path;
@@ -152,20 +164,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         if(path.size()>L){
                             break;
                         }
-                        if(checkPath(polygon,vi,vi2,ei))
-                            continue;
-
-                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
-                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
-                        changes.push_back(newChange);
-                    }
-
-                        // do this when we have to start from the starting vertex again
-                    for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
-                        path.push_back(*vi2);
-
-                        // check if the path is ok with the size
-                        if(path.size()>L){
+                        if(ei->point(0)==*vi2||ei->point(1)==*vi2){
+                            stop=1;
                             break;
                         }
                         if(checkPath(polygon,vi,vi2,ei))
@@ -175,11 +175,34 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
                         changes.push_back(newChange);
                     }
+                    if(stop)
+                        continue;
+
+                        // do this when we have to start from the starting vertex again
+                    for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
+                        path.push_back(*vi2);
+
+                        // check if the path is ok with the size
+                        if(path.size()>L){
+                            break;
+                        }
+                        if(ei->point(0)==*vi2||ei->point(1)==*vi2){
+                            stop=1;
+                            break;
+                        }
+                        if(checkPath(polygon,vi,vi2,ei))
+                            continue;
+
+                        double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
+                        EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                        changes.push_back(newChange);
+                    }
+                    if(stop)
+                        continue;
                 }
             }
         }
         cout << "vector size " << changes.size() << endl;
-        // pick the correct change
         int temp=changes.at(0)->getArea();
         EdgeChange* theChange=changes.at(0);
         
@@ -198,19 +221,12 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
 
         // remove edge and change
-        changeEdge(polygon,theChange);
+        changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = (double)abs(*finalArea-initialArea) ;
         // cout<<"DA: "<<DA<<endl;
-        cout << "edge to be broken " << theChange->getSegment()<<endl;
-        cout << "point to break the edge " << theChange->getLeft()<<endl;
-        cout << "point to break the edge " << theChange->getRight()<<endl;
         cout << "simple = " << polygon->is_simple() << endl;
-        
-        for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
-            cout << *ei << endl;
         cout<<"!---!"<<endl;
-        prev=DA;
         
     }
 

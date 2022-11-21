@@ -23,4 +23,4 @@ double triangularAreaCalculation(Point , Point , Point );
 double calculateNewArea(Polygon* , Segment , Point , Point , std::vector<Point>* );
 int maxEnergy(int  , int , int );
 int minEnergy(int  , int , int );
-void changeEdge(Polygon* ,EdgeChange* );
+void changeEdge(Polygon* ,EdgeChange*, int );

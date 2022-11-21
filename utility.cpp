@@ -218,10 +218,10 @@ int minEnergy(int n, int polygonArea ,int chArea){
     return n*(1-tmp);
 }
 
-void changeEdge(Polygon* polygon,EdgeChange* edge){
+void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     Point left=edge->getLeft();
     Point right=edge->getRight();
-    Point whereToInsert=edge->getSegment().point(0);
+    Point whereToInsert=edge->getSegment().point(1);
     VertexIterator tempLeft,tempRight,insert;
     for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->end();vi++){
         if(*vi==left){
@@ -229,7 +229,6 @@ void changeEdge(Polygon* polygon,EdgeChange* edge){
             break;
         }
     }
-
     vector<Point> points;
     VertexIterator vi=tempLeft;
     while(*vi!=right){
@@ -240,15 +239,34 @@ void changeEdge(Polygon* polygon,EdgeChange* edge){
         polygon->erase(vi);
     }
     points.push_back(right);
-    polygon->erase(vi);
+    polygon->erase(vi);//mexri edo einai sosto, meta den diagrafetai i akmi pou theloume na figei
 
-
+    int count=0;
+    Point prev;
     for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
         if (*vi==whereToInsert){
-            for (int i=0;i<points.size();i++){
-                polygon->insert(vi+i+1,points.at(i));
-            }
+            int i;
+            polygon->insert(vi,points.at(0));
+            count++;
+            prev = points.at(0);
+            // for (i=1;i<points.size();i++){
+            //     polygon->insert(vi+i-1,points.at(i));
+            //    
+            // }
+            // //polygon->insert(vi+i+1,edge->getSegment().point(0));
             break;
         }
+    }
+    while(count<points.size()){
+        VertexIterator tmp;
+        for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->end();vi++){
+            if(*vi==prev){
+                tmp=vi;
+                break;
+            }
+        }
+        polygon->insert(tmp,points.at(count));
+        prev = points.at(count);
+        count++;
     }
 }
