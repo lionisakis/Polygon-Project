@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
             break;
     }
     if (i==-1){
-        //allPoints.pop_back();
+        allPoints.pop_back();
     }
 
     cout <<"total points = " << allPoints.size() << endl;
@@ -166,7 +166,6 @@ int main(int argc, char* argv[]){
     double ratio, ratio2;//initial and final ratio respectively
 
 
-    cout<<"!"<<endl;
     if (algo==1){
 
         //this has to be changed
@@ -181,14 +180,11 @@ int main(int argc, char* argv[]){
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
         }
-        for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
-            cout << *ei << endl;
-        cout << "--------" << endl;
         if(max)
             localSearch(&p, 1, threshold,  L, &pArea2,allPoints.size());
         else if(min)
             localSearch(&p, 2, threshold,  L, &pArea2,allPoints.size());
-        ratio = ((double)pArea2/(double)chArea);
+        ratio2 = ((double)pArea2/(double)chArea);
     }
     else if (algo==2){
         
