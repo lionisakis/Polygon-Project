@@ -3,6 +3,7 @@
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
+#include "edgeChange.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -152,6 +153,9 @@ Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,dou
 int checkVisibility(Polygon* polygon, Point newPoint, Point checkPoint){
     Segment rayCast(newPoint, checkPoint);
     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+        if(ei->point(0) == newPoint || ei->point(1)==newPoint){
+            continue;
+        }
         if(ei->point(0) != checkPoint && ei->point(1)!=checkPoint){
             if(intersection(rayCast, *ei)){
                 return 0;
@@ -212,4 +216,39 @@ int maxEnergy(int n , int polygonArea, int chArea){
 int minEnergy(int n, int polygonArea ,int chArea){
     int tmp = polygonArea/chArea;
     return n*(1-tmp);
+}
+
+void changeEdge(Polygon* polygon,EdgeChange* edge){
+    Point left=edge->getLeft();
+    Point right=edge->getRight();
+    Point whereToInsert=edge->getSegment().point(0);
+    VertexIterator tempLeft,tempRight,insert;
+    for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->end();vi++){
+        if(*vi==left){
+            tempLeft=vi;
+            break;
+        }
+    }
+
+    vector<Point> points;
+    VertexIterator vi=tempLeft;
+    while(*vi!=right){
+        if(vi==polygon->vertices_end())
+            vi=polygon->vertices_begin();
+        Point temp=*vi;
+        points.push_back(temp);
+        polygon->erase(vi);
+    }
+    points.push_back(right);
+    polygon->erase(vi);
+
+
+    for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
+        if (*vi==whereToInsert){
+            for (int i=0;i<points.size();i++){
+                polygon->insert(vi+i+1,points.at(i));
+            }
+            break;
+        }
+    }
 }

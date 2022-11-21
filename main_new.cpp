@@ -139,17 +139,18 @@ int main(int argc, char* argv[]){
         }
         Point temp(x, y);
         allPoints.push_back(temp);
-        cout << temp << endl;
     }
     int i=0;
+    string check=".instance";
+    for(i= 8; i>=0; i--){
+        if(check[i]!=input[input.size()-9+i])
+            break;
+    }
+    if (i==-1){
+        allPoints.pop_back();
+    }
+
     cout <<"total points = " << allPoints.size() << endl;
-    // string check=".instance";
-    // for(i= 8; i>=0; i--){
-    //     if(check[i]!=input[input.size()-9+i])
-    //         break;
-    // }
-    // if (i==-1)
-    //     allPoints.pop_back();
 
     in.close();
 
@@ -165,6 +166,7 @@ int main(int argc, char* argv[]){
     double ratio, ratio2;//initial and final ratio respectively
 
 
+    cout<<"!"<<endl;
     if (algo==1){
 
         //this has to be changed
@@ -174,11 +176,13 @@ int main(int argc, char* argv[]){
             ratio = ((double)pArea/(double)chArea);
         }
         else if (min){
-            int init = 1 + (rand()%3);
+            // int init = 1 + (rand()%3);
+            int init=1;
             incremental(&p,&allPoints,init,3,&ourArea);
             pArea = abs(p.area());//in this variable we store the area calculated by cgal function
             ratio = ((double)pArea/(double)chArea);
         }
+        cout<<"!!"<<endl;
 
         if(max)
             localSearch(&p, 1, threshold,  L, &pArea2);

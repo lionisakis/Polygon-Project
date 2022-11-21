@@ -4,6 +4,7 @@
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
+#include "edgeChange.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -22,3 +23,4 @@ double triangularAreaCalculation(Point , Point , Point );
 double calculateNewArea(Polygon* , Segment , Point , Point , std::vector<Point>* );
 int maxEnergy(int  , int , int );
 int minEnergy(int  , int , int );
+void changeEdge(Polygon* ,EdgeChange* );

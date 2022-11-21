@@ -21,6 +21,31 @@ typedef Polygon::Vertex_iterator VertexIterator;
 typedef Polygon::Edge_const_iterator EdgeIterator;
 typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
+int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei){
+    // check visibility that the last point is visible
+    if ((checkVisibility(polygon,*viPathLast,ei->point(0))==0)||(checkVisibility(polygon,*viPathLast,ei->point(1)))==0)
+        return 1;
+    // and not in our edge
+    if(ei->point(0)==*viPathLast||ei->point(1)==*viPathLast){
+        return 1;
+    }
+    // check the change does not change our simplicity
+    Segment segLeft=Segment(ei->point(0),*viPathFirst);
+    Segment segRight=Segment(*viPathLast,ei->point(1));
+    Segment newEi;                                       
+    if(viPathLast==polygon->vertices_end()-1){
+        newEi=Segment(*(viPathFirst-1),*(polygon->vertices_begin()));                                       
+    }
+    else if (viPathFirst==polygon->vertices_begin()){
+        newEi=Segment(*(polygon->vertices_end()-1),*(viPathLast+1));                                       
+    }
+    else{
+        newEi=Segment(*(viPathFirst-1),*(viPathLast+1));                                       
+    }
+    if(intersection(newEi,segLeft)||intersection(newEi,segRight))
+        return 1;
+    return 0;
+}
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
 void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea){
     // change to clockwise 
@@ -28,17 +53,17 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         polygon->reverse_orientation();
     }
 
-    int DA=0;
-    do{
+    double DA=threshold+1;
+    double prev=0;
+    int countDA=0;
+    while(DA>threshold){
+
         int initialArea=abs(polygon->area());
         vector<EdgeChange*> changes;
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
-                
-                // check visibility
-                if ((checkVisibility(polygon,*vi,ei->point(0))==0)||(checkVisibility(polygon,*vi,ei->point(1)))==0)
+                if(checkPath(polygon,vi,vi,ei))
                     continue;
-
                 vector<Point> path;
                 path.push_back(*vi);
                 double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
@@ -53,9 +78,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                     if(path.size()>L){
                         break;
                     }
-
-                    // check visibility
-                    if ((checkVisibility(polygon,*vi,ei->point(0))==0)||(checkVisibility(polygon,*vi,ei->point(1)))==0)
+                    if(checkPath(polygon,vi,vi2,ei))
                         continue;
 
                     double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
@@ -71,9 +94,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                     if(path.size()>L){
                         break;
                     }
-
-                    // check visibility
-                    if ((checkVisibility(polygon,*vi,ei->point(0))==0)||(checkVisibility(polygon,*vi,ei->point(1)))==0)
+                    if(checkPath(polygon,vi,vi2,ei))
                         continue;
 
                     double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
@@ -101,9 +122,12 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
 
         // remove edge and change
-        //*finalArea = abs(polygon->area);
-        // DA = abs(finalArea-initialArea) ;
-
-    }while(DA>=threshold);
+        changeEdge(polygon,theChange);
+        *finalArea = abs(polygon->area());
+        DA = (double)abs(*finalArea-initialArea) ;
+        cout<<"DA: "<<DA<<endl;
+        cout<<"!---!"<<endl;
+        prev=DA;
+    }
 
 }
