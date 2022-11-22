@@ -223,8 +223,9 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         // remove edge and change
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
-        DA = (double)abs(*finalArea-initialArea) ;
-        // cout<<"DA: "<<DA<<endl;
+        //DA = (double)abs(*finalArea-initialArea) ;
+        DA = abs(theChange->getArea());
+        cout<<"DA: "<<DA<<endl;
         cout << "simple = " << polygon->is_simple() << endl;
         cout<<"!---!"<<endl;
         
