@@ -184,20 +184,21 @@ int main(int argc, char* argv[]){
             localSearch(&p, 1, threshold,  L, &pArea2,allPoints.size());
         else if(min)
             localSearch(&p, 2, threshold,  L, &pArea2,allPoints.size());
-        ratio2 = ((double)pArea2/(double)chArea);
+        
     }
     else if (algo==2){
         int initialEnergy;
         if(max){
-            initialEnergy = maxEnergy(totalPoints, pArea, chArea);
+            initialEnergy = maxEnergy(allPoints.size(), pArea, chArea);
+            simulated_annealing(&p, 1, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
         }
         else if(min){
-            initialEnergy = minEnergy(totalPoints, pArea, chArea);
+            initialEnergy = minEnergy(allPoints.size(), pArea, chArea);
+            simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
         }
-        
     }
 
-
+    ratio2 = ((double)pArea2/(double)chArea);
     
     cout << "simple = " << p.is_simple() << endl;
 

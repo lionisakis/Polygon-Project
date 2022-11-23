@@ -138,7 +138,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                     int flag;
                     do{
                         flag=0;
-                        int random=rand()%(countPoints-1);
+                        int random=rand()%(countPoints);
                         for(int i=0;i<see.size();i++){
                             if(see.at(i)==polygon->edges_begin()+random){
                                 flag=1;
@@ -245,11 +245,72 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
 }
+void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea){
+    double T=1;
+    int currEnergy;
+    int prevEnergy=initialEnergy;
+    while (T>=0){
 
-void localStep(Polygon* polygon, )
+        //randomly find points q,s
+        int currArea;
+        int q1 = rand%(countPoints);
+        int s1;
+        int flag;
+        do{
+            flag=0;
+            int random=rand()%(countPoints);
+            if(q1==random){
+                flag=1;
+            }
+            if (flag==0){
+                s1=random;
+            }
+        }while(flag==1);
+
+        int tmp=0;
+        Point q, s, p, t;
+        for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+            if(tmp == q1){
+                q = *vi;
+                p = *(vi-1);
+                r = *(vi+1);
+            }
+            else if(tmp == s1){
+                s = *vi;
+                t = *(vi+1);
+            }
+            tmp++;
+        }
+        for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei){
+            if(ei->point(0) == s && ei->point(1) == t){
+                
+            }
+        }
+
+        //check validity
+        int valid=0;
+        if(checkPath())
+
+        if(valid){
+            if(typeOfOptimization == 1)
+                currEnergy = maxEnergy(countPoints, currArea, chArea);
+            else if(typeOfOptimization == 2)
+                currEnergy = minEnergy(countPoints, currArea, chArea);
+            int DE = currEnergy - prevEnergy;
+            if(DE < 0 || Metropolis){//make function for metropolis
+                //apply the transition
+            }
+
+            T=T-1/L;
+        }
+    }
+}
+
+
+
 //typeOfOptimization=1: max, =2:min
 //typeOfStep=1: local step, =2: global step, =3:subdivision
-void simulated_annealing(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy){
+void simulated_annealing(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
     
     if(typeOfStep==1){
 
