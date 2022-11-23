@@ -4,6 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include "edgeChange.hpp"
+#include <math.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -268,4 +269,8 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
         count++;
     }
     cout <<"total = " << points.size() << endl;
+}
+
+int Metropolis(double DE,double T,double R){    
+    return exp(-DE/T)>R;
 }

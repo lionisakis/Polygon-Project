@@ -24,3 +24,4 @@ double calculateNewArea(Polygon* , Segment , Point , Point , std::vector<Point>*
 int maxEnergy(int  , int , int );
 int minEnergy(int  , int , int );
 void changeEdge(Polygon* ,EdgeChange*, int );
+int Metropolis(double DE,double T,double R);

@@ -11,6 +11,7 @@
 #include <cstdlib>
 
 #include  "mainFunctions.hpp"
+#include  "utility.hpp"
 #include  "mainFunctions2.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -188,13 +189,28 @@ int main(int argc, char* argv[]){
     }
     else if (algo==2){
         int initialEnergy;
+        double R =(double)rand() / (double)((unsigned)RAND_MAX + 1);
+        if (annealing!=3){
+            //this has to be changed
+            if(max){
+                convexHull(&p, &allPoints, 2, &ourArea);//the algorithm selection is based on the paper from eclass
+                pArea = abs(p.area());//in this variable we store the area calculated by cgal function
+                ratio = ((double)pArea/(double)chArea);
+            }
+            else if (min){
+                int init = 1 + (rand()%3);
+                incremental(&p,&allPoints,init,3,&ourArea);
+                pArea = abs(p.area());//in this variable we store the area calculated by cgal function
+                ratio = ((double)pArea/(double)chArea);
+            }
+        }
         if(max){
             initialEnergy = maxEnergy(allPoints.size(), pArea, chArea);
-            simulated_annealing(&p, 1, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
+            simulated_annealing(&p, 1, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea,R);
         }
         else if(min){
             initialEnergy = minEnergy(allPoints.size(), pArea, chArea);
-            simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
+            simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea,R);
         }
     }
 
