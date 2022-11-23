@@ -237,10 +237,13 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
         Point temp=*vi;
         points.push_back(temp);
         polygon->erase(vi);
+        if(vi == polygon->vertices_begin()){
+            cout << "hhh" << endl;
+        }
     }
     points.push_back(right);
-    polygon->erase(vi);//mexri edo einai sosto, meta den diagrafetai i akmi pou theloume na figei
-
+    polygon->erase(vi);
+    
     int count=0;
     Point prev;
     for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
@@ -249,11 +252,6 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
             polygon->insert(vi,points.at(0));
             count++;
             prev = points.at(0);
-            // for (i=1;i<points.size();i++){
-            //     polygon->insert(vi+i-1,points.at(i));
-            //    
-            // }
-            // //polygon->insert(vi+i+1,edge->getSegment().point(0));
             break;
         }
     }
@@ -269,4 +267,5 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
         prev = points.at(count);
         count++;
     }
+    cout <<"total = " << points.size() << endl;
 }

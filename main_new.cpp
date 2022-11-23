@@ -187,6 +187,13 @@ int main(int argc, char* argv[]){
         ratio2 = ((double)pArea2/(double)chArea);
     }
     else if (algo==2){
+        int initialEnergy;
+        if(max){
+            initialEnergy = maxEnergy(totalPoints, pArea, chArea);
+        }
+        else if(min){
+            initialEnergy = minEnergy(totalPoints, pArea, chArea);
+        }
         
     }
 
