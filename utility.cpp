@@ -209,13 +209,13 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     return total;
 }
 
-int maxEnergy(int n , int polygonArea, int chArea){
-    int tmp = polygonArea/chArea;
+double maxEnergy(int n , int polygonArea, int chArea){
+    double tmp = (double)polygonArea/(double)chArea;
     return n*tmp;
 }
 
-int minEnergy(int n, int polygonArea ,int chArea){
-    int tmp = polygonArea/chArea;
+double minEnergy(int n, int polygonArea ,int chArea){
+    double tmp = (double)polygonArea/(double)chArea;
     return n*(1-tmp);
 }
 
@@ -271,6 +271,7 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     cout <<"total = " << points.size() << endl;
 }
 
-int Metropolis(double DE,double T,double R){    
+int Metropolis(double DE,double T){    
+    double R =(double)rand() / (double)((unsigned)RAND_MAX + 1);
     return exp(-DE/T)>R;
 }

@@ -27,9 +27,9 @@ typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 
 int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei2){
-    cout <<"q = " << *viPathLast << endl;
-    cout <<"st = " << *ei2 << endl;
-    sleep(3);
+    // cout <<"q = " << *viPathLast << endl;
+    // cout <<"st = " << *ei2 << endl;
+    // sleep(3);
     // and not in our edge
     if(ei2->point(0)==*viPathLast||ei2->point(1)==*viPathLast){
         return 1;
@@ -231,28 +231,26 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
             }
         }
 
-
+        cout <<"----------" << endl;
         // remove edge and change
+        for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
+            cout << *ei << endl;
+        cout <<"----------" << endl;
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
         // cout<<"DA: "<<DA<<endl;
         if(polygon->is_simple()==0){
-            cout <<"l " << L << endl;
             cout << "left " << theChange->getLeft() << endl;
             cout << "right " << theChange->getRight() << endl;
             cout << "edge " << theChange->getSegment() << endl;
-            cout <<"changes = " << changes.size() << endl;
-            cout <<"not simple" << endl;
             break;
         }
         cout << "simple = " << polygon->is_simple() << endl;
-        // cout<<"!---!"<<endl;
-        
     }
 
 }
-void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea,double R){
+void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea){
     
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -277,7 +275,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
                 s1=random;
             }
         }while(flag==1);
-        sleep(3);
+        //sleep(3);
         int tmp=0;
         VertexIterator q, s, p, t,r;
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
@@ -322,17 +320,26 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
             else if(typeOfOptimization == 2)
                 currEnergy = minEnergy(countPoints, currArea, chArea);
-            int DE = currEnergy - prevEnergy;
-            if(DE < 0 || Metropolis(DE,T,R)){//make function for metropolis
+            double DE = currEnergy - prevEnergy;
+            if(DE < 0.0 || Metropolis(DE,T)){//make function for metropolis
                 Point tmp = *q;
+                Point tmp2 = *t;
                 polygon->erase(q);
-                polygon->insert(t, tmp);
+                for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                    if(*vi == tmp2){
+                        polygon->insert(vi, tmp);
+                        break;
+                    }
+                }
+                if(polygon->is_simple()==0){
+                    cout <<"not simple" << endl;
+                    return;
+                }
             }
 
             T=T-1/L;
             prevEnergy = currEnergy;
         }
-        cout <<"searching " << endl;
     }
 }
 
@@ -409,7 +416,7 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
     return q;
 }
 
-void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea,double R){
+void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea){
      // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -441,7 +448,7 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea
 
         // do the transition
         int DE = currEnergy - prevEnergy;
-        if(DE < 0 || Metropolis(DE,T,R)){//make function for metropolis
+        if(DE < 0 || Metropolis(DE,T)){//make function for metropolis
             Point temp=*r;
             polygon->erase(r);
             polygon->insert(q,temp);
@@ -457,15 +464,15 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea
 
 //typeOfOptimization=1: max, =2:min
 //typeOfStep=1: local step, =2: global step, =3:subdivision
-void simulated_annealing(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea,double R){
+void simulated_annealing(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
     //local step
     
     if(typeOfStep==1){
-        localMinimum(polygon,typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea,R);
+        localMinimum(polygon,typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
     }
     //global step
     else if(typeOfStep==2){
-        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea,R);
+        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
 
     }
     //subdivision

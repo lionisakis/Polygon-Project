@@ -189,7 +189,6 @@ int main(int argc, char* argv[]){
     }
     else if (algo==2){
         int initialEnergy;
-        double R =(double)rand() / (double)((unsigned)RAND_MAX + 1);
         if (annealing!=3){
             //this has to be changed
             if(max){
@@ -206,11 +205,11 @@ int main(int argc, char* argv[]){
         }
         if(max){
             initialEnergy = maxEnergy(allPoints.size(), pArea, chArea);
-            simulated_annealing(&p, 1, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea,R);
+            simulated_annealing(&p, 1, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
         }
         else if(min){
             initialEnergy = minEnergy(allPoints.size(), pArea, chArea);
-            simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea,R);
+            simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
         }
     }
 
