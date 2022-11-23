@@ -27,7 +27,9 @@ typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 
 int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei2){
-
+    cout <<"q = " << *viPathLast << endl;
+    cout <<"st = " << *ei2 << endl;
+    sleep(3);
     // and not in our edge
     if(ei2->point(0)==*viPathLast||ei2->point(1)==*viPathLast){
         return 1;
@@ -275,18 +277,28 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
                 s1=random;
             }
         }while(flag==1);
-
+        sleep(3);
         int tmp=0;
         VertexIterator q, s, p, t,r;
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
             if(tmp == q1){
                 q = vi;
-                p = (vi-1);
-                r = (vi+1);
+                if (q==polygon->vertices_end()-1)
+                    r=polygon->vertices_begin();
+                else
+                    r=q+1;
+                
+                if (q==polygon->vertices_begin())
+                    p=polygon->vertices_end()-1;
+                else
+                    p=q-1;
             }
             else if(tmp == s1){
                 s = vi;
-                t = (vi+1);
+                if (s==polygon->vertices_end()-1)
+                    t=polygon->vertices_begin();
+                else
+                    t=s+1;
             }
             tmp++;
         }
@@ -304,6 +316,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
             valid=1;
 
         if(valid){
+            cout <<"transition" << endl;
             currArea = abs(polygon->area());
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
@@ -319,6 +332,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
             T=T-1/L;
             prevEnergy = currEnergy;
         }
+        cout <<"searching " << endl;
     }
 }
 
