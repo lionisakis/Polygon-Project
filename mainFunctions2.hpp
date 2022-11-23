@@ -10,3 +10,5 @@ typedef CGAL::Polygon_2<K> Polygon;
 
 
 void localSearch(Polygon* , int , int , int , int* ,int);
+void simulated_annealing(Polygon* , int , int , int* ,int , int , int , int );
+void globalStep(Polygon* , int , int , int* , int , int , int );

@@ -246,6 +246,10 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
 }
 void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea){
+    
+    if(polygon->is_clockwise_oriented()==0){
+        polygon->reverse_orientation();
+    }
     double T=1;
     int currEnergy;
     int prevEnergy=initialEnergy;
@@ -268,40 +272,47 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
         }while(flag==1);
 
         int tmp=0;
-        Point q, s, p, t;
+        VertexIterator q, s, p, t;
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
             if(tmp == q1){
-                q = *vi;
-                p = *(vi-1);
-                r = *(vi+1);
+                q = vi;
+                p = (vi-1);
+                r = (vi+1);
             }
             else if(tmp == s1){
-                s = *vi;
-                t = *(vi+1);
+                s = vi;
+                t = (vi+1);
             }
             tmp++;
         }
+        EdgeIterator st;//edge to be broken
         for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei){
-            if(ei->point(0) == s && ei->point(1) == t){
-                
+            if(ei->point(0) == *s && ei->point(1) == *t){
+                st = ei;
+                break;
             }
         }
 
         //check validity
         int valid=0;
-        if(checkPath())
+        if(checkPath(polygon, q, q, st) == 0)
+            valid=1;
 
         if(valid){
+            currArea = abs(polygon->area());
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
             else if(typeOfOptimization == 2)
                 currEnergy = minEnergy(countPoints, currArea, chArea);
             int DE = currEnergy - prevEnergy;
             if(DE < 0 || Metropolis){//make function for metropolis
-                //apply the transition
+                Point tmp = *q;
+                polygon->erase(q);
+                polygon->insert(t, tmp);
             }
 
             T=T-1/L;
+            prevEnergy = currEnergy;
         }
     }
 }
@@ -311,13 +322,16 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
 //typeOfOptimization=1: max, =2:min
 //typeOfStep=1: local step, =2: global step, =3:subdivision
 void simulated_annealing(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
-    
+    //local step
     if(typeOfStep==1){
 
     }
+    //global step
     else if(typeOfStep==2){
+        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
 
     }
+    //subdivision
     else if (typeOfStep == 3){
 
     }
