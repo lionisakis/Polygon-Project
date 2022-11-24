@@ -211,11 +211,10 @@ int main(int argc, char* argv[]){
             initialEnergy = minEnergy(allPoints.size(), pArea, chArea);
             simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
         }
-        if(pArea2 == 0){
-            pArea2 = pArea;
-        }
     }
-
+    
+    if(pArea2 == 0)
+        pArea2 = pArea;
     ratio2 = ((double)pArea2/(double)chArea);
     
     cout << "simple = " << p.is_simple() << endl;
