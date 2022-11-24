@@ -163,7 +163,7 @@ int main(int argc, char* argv[]){
     //code
     Polygon p;
     double ourArea=0;//in this variable we store the area calculated by our algorithm
-    int pArea, pArea2;//initial and final area respectively
+    int pArea, pArea2=0;//initial and final area respectively
     double ratio, ratio2;//initial and final ratio respectively
 
 
@@ -210,6 +210,9 @@ int main(int argc, char* argv[]){
         else if(min){
             initialEnergy = minEnergy(allPoints.size(), pArea, chArea);
             simulated_annealing(&p, 2, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
+        }
+        if(pArea2 == 0){
+            pArea2 = pArea;
         }
     }
 

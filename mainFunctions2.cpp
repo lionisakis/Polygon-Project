@@ -314,7 +314,6 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             valid=1;
 
         if(valid){
-            cout <<"transition" << endl;
             currArea = abs(polygon->area());
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
@@ -339,7 +338,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
 
             T=T-1/L;
             prevEnergy = currEnergy;
-            *finalArea=abs(polygon->area());
+            *finalArea=currArea;
         }
     }
 }
@@ -504,9 +503,10 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             break;
         cout<<"-----\n";
         T=T-1/L;
-        *finalArea=abs(polygon->area());
+        *finalArea=currArea;
         prevEnergy = currEnergy;
     }    
+
 }
 
 //typeOfOptimization=1: max, =2:min
