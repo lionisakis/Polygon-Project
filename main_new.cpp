@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
     cout << "name of output file: " << output << "\n";
 
     int algo;//1: local_search , 2: simulated_annealing
-    int L;//L parameter, must be lower than 10 if we have local search, otherwise it shows maximum iterations
+    double L;//L parameter, must be lower than 10 if we have local search, otherwise it shows maximum iterations
     int max, min;//only on of these will be found in command line arguments
 
 
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]){
         algo=2;
 
     //save L parameter
-    L = atoi(argv[8]);
+    L = atof(argv[8]);
 
     std::string type(argv[9]);
     //find if we want to minimize or maximize the area

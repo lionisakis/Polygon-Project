@@ -250,7 +250,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
 }
-void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea){
+void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea){
     
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -339,17 +339,17 @@ void globalStep(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,
 
             T=T-1/L;
             prevEnergy = currEnergy;
+            *finalArea=abs(polygon->area());
         }
     }
 }
 
+
 VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
     vector<int> seen;
-    int flag=1;
     VertexIterator p,q,r,s;
     // find a random point until there is no problem
-    while(flag==1){
-        cout<<"---"<<endl;
+    while(1){
         // find a random point that you have not seen yet
         int notSeen=0;
         int pos;
@@ -363,6 +363,9 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
             if(i==seen.size()){
                 notSeen=1;
                 seen.push_back(pos);
+            }
+            if(seen.size()==10){
+                return polygon->vertices_end();
             }
         }
         q=polygon->vertices_begin()+pos;
@@ -382,41 +385,75 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
         if (r==polygon->vertices_end()-1)
             s=polygon->vertices_begin();
         else
-            s=q+1;
+            s=r+1;
         
-
+        Segment qs=Segment(*q,*s);
+        Segment pr=Segment(*p,*r);
+        if(intersection(qs,pr))
+            continue;
+        
         // do the search
         Fuzzy_box default_range1(*p,*r);
         std::vector<Point> result;
         kd->search(std::back_inserter( result ), default_range1);
-        cout<<result.size()<<endl;
-        cout<<"default_range1 "<<*p<<":"<<*r<<endl;
-        // check if there is a problem or not
-        for(int i=0;i<result.size();i++){
-            cout<<result.at(i)<<endl;
-        }
         Fuzzy_box default_range2(*q,*s);
         kd->search(std::back_inserter( result ), default_range2);
-        cout<<result.size()<<endl;
-        cout<<"default_range2 "<<*q<<":"<<*s<<endl;
+        
+        int flag=0;
         // check if there is a problem or not
         for(int i=0;i<result.size();i++){
             Point x=result.at(i);
-            if (x==*q||x==*r||x==*p||x==*s){
-                continue;
-            }
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-                
+                EdgeIterator seen=polygon->edges_end();
+                if(x==*s&&ei->point(1)==*s){
+                    seen=ei;
+                }
+                else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
+                    seen=ei;
+                }
+                if(seen!=polygon->edges_end()){
+                    if(intersection(pr,*seen)){
+                        flag=1;
+                        break;
+                    }
+                }
             }
         }
+        if (flag==1)
+            continue;        
+        
         // check if there is a problem or not
-        if (result.size()==2)
-            flag=0;
+        flag=0;
+
+        for(int i=0;i<result.size();i++){
+            Point x=result.at(i);
+            for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                EdgeIterator seen=polygon->edges_end();
+                if(x==*p&&ei->point(0)==*p){
+                    seen=ei;
+                }
+                else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
+                    seen=ei;
+                }
+                if(seen!=polygon->edges_end()){
+                    if(intersection(qs,*seen)){
+                        flag=1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (flag==1)
+            continue;
+        
+        break;
     }
+    cout<<"Return:"<<*q<<endl;
     return q;
 }
 
-void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea, int countPoints, int initialEnergy, int chArea){
+void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea){
      // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -431,6 +468,8 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea
     int prevEnergy=initialEnergy;
     while (T>=0){
         VertexIterator q=localAlgorithm(polygon,&kd,countPoints);
+        if(q==polygon->vertices_end())
+            break;
         VertexIterator r;
         if (q==polygon->vertices_end()-1)
             r=polygon->vertices_begin();
@@ -447,11 +486,17 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea
 
 
         // do the transition
-        int DE = currEnergy - prevEnergy;
+        double DE = currEnergy - prevEnergy;
         if(DE < 0 || Metropolis(DE,T)){//make function for metropolis
             Point temp=*r;
+            Point x=*q;
             polygon->erase(r);
-            polygon->insert(q,temp);
+            for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
+                if(*vi==x){
+                    polygon->insert(vi,temp);
+                    break;
+                }
+            }
         }
 
         cout<<"simple = "<<polygon->is_simple()<<endl;
@@ -459,12 +504,14 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, int L, int* finalArea
             break;
         cout<<"-----\n";
         T=T-1/L;
+        *finalArea=abs(polygon->area());
+        prevEnergy = currEnergy;
     }    
 }
 
 //typeOfOptimization=1: max, =2:min
 //typeOfStep=1: local step, =2: global step, =3:subdivision
-void simulated_annealing(Polygon* polygon, int typeOfOptimization, int L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
+void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
     //local step
     
     if(typeOfStep==1){
