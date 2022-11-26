@@ -1,12 +1,10 @@
 *
 !utility.cpp
 !utility.hpp
-!main_old.cpp
-!main_new.cpp
+!main.cpp
 !README.md
 !runls.sh
 !runsa.sh
-!runold.sh
 !mainFunctions.cpp
 !mainFunctions.hpp
 !edgePointPair.cpp
