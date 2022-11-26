@@ -251,7 +251,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
 }
-void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, Point* mostLeft, Point* mostRight){
+void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, Point* mostLeft, Point* mostRight, int flagSub=0){
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
@@ -275,7 +275,6 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                 s1=random;
             }
         }while(flag==1);
-
         int tmp=0;
         VertexIterator q, s, p, t,r;
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
@@ -312,13 +311,14 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         
         if(checkPath(polygon, q, q, st) == 0)
             valid=1;
-
         
         //check if st is one of the marked edges
-        if(*s == *mostRight)
-            valid=0;
-        if(*t == *mostLeft)
-            valid=0;
+        if(flagSub){
+            if(*s == *mostRight)
+                valid=0;
+            if(*t == *mostLeft)
+                valid=0;
+        }
 
         if(valid){
             cout <<"valid" << endl;
@@ -607,8 +607,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             tmp.push_back(KP2.at(w));
 
         int chArea2 = abs(tmp.area());
-        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, points2.size(), initialEnergy, chArea2, &mostLeft, &mostRight);
-        
+        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, points2.size(), initialEnergy, chArea2, &mostLeft, &mostRight, 1);
+        cout <<"done with global" << endl;
         // cout <<"---------" << endl;
         // for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
         //     cout << *ei << endl;

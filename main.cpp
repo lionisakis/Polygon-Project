@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
     unsigned int tmp = (unsigned) time(NULL);
     srand(tmp);
 
-    if(argc < 16 || argc > 19){//check if the #arguments is correct
+    if(argc < 16 || argc > 21){//check if the #arguments is correct
         cout << "not enough arguments were given"<<endl ;
         return 0;
     }
@@ -226,6 +226,7 @@ int main(int argc, char* argv[]){
     }
     else if (algo==2){
         int initialEnergy;
+        cout <<"anne " << annealing << endl; 
         if (annealing!=3){
             //this has to be changed
             if(algo2 == 2)
