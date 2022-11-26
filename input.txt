@@ -1,7 +1,0 @@
-# HIP even point set instance (400 points) sampled from image 
-# parameters "convex_hull": {"area": "81456224"}
-0	1	1
-1	2	3
-2	1	4
-4   0   2
-5   1   2

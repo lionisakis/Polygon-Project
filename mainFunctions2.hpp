@@ -11,4 +11,4 @@ typedef CGAL::Polygon_2<K> Polygon;
 
 void localSearch(Polygon* , int , int , int , int*,int );
 void simulated_annealing(Polygon* , int , double , int* ,int , int , int , int);
-void subdivision(Polygon* polygon, std::vector<Point>* points, int typeOfOptimization, int L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m);
+void subdivision(Polygon* , std::vector<Point>* , int , double , int *, int , int , int , int , int );

@@ -247,7 +247,7 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
         points.push_back(temp);
         polygon->erase(vi);
         if(vi == polygon->vertices_begin()){
-            cout << "hhh" << endl;
+            //cout << "hhh" << endl;
         }
     }
     points.push_back(right);
@@ -276,7 +276,6 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
         prev = points.at(count);
         count++;
     }
-    cout <<"total = " << points.size() << endl;
 }
 
 int Metropolis(double DE,double T){    

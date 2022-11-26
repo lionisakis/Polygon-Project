@@ -27,10 +27,8 @@ typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 
+//returns 1 when the path does not pass the validity check and 0 when it passes the validity check
 int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei2){
-    // cout <<"q = " << *viPathLast << endl;
-    // cout <<"st = " << *ei2 << endl;
-    // sleep(3);
     // and not in our edge
     if(ei2->point(0)==*viPathLast||ei2->point(1)==*viPathLast){
         return 1;
@@ -40,7 +38,7 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
         return 1;
     
     // check the change does not change our simplicity
-    Segment segLeft=Segment(ei2->point(1),*viPathFirst);//changes 1->0, 0->1
+    Segment segLeft=Segment(ei2->point(1),*viPathFirst);
     Segment segRight=Segment(*viPathLast,ei2->point(0));
     Segment newEi;    
 
@@ -55,6 +53,7 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
     }
     if(intersection(newEi,segLeft)||intersection(newEi,segRight))
         return 1;
+
     //check if the new edge newEi intersects with the other edges of the polygon
     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
         if(ei->point(0)==newEi.point(0)||ei->point(1)==newEi.point(0))
@@ -66,6 +65,7 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
         if(intersection(newEi,*ei))
             return 1;
     }
+
     return 0;
 }
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
@@ -251,8 +251,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
 }
-void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea){
-    
+void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, Point* mostLeft, Point* mostRight){
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
@@ -276,7 +275,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                 s1=random;
             }
         }while(flag==1);
-        //sleep(3);
+
         int tmp=0;
         VertexIterator q, s, p, t,r;
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
@@ -308,13 +307,21 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                 break;
             }
         }
-
         //check validity
         int valid=0;
+        
         if(checkPath(polygon, q, q, st) == 0)
             valid=1;
 
+        
+        //check if st is one of the marked edges
+        if(*s == *mostRight)
+            valid=0;
+        if(*t == *mostLeft)
+            valid=0;
+
         if(valid){
+            cout <<"valid" << endl;
             currArea = abs(polygon->area());
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
@@ -338,6 +345,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             }
 
             T=T-1/L;
+            cout <<"T= " << T<<endl;
             prevEnergy = currEnergy;
             *finalArea=currArea;
         }
@@ -514,39 +522,34 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
 //typeOfStep=1: local step, =2: global step
 void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
     //local step
-    
     if(typeOfStep==1){
         localMinimum(polygon,typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
     }
     //global step
     else if(typeOfStep==2){
-        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
+        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea, NULL, NULL);
     }
 }
 
 //greedyAlgo=1: incremental, greedyAlgo=2: convex hull
 //greedyEdge=1: random, =2:min, =3:max
-void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, int L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m){
+void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, double L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m){
     sortPoints(points, 2);
     double area;
     int count=0;
     int k = (int)ceil((double)(countPoints)/(double)(m-1));
-    cout <<"k " << k<< endl;
     vector<Polygon> polygons(k);
     for(int i=0; i<k; i++){
-        cout <<"i= " << i << endl;
         vector<Point> points2;
         //when you make the 2nd, 3rd, ..., kth polygon incllude also the previous last point
         if(i!=0){
             points2.push_back(points->at(count-1));
-            cout <<"prev " << count-1 << endl;
         }
         
         //when we are not in the last subset add m points
         if(i<k-1){
             for(int j=0; j<m-1; j++){
                 points2.push_back(points->at(count));
-                cout <<"j = " << count << endl;
                 count++;
             }
         }
@@ -573,15 +576,46 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             incremental(&polygons.at(i), &points2, 2, greedyEdge, &area, 1);
         }
         else{
-            cout <<"hhhhh   "<< points2.size() << endl;
             convexHull(&polygons.at(i), &points2, greedyEdge, &area, 1);
-            cout << "end2" << endl;
         }
-        cout <<"---------" << endl;
-        for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
-            cout << *ei << endl;
-        cout <<"---------" << endl;
+        
+        //find leftmost, rightmost point of subset so that we dont break the marked edges
+        vector<Point> LH;
+        CGAL::lower_hull_points_2(points2.begin(), points2.end(), back_inserter(LH));
+        vector<Point> UH;
+        CGAL::upper_hull_points_2(points2.begin(), points2.end(), back_inserter(UH));
+
+        Point mostLeft, mostRight;
+        mostLeft = LH.at(0);
+        mostRight = UH.at(0);
+
+        //calculate initial energy of the greedy solution
+        int initialEnergy;
+        int pArea = abs(polygons.at(i).area());
+        if(typeOfOptimization == 1)
+            initialEnergy = maxEnergy(countPoints, pArea, chArea);
+        else if(typeOfOptimization == 2)
+            initialEnergy = minEnergy(countPoints, pArea, chArea);
+
+        //apply global step to each subset
+        // find KP 
+        vector<Point> KP2;
+        Polygon tmp;
+        const Polygon::Vertices& range = polygons.at(i).vertices();
+        CGAL::convex_hull_2(range.begin(), range.end(), back_inserter(KP2));
+        for(int w=0; w<KP2.size(); w++)
+            tmp.push_back(KP2.at(w));
+
+        int chArea2 = abs(tmp.area());
+        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, points2.size(), initialEnergy, chArea2, &mostLeft, &mostRight);
+        
+        // cout <<"---------" << endl;
+        // for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
+        //     cout << *ei << endl;
+        // cout <<"---------" << endl;
         cout << "simple =  " << polygons.at(i).is_simple() << endl;
     }
+
+    //combine all polygons and apply local step
 
 }
