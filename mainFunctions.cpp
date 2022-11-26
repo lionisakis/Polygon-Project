@@ -23,11 +23,51 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 
 
-
-void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area){
+//flagSub=0: normal incremental, flagSub=1: incremental for subdivision
+void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area, int flagSub=0){
     // make the triangle and short the points
-    coordinatesSorting(polygon,points,sorting,area);
+    Point mostLeft, mostRight;
+    vector<Point> LH;
+    vector<Point> UH;
+    if(!flagSub)
+        coordinatesSorting(polygon,points,sorting,area);
+    else{
+        
+        CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
+        CGAL::upper_hull_points_2(points->begin(), points->end(), back_inserter(UH));
+
+        mostLeft = LH.at(0);
+        mostRight = UH.at(0);
+        polygon->push_back(points->at(0));
+        polygon->push_back(points->at(1));
+        // so we are not collinear for KP reasons
+        for(int i=2;i<points->size();i++){
+            Point third=points->at(i);
+            // if they are not collinear
+            if (! CGAL::collinear(points->at(0),points->at(1),third)){
+                polygon->push_back(third);
+                // swap go to the 3rd position of points so we have almost sorted points
+                for(int j=i;j>2;j--){
+                    Point temp=points->at(j);
+                    points->at(j)=points->at(j-1);
+                    points->at(j-1)=temp;
+                }
+                break;
+            }
+        }
+        *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
+    }
+
     for (int i=3;i<points->size();i++){
+        if(flagSub && points->at(i) == mostLeft){
+            for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                if(*vi==LH.at(1)){
+                    polygon->insert(vi, points->at(i));
+                    break;
+                }
+            }
+            continue;
+        }
         // find the current Point we want to insert
         Point currentPoint= points->at(i);
 
@@ -70,6 +110,12 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             if(positionStart<=positionEnd){    
                 // the edges between the start and end check if they are visible
                 for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
+                    if(flagSub){
+                        if(mostRight==ei->point(1))
+                            continue;
+                        if(mostLeft == ei->point(0))
+                            continue;
+                    }
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                         reachable.push_back(*ei);
                     }
@@ -81,12 +127,24 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             else{
                 // [start,...,finish] 
                 for(EdgeIterator ei=positionStart;ei!=polygon->edges_end();ei++){
+                    if(flagSub){
+                        if(mostRight==ei->point(1))
+                            continue;
+                        if(mostLeft == ei->point(0))
+                            continue;
+                    }
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                         reachable.push_back(*ei);
                     }
                 }
                 // [begin,...,end]
                 for(EdgeIterator ei=polygon->edges_begin();ei<=positionEnd;ei++){
+                    if(flagSub){
+                        if(mostRight==ei->point(1))
+                            continue;
+                        if(mostLeft == ei->point(0))
+                            continue;
+                    }
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                         reachable.push_back(*ei);
                     }
@@ -115,7 +173,9 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
     }
 }
 
-void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area){
+//flagSub=0: normal convex hull, flagSub=1: convex hull for subdivision
+//if flagsub=1 then vector points is ordered by x increasing
+void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, int flagSub=0){
     
     //create convex hull and put it in the polygon
     vector<Point> KP;
@@ -139,6 +199,17 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
         }
     }
 
+    vector<Point> LH;
+    CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
+    vector<Point> UH;
+    CGAL::upper_hull_points_2(points->begin(), points->end(), back_inserter(UH));
+
+    Point mostLeft, mostRight;
+    if(flagSub){
+        mostLeft = LH.at(0);
+        mostRight = UH.at(0);
+    }
+
     while(remainingPoints.size()!=0){
         vector<edgePointPair*> pairs;
         //for every edge of polygon A find its closet point and create a pair that contains the edge the closest point and the area of the polygon that will be created
@@ -149,6 +220,10 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area)
                 // int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
+                    if(flagSub){
+                        if(ei->point(0) == mostRight || ei->point(1) == mostLeft)
+                            continue;
+                    }
                     if((checkVisibility(polygon, remainingPoints.at(i), ei->point(0)))&&(checkVisibility(polygon,remainingPoints.at(i), ei->point(1)))){
                         min=distance;
                         place=i;

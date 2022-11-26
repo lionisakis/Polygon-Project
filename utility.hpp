@@ -25,3 +25,4 @@ double maxEnergy(int  , int , int );
 double minEnergy(int  , int , int );
 void changeEdge(Polygon* ,EdgeChange*, int );
 int Metropolis(double DE,double T);
+void sortPoints(std::vector<Point>* , int );

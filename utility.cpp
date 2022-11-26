@@ -70,6 +70,14 @@ void swap(Point* a, Point* b,int type){
         }
     }
 }
+void sortPoints(vector<Point>* points, int type){
+    for (int i=0;i<points->size();i++){
+        for(int j=i+1;j<points->size();j++){
+            swap(&points->at(i),&points->at(j),type);
+        }
+    }
+}
+
 void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* area){
     for (int i=0;i<points->size();i++){
         for(int j=i+1;j<points->size();j++){

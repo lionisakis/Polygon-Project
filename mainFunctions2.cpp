@@ -9,6 +9,7 @@
 #include <CGAL/squared_distance_2.h>
 #include "utility.hpp"
 #include "edgeChange.hpp"
+#include "mainFunctions.hpp"
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
@@ -39,8 +40,8 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
         return 1;
     
     // check the change does not change our simplicity
-    Segment segLeft=Segment(ei2->point(0),*viPathFirst);
-    Segment segRight=Segment(*viPathLast,ei2->point(1));
+    Segment segLeft=Segment(ei2->point(1),*viPathFirst);//changes 1->0, 0->1
+    Segment segRight=Segment(*viPathLast,ei2->point(0));
     Segment newEi;    
 
     if(viPathLast==polygon->vertices_end()-1){
@@ -231,11 +232,11 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
             }
         }
 
-        cout <<"----------" << endl;
-        // remove edge and change
-        for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
-            cout << *ei << endl;
-        cout <<"----------" << endl;
+        // cout <<"----------" << endl;
+        // // remove edge and change
+        // for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
+        //     cout << *ei << endl;
+        // cout <<"----------" << endl;
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
@@ -510,7 +511,7 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
 }
 
 //typeOfOptimization=1: max, =2:min
-//typeOfStep=1: local step, =2: global step, =3:subdivision
+//typeOfStep=1: local step, =2: global step
 void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
     //local step
     
@@ -520,11 +521,67 @@ void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int
     //global step
     else if(typeOfStep==2){
         globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
-
     }
-    //subdivision
-    else if (typeOfStep == 3){
+}
 
+//greedyAlgo=1: incremental, greedyAlgo=2: convex hull
+//greedyEdge=1: random, =2:min, =3:max
+void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, int L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m){
+    sortPoints(points, 2);
+    double area;
+    int count=0;
+    int k = (int)ceil((double)(countPoints)/(double)(m-1));
+    cout <<"k " << k<< endl;
+    vector<Polygon> polygons(k);
+    for(int i=0; i<k; i++){
+        cout <<"i= " << i << endl;
+        vector<Point> points2;
+        //when you make the 2nd, 3rd, ..., kth polygon incllude also the previous last point
+        if(i!=0){
+            points2.push_back(points->at(count-1));
+            cout <<"prev " << count-1 << endl;
+        }
+        
+        //when we are not in the last subset add m points
+        if(i<k-1){
+            for(int j=0; j<m-1; j++){
+                points2.push_back(points->at(count));
+                cout <<"j = " << count << endl;
+                count++;
+            }
+        }
+        //when we are in the second to last subset and the remaining points are less than 3 add them to this one
+        if((i==k-2) && (((countPoints-1)-(k-1)*(m-1)))<3){
+            while(count<countPoints){
+                points2.push_back(points->at(count));
+                count++;
+            }
+        }
+        //we are in the last subset and we have sufficient remaining points 
+        else if(i==k-1 && (((countPoints-1)-(k-1)*(m-1)))>=3){
+            while(count<countPoints){
+                points2.push_back(points->at(count));
+                count++;
+            }
+        }
+        //we skip this subset cause all of the points were added to the previous one
+        else if(i==k-1){
+            break;
+        }
+        
+        if(greedyAlgo==1){
+            incremental(&polygons.at(i), &points2, 2, greedyEdge, &area, 1);
+        }
+        else{
+            cout <<"hhhhh   "<< points2.size() << endl;
+            convexHull(&polygons.at(i), &points2, greedyEdge, &area, 1);
+            cout << "end2" << endl;
+        }
+        cout <<"---------" << endl;
+        for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
+            cout << *ei << endl;
+        cout <<"---------" << endl;
+        cout << "simple =  " << polygons.at(i).is_simple() << endl;
     }
 
 }

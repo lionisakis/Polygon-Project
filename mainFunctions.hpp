@@ -9,6 +9,6 @@ typedef CGAL::Point_2<K> Point;
 typedef CGAL::Polygon_2<K> Polygon;
 
 
-void incremental(Polygon* ,std::vector<Point>* , int , int ,double* );
-void convexHull(Polygon* , std::vector<Point>* , int , double* );
+void incremental(Polygon* ,std::vector<Point>* , int , int ,double* , int flagSub=0);
+void convexHull(Polygon* , std::vector<Point>* , int , double*, int flagSub=0);
 
