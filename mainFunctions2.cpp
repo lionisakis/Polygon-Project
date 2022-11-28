@@ -615,6 +615,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         // cout <<"---------" << endl;
         cout << "simple =  " << polygons.at(i).is_simple() << endl;
     }
+    
 
     //combine all polygons and apply local step
 

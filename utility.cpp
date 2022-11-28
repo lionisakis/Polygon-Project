@@ -191,6 +191,7 @@ int checkRed(vector<Point>* KP, Point newPoint, Point checkPoint){
 }
 
 //it has to be clockwise!!!
+//TODO: change function, create polygon and use triangle area
 double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, vector<Point>* path){
     double total=0;
     Point left2; //neighbour of left point 
