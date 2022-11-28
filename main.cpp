@@ -248,10 +248,10 @@ int main(int argc, char* argv[]){
         else{
 
             if(max){
-                subdivision(&p, &allPoints, 1, L, &pArea2, allPoints.size(), chArea, algo2, edge, 5);
+                subdivision(&p, &allPoints, 1, L, &pArea2, allPoints.size(), chArea, algo2, edge, m);
             }
             else if (min){
-                subdivision(&p, &allPoints, 2, L, &pArea2, allPoints.size(), chArea, algo2, edge, 5);
+                subdivision(&p, &allPoints, 2, L, &pArea2, allPoints.size(), chArea, algo2, edge, m);
             }
         }
             

@@ -562,7 +562,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             cout<<polygons.size()<<endl;
             break;
         }
-        
+        cout << "size of subset =  " << points2.size() << endl;
         cout<<"Here\n";
         if(greedyAlgo==1){
             incremental(&polygons.at(i), &points2, 2, greedyEdge, &area, 1);
@@ -619,57 +619,74 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     //combine all polygons 
     // for the rest polygons
     for(int i=1;i<polygons.size();i++){
+        cout <<"combining polygon "<< i << endl;
         Polygon* current=&polygons.at(i);
         VertexIterator positionPolygon;
-        Point p;
+        Point q, p;
         // here is to find the q
         for(VertexIterator viPolygon=polygon->vertices_begin();viPolygon!=polygon->vertices_end();viPolygon++){
             for(VertexIterator vi2=current->vertices_begin();vi2!=current->vertices_end();vi2++){
                 if(*viPolygon==*vi2){
-                    p=*(viPolygon);
-                    cout<<"did?"<<endl;
-                    cout<<p<<endl;
+                    q=*(viPolygon);
+                    cout<<"q = "<< q<<endl;
+                    p = *(viPolygon+1);
+                    cout<<"p = "<< p<<endl;
                     break;
                 }
             }   
         }
-        cout<<"What?"<<endl;
 
         int count=0;
         vector<Point> insert;
         for(VertexIterator vi=current->vertices_begin()+1;vi!=current->vertices_end();vi++){
-            cout<<*vi<<endl;
             insert.push_back(*vi);
-            cout<<insert.at(insert.size()-1)<<endl;
             count++;
         }
-        for(int i=0;i<insert.size();i++){
-            cout<<i<<endl;
-            cout<<insert.at(i)<<endl;
-            for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
-                if(p==*vi){
-                    positionPolygon=vi;
+        cout <<"insert size = " << insert.size() << endl;
+        int total = insert.size();
+        int added=0;
+        while(added < total){
+            cout << added <<" insertion of point "<< insert.at(added) << endl;
+            for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                if(*vi == p){
+                    positionPolygon = vi;
                     break;
                 }
             }
-            cout<<*positionPolygon<<endl;
-            polygon->insert(positionPolygon,insert.at(i));
-            
-            cout<<i<<endl;
+            polygon->insert(positionPolygon, insert.at(added));
+            if(polygon->is_simple()==0){
+                cout<<i<<endl;
+                break;
+            }
+            added++;
+            cout <<added <<" = added!!!!!!!!" << endl;
+            cout <<total  <<" size of insert////////" << endl;
+        }
+        // for(int j=0;j<insert.size();j++){
+        //     cout << j <<"insertion of point "<< insert.at(j) << endl;
+        //     for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
+        //         if(p==*vi){
+        //             positionPolygon=vi;
+        //             break;
+        //         }
+        //     }
+        //     cout<<"pos =  "<< *positionPolygon <<"and inserting point = " << j<< endl;
+        //     // cout <<"temp polygon" << endl;
+        //     // for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
+        //     //     cout << *ei << endl;
+        //     // cout <<"---------" << endl;
+        //     // cout <<"old polygon" << endl;
+        //     // for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
+        //     //     cout << *ei << endl;
+        //     // cout <<"----------" << endl;
+        //     polygon->insert(positionPolygon,insert.at(j));
+        //     if(polygon->is_simple()==0){
+        //         cout<<i<<endl;
+        //         break;
+        //     }
 
-        }
-        if(polygon->is_simple()==0){
-            cout<<i<<endl;
-            break;
-        }
-        cout<<"DONE WHAT?"<<endl;
+        // }
+        
+        cout<<"DONE with polygon = "<< i<<endl;
     }
-    // for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
-    //     cout<<*vi<<endl;
-    // }
-    // cout<<"----"<<endl;
-    // for(VertexIterator vi=polygons.at(1).vertices_begin();vi!=polygons.at(1).vertices_end();vi++){
-    //     cout<<*vi<<endl;
-    // }
-    // cout<<polygon->is_simple()<<endl;
 }
