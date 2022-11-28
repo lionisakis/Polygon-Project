@@ -32,7 +32,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
     if(!flagSub)
         coordinatesSorting(polygon,points,sorting,area);
     else{
-        
+        cout<<"!"<<endl;
         CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
         CGAL::upper_hull_points_2(points->begin(), points->end(), back_inserter(UH));
 
@@ -40,6 +40,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
         mostRight = UH.at(0);
         polygon->push_back(points->at(0));
         polygon->push_back(points->at(1));
+        cout<<"!!"<<endl;
         // so we are not collinear for KP reasons
         for(int i=2;i<points->size();i++){
             Point third=points->at(i);
@@ -52,22 +53,26 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                     points->at(j)=points->at(j-1);
                     points->at(j-1)=temp;
                 }
+                cout<<"!!!"<<endl;
                 break;
             }
         }
         *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
     }
-
+    cout<<"-"<<endl;
     for (int i=3;i<points->size();i++){
-        if(flagSub && points->at(i) == mostLeft){
+        if(flagSub && (points->at(i) == mostLeft)){
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
                 if(*vi==LH.at(1)){
                     polygon->insert(vi, points->at(i));
                     break;
                 }
             }
+            cout<<"--"<<endl;
             continue;
         }
+        cout<<"---"<<endl;
+
         // find the current Point we want to insert
         Point currentPoint= points->at(i);
 
@@ -110,12 +115,19 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             if(positionStart<=positionEnd){    
                 // the edges between the start and end check if they are visible
                 for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
+                    cout<<*positionStart<<"-" <<*positionEnd<<endl;
                     if(flagSub){
+                        cout<<"----"<<endl;
+                        cout<<mostRight<<"=="<<ei->point(1)<<endl;
+                        cout<<mostLeft<<"=="<<ei->point(0)<<endl;
+
                         if(mostRight==ei->point(1))
                             continue;
                         if(mostLeft == ei->point(0))
                             continue;
+                        cout<<"----!"<<endl;
                     }
+
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
                         reachable.push_back(*ei);
                     }

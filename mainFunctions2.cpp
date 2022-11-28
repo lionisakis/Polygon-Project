@@ -215,7 +215,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 }
             }
         }
-        //cout << "vector size " << changes.size() << endl;
+
         int temp=changes.at(0)->getArea();
         EdgeChange* theChange=changes.at(0);
         
@@ -232,22 +232,10 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
             }
         }
 
-        // cout <<"----------" << endl;
-        // // remove edge and change
-        // for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
-        //     cout << *ei << endl;
-        // cout <<"----------" << endl;
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
-        // cout<<"DA: "<<DA<<endl;
-        if(polygon->is_simple()==0){
-            cout << "left " << theChange->getLeft() << endl;
-            cout << "right " << theChange->getRight() << endl;
-            cout << "edge " << theChange->getSegment() << endl;
-            break;
-        }
-        cout << "simple = " << polygon->is_simple() << endl;
+
     }
 
 }
@@ -541,7 +529,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     vector<Polygon> polygons(k);
     for(int i=0; i<k; i++){
         vector<Point> points2;
-        //when you make the 2nd, 3rd, ..., kth polygon incllude also the previous last point
+        //when you make the 2nd, 3rd, ..., kth polygon include also the previous last point
         if(i!=0){
             points2.push_back(points->at(count-1));
         }
@@ -569,15 +557,21 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         }
         //we skip this subset cause all of the points were added to the previous one
         else if(i==k-1){
+            cout<<i<<endl;
+            polygons.pop_back();
+            cout<<polygons.size()<<endl;
             break;
         }
         
+        cout<<"Here\n";
         if(greedyAlgo==1){
             incremental(&polygons.at(i), &points2, 2, greedyEdge, &area, 1);
         }
         else{
             convexHull(&polygons.at(i), &points2, greedyEdge, &area, 1);
         }
+
+        cout<<"NOT Here\n";
         
         //find leftmost, rightmost point of subset so that we dont break the marked edges
         vector<Point> LH;
@@ -607,7 +601,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             tmp.push_back(KP2.at(w));
 
         int chArea2 = abs(tmp.area());
-        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, points2.size(), initialEnergy, chArea2, &mostLeft, &mostRight, 1);
+        // globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, points2.size(), initialEnergy, chArea2, &mostLeft, &mostRight, 1);
         cout <<"done with global" << endl;
         // cout <<"---------" << endl;
         // for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
@@ -615,8 +609,67 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         // cout <<"---------" << endl;
         cout << "simple =  " << polygons.at(i).is_simple() << endl;
     }
+    // cout<<"What?"<<endl;
     
+    // // just insert the first polygon
+    for(VertexIterator vi=polygons.at(0).vertices_begin();vi!=polygons.at(0).vertices_end();vi++){
+        polygon->push_back(*vi);
+    }
 
-    //combine all polygons and apply local step
+    //combine all polygons 
+    // for the rest polygons
+    for(int i=1;i<polygons.size();i++){
+        Polygon* current=&polygons.at(i);
+        VertexIterator positionPolygon;
+        Point p;
+        // here is to find the q
+        for(VertexIterator viPolygon=polygon->vertices_begin();viPolygon!=polygon->vertices_end();viPolygon++){
+            for(VertexIterator vi2=current->vertices_begin();vi2!=current->vertices_end();vi2++){
+                if(*viPolygon==*vi2){
+                    p=*(viPolygon);
+                    cout<<"did?"<<endl;
+                    cout<<p<<endl;
+                    break;
+                }
+            }   
+        }
+        cout<<"What?"<<endl;
 
+        int count=0;
+        vector<Point> insert;
+        for(VertexIterator vi=current->vertices_begin()+1;vi!=current->vertices_end();vi++){
+            cout<<*vi<<endl;
+            insert.push_back(*vi);
+            cout<<insert.at(insert.size()-1)<<endl;
+            count++;
+        }
+        for(int i=0;i<insert.size();i++){
+            cout<<i<<endl;
+            cout<<insert.at(i)<<endl;
+            for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
+                if(p==*vi){
+                    positionPolygon=vi;
+                    break;
+                }
+            }
+            cout<<*positionPolygon<<endl;
+            polygon->insert(positionPolygon,insert.at(i));
+            
+            cout<<i<<endl;
+
+        }
+        if(polygon->is_simple()==0){
+            cout<<i<<endl;
+            break;
+        }
+        cout<<"DONE WHAT?"<<endl;
+    }
+    // for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
+    //     cout<<*vi<<endl;
+    // }
+    // cout<<"----"<<endl;
+    // for(VertexIterator vi=polygons.at(1).vertices_begin();vi!=polygons.at(1).vertices_end();vi++){
+    //     cout<<*vi<<endl;
+    // }
+    // cout<<polygon->is_simple()<<endl;
 }
