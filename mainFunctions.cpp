@@ -53,7 +53,6 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                     points->at(j)=points->at(j-1);
                     points->at(j-1)=temp;
                 }
-                cout<<"!!!"<<endl;
                 break;
             }
         }
@@ -68,10 +67,8 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                     break;
                 }
             }
-            cout<<"--"<<endl;
             continue;
         }
-        cout<<"---"<<endl;
 
         // find the current Point we want to insert
         Point currentPoint= points->at(i);
@@ -115,17 +112,11 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
             if(positionStart<=positionEnd){    
                 // the edges between the start and end check if they are visible
                 for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
-                    cout<<*positionStart<<"-" <<*positionEnd<<endl;
                     if(flagSub){
-                        cout<<"----"<<endl;
-                        cout<<mostRight<<"=="<<ei->point(1)<<endl;
-                        cout<<mostLeft<<"=="<<ei->point(0)<<endl;
-
                         if(mostRight==ei->point(1))
                             continue;
                         if(mostLeft == ei->point(0))
                             continue;
-                        cout<<"----!"<<endl;
                     }
 
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
@@ -210,7 +201,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
             remainingPoints.push_back(points->at(k));
         }
     }
-
     vector<Point> LH;
     CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
     vector<Point> UH;
@@ -233,8 +223,16 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
                     if(flagSub){
-                        if(ei->point(0) == mostRight || ei->point(1) == mostLeft)
+                        if(polygon->is_counterclockwise_oriented()==1){
+                            polygon->reverse_orientation();
+                        }
+                        if(ei->point(0) == mostRight || ei->point(1) == mostLeft){
                             continue;
+                        }
+                        if(polygon->is_counterclockwise_oriented()==0){
+                            polygon->reverse_orientation();
+                        }
+                            
                     }
                     if((checkVisibility(polygon, remainingPoints.at(i), ei->point(0)))&&(checkVisibility(polygon,remainingPoints.at(i), ei->point(1)))){
                         min=distance;
@@ -247,7 +245,9 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
                 pairs.push_back(newPair);
             }
         }
-
+        if(polygon->is_counterclockwise_oriented()==0){
+            polygon->reverse_orientation();
+        }
         //the program exits if no pair can be found, as was requested to do in one of the threads in eclass
         if(pairs.size() == 0){
             cout << "reached deadend --- about to exit"<< endl;;
@@ -291,5 +291,7 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
             delete pairs.at(i);
         }        
     }
+    cout <<"most left = " << mostLeft << endl;
+    cout <<"most right = " << mostRight << endl;
 }
 

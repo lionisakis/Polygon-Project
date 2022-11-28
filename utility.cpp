@@ -204,17 +204,44 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
         if(ei->point(1) == left )
             left2 = ei->point(0);
     }
+
+
     //compute the area that we have to add
-    total+=triangularAreaCalculation(path->at(0), left2, right2);
-    for(int i=1; i<length; i++){
-        total+=triangularAreaCalculation(path->at(i), path->at(i-1), right2);
+    Polygon tmpPlus;
+    tmpPlus.push_back(left2);
+    tmpPlus.push_back(right2);
+    if((path->size()==2 ) && (path->at(0) == path->at(1)))
+        tmpPlus.push_back(path->at(0));
+    else{
+        for(int i=path->size()-1; i>=0; i--){
+            //cout << "path = " << path->at(i) << endl;
+            tmpPlus.push_back(path->at(i));
+        }
+        
     }
+    if(tmpPlus.is_simple() == 0){
+        cout <<"not simple" << endl;
+    }
+    total+=abs(tmpPlus.area());
+
+
+
 
     //compute the area that we will lose
-    total-=triangularAreaCalculation(path->at(0), edge.point(0), edge.point(1));
-    for(int i=1; i<length; i++){
-        total-=triangularAreaCalculation(path->at(i), path->at(i-1), edge.point(0));
+    Polygon tmpMinus;
+    tmpMinus.push_back(edge.point(1));
+    if((path->size()==2 ) && (path->at(0) == path->at(1)))
+        tmpMinus.push_back(path->at(0));
+    else{
+        for(int i=0; i<path->size(); i++){
+            tmpMinus.push_back(path->at(i));
+        }
     }
+    tmpMinus.push_back(edge.point(0));
+    if(tmpMinus.is_simple() == 0){
+        cout <<"not simple2" << endl;
+    }
+    total-=abs(tmpMinus.area());
     return total;
 }
 

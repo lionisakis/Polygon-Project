@@ -94,7 +94,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                     changes.push_back(newChange);
 
                     // until we have gone out of bounds do this
-                    for (VertexIterator vi2 = vi; vi2 != polygon->vertices_end(); ++vi2){
+                    for (VertexIterator vi2 = vi+1; vi2 != polygon->vertices_end(); ++vi2){
                         path.push_back(*vi2);
 
                         // check if the path is ok with the size
@@ -169,7 +169,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         changes.push_back(newChange);
 
                         // until we have gone out of bounds do this
-                        for (VertexIterator vi2 = vi; vi2 != polygon->vertices_end(); ++vi2){
+                        for (VertexIterator vi2 = vi+1; vi2 != polygon->vertices_end(); ++vi2){
                             path.push_back(*vi2);
 
                             // check if the path is ok with the size
@@ -570,7 +570,6 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             convexHull(&polygons.at(i), &points2, greedyEdge, &area, 1);
         }
 
-        
         //find leftmost, rightmost point of subset so that we dont break the marked edges
         vector<Point> LH;
         CGAL::lower_hull_points_2(points2.begin(), points2.end(), back_inserter(LH));
@@ -602,8 +601,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         // globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, points2.size(), initialEnergy, chArea2, &mostLeft, &mostRight, 1);
         // cout <<"done with global" << endl;
         // cout <<"---------" << endl;
-        // for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
-        //     cout << *ei << endl;
+        for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
+            cout << *ei << endl;
         // cout <<"---------" << endl;
         cout << "simple =  " << polygons.at(i).is_simple() << endl;
     }
@@ -624,6 +623,9 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     // for the other polygons
     for(int i=1;i<polygons.size();i++){
         // take the current polygon
+        if(polygons.at(i).is_clockwise_oriented()==0){
+            polygons.at(i).reverse_orientation();
+        }
         Polygon* current=&polygons.at(i);
 
         // the polygon
@@ -635,7 +637,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
 
         cout<<"----"<<endl;
         // find p and q
-        Point q;
+        Point q, r;
         VertexIterator p,next;
         for(VertexIterator vAll=polygon->vertices_begin();vAll!=polygon->vertices_end();vAll++){
             for(VertexIterator vCurrent=current->vertices_begin();vCurrent!=current->vertices_end();vCurrent++){
@@ -657,6 +659,14 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                     else{
                         next=vCurrent+1;
                     }
+
+                    //find r
+                    if(vCurrent==current->vertices_begin()){
+                        r = *(current->vertices_end()-1);
+                    }
+                    else{
+                        r = *(vCurrent-1);
+                    }
                 }
             }
         }
@@ -669,14 +679,36 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             cout<<"count= "<<count<<" vCurrent2:"<<*vCurrent2<<endl;
             for(VertexIterator vAll=polygon->vertices_begin();vAll!=polygon->vertices_end();vAll++){
                 if(*vAll==temp){
-                    // cout<<*vAll<<endl;
                     polygon->insert(vAll,*vCurrent2);
+                    if(polygon->is_simple()==0){
+                        break;
+                    }
                     break;
                 }
             }
             cout<<"Inserted\n";
             count++;
-            temp=*vCurrent2;
+            //temp=*vCurrent2; //may need changing
+        }
+
+        //if we are in case \/ then remove q and insert it by breaking edge pr
+        if(temp.y()>q.y() && r.y()>q.y()){
+            cout <<"fixing " << q <<endl;
+            for(VertexIterator vAll2=polygon->vertices_begin();vAll2!=polygon->vertices_end();vAll2++){
+                if(*vAll2==q){
+                    polygon->erase(vAll2);
+                    break;
+                }
+                
+            }
+            for(VertexIterator vAll3=polygon->vertices_begin();vAll3!=polygon->vertices_end();vAll3++){
+                if(*vAll3==r){
+                    cout <<"inserted"<< endl;
+                    polygon->insert(vAll3, q);
+                    break;
+                }
+                
+            }
 
         }
 
@@ -692,17 +724,18 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                     break;
                 }
             }
-            temp=*vCurrent2;
+            //temp=*vCurrent2;
             count++;
         }
 
         cout<<"i="<<i<<endl;
         cout<<"simple="<<polygon->is_simple()<<endl;
         cout<<"------"<<endl;
-        // for(EdgeIterator ei=polygon->edges_begin();polygon->edges_end()!=ei;ei++)
-        //     cout<<*ei<<endl;
-        if(polygon->is_simple()==0)
+        if(polygon->is_simple()==0){
+            for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei)
+                cout << *ei << endl;
             break;
+        }
     }
 
 }
