@@ -222,7 +222,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         for(int i=1;i<changes.size();i++){
             // max
             if (typeOfOptimization==1 && temp<changes.at(i)->getArea()){
-                temp=changes.at(i)->getArea();
+                temp=changes.at(i)->getArea();                                                                                                                                                                                    
                 theChange=changes.at(i);
             }
             // min
