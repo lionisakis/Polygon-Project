@@ -231,7 +231,6 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 theChange=changes.at(i);
             }
         }
-
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
@@ -536,9 +535,22 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         
         //when we are not in the last subset add m points
         if(i<k-1){
+            int temp=0;
+            vector<Point> temporary;
+            for(int j=0; j<m-1; j++){
+                temporary.push_back(points->at(temp));
+                temp++;
+            }
+            vector<Point> UH;
+            CGAL::upper_hull_points_2(temporary.begin(), temporary.end(), back_inserter(UH));
+
             for(int j=0; j<m-1; j++){
                 points2.push_back(points->at(count));
                 count++;
+                if(points->at(count-1)==UH.at(0)){
+                    cout <<"j = " << j << " m-1= " << m-1 << endl;
+                    break;
+                }
             }
         }
         //when we are in the second to last subset and the remaining points are less than 3 add them to this one

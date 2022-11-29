@@ -226,7 +226,6 @@ int main(int argc, char* argv[]){
     }
     else if (algo==2){
         int initialEnergy;
-        cout <<"anne " << annealing << endl; 
         if (annealing!=3){
             //this has to be changed
             if(algo2 == 2)
