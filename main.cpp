@@ -247,11 +247,12 @@ int main(int argc, char* argv[]){
         else{
 
             if(max){
-                subdivision(&p, &allPoints, 1, L, &pArea2, allPoints.size(), chArea, algo2, edge, m);
+                subdivision(&p, &allPoints, 1, L, &pArea2, allPoints.size(), chArea, algo2, edge, m, &pArea);
             }
             else if (min){
-                subdivision(&p, &allPoints, 2, L, &pArea2, allPoints.size(), chArea, algo2, edge, m);
+                subdivision(&p, &allPoints, 2, L, &pArea2, allPoints.size(), chArea, algo2, edge, m, &pArea);
             }
+            ratio = ((double)pArea/(double)chArea);
         }
             
     }

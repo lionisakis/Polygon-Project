@@ -238,14 +238,16 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
 }
-void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, Point* mostLeft, Point* mostRight, int flagSub=0){
+void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, int flagSub=0){
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
     Segment left,right;
+    Point mostLeft;
+    Point mostRight;
     if(flagSub){
-        Point mostLeft =*polygon->left_vertex();
-        Point mostRight =*polygon->right_vertex();
+        mostLeft =*polygon->left_vertex();
+        mostRight =*polygon->right_vertex();
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             if(ei->point(1)==mostLeft){
                 left=*ei;
@@ -255,6 +257,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             }
         }   
     }
+
     double T=1;
     int currEnergy;
     int prevEnergy=initialEnergy;
@@ -296,6 +299,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                     t=polygon->vertices_begin();
                 else
                     t=s+1;
+                
             }
             tmp++;
         }
@@ -314,14 +318,25 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         
         //check if st is one of the marked edges
         if(flagSub){
-            if(*st == left)
+            if(*s == mostRight)
                 valid=0;
-            else if(*st == right)
+            if(*t == mostLeft)
+                valid=0;
+            if(mostRight == *q)
+                valid=0;
+            if(mostLeft == *q)
+                valid=0;
+            if(mostRight == *p)
+                valid=0;
+            if(mostLeft == *p)
+                valid=0;
+            if(mostRight == *r)
+                valid=0;
+            if(mostLeft == *r)
                 valid=0;
         }
 
         if(valid){
-            // cout <<"valid" << endl;
             currArea = abs(polygon->area());
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
@@ -345,7 +360,6 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             }
 
             T=T-1/L;
-            // cout <<"T= " << T<<endl;
             prevEnergy = currEnergy;
             *finalArea=currArea;
         }
@@ -457,7 +471,6 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
         
         break;
     }
-    cout<<"Return:"<<*q<<endl;
     return q;
 }
 
@@ -466,7 +479,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
-
     Tree kd;
     for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end();vi++)
         kd.insert(*vi);
@@ -510,7 +522,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
         cout<<"simple = "<<polygon->is_simple()<<endl;
         if(polygon->is_simple()==0)
             break;
-        cout<<"-----\n";
         T=T-1/L;
         *finalArea=currArea;
         prevEnergy = currEnergy;
@@ -527,13 +538,13 @@ void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int
     }
     //global step
     else if(typeOfStep==2){
-        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea, NULL, NULL);
+        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
     }
 }
 
 //greedyAlgo=1: incremental, greedyAlgo=2: convex hull
 //greedyEdge=1: random, =2:min, =3:max
-void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, double L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m){
+void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, double L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m, int* initialArea){
     sortPoints(points, 2);
     double area;
     int howManyToAdd=m-1;
@@ -595,7 +606,6 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             offset++;
         }
         offset--;
-
         if(greedyAlgo==1){
             vector<Point>temp=current;
             Segment segments[2];
@@ -611,9 +621,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                     segments[1]=Segment(current.at(i),right);
                 }
             }
-            cout<<"---"<<endl;
             int result=incremental(&polygons.at(i), &temp, 2, greedyEdge, &area, 1, segments);
-            cout<<"!!!"<<endl;
             if(result){
                 VertexIterator vi=polygons.at(i).vertices_begin();
                 while(vi!=polygons.at(i).vertices_end())
@@ -625,7 +633,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         else{
             convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
         }
-
+        
 
         Point mostLeft, mostRight;
         mostLeft = current.at(0);
@@ -649,13 +657,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             tmp.push_back(KP2.at(w));
 
         int chArea2 = abs(tmp.area());
-        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, current.size(), initialEnergy, chArea2, &mostLeft, &mostRight, 1);
-        cout <<"done with global" << endl;
-        cout <<"---------" << endl;
-        for (EdgeIterator ei = polygons.at(i).edges_begin(); ei != polygons.at(i).edges_end(); ++ei)
-            cout << *ei << endl;
-        cout <<"---------" << endl;
-        cout << "simple =  " << polygons.at(i).is_simple() << endl;
+        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, current.size(), initialEnergy, chArea2, 1);
     }
     
     // just insert the first polygon
@@ -669,12 +671,13 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     
     // for the other polygons
     for(int i=1;i<runs;i++){
+        
         // take the current polygon
         Polygon* current=&polygons.at(i);
         if(current->is_clockwise_oriented()==0){
             current->reverse_orientation();
         }
-
+    
         // find p and q
         Point q, r;
         VertexIterator p,next;
@@ -698,18 +701,9 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                     else{
                         next=vCurrent+1;
                     }
-
-                    //find r
-                    if(vCurrent==current->vertices_begin()){
-                        r = *(current->vertices_end()-1);
-                    }
-                    else{
-                        r = *(vCurrent-1);
-                    }
                 }
             }
         }
-        
         int count=0;
         Point temp=*p;
         int flagQ=0;
@@ -736,7 +730,6 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             for(VertexIterator vCurrent2=current->vertices_begin();*vCurrent2!=q;vCurrent2++){
                 for(VertexIterator vAll=polygon->vertices_begin();vAll!=polygon->vertices_end();vAll++){
                     if(*vAll==temp){
-                        // cout<<*vAll<<endl;
                         polygon->insert(vAll,*vCurrent2);
                         break;
                     }
@@ -744,14 +737,19 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                 count++;
             }
         }
+        if(polygon->is_simple()==0){
+            cout <<"problem and i = "<< i << endl;
+        }
 
     }
-        
+    
+    //apply local step 
     int initialEnergy;
+    *initialArea = abs(polygon->area());
     if(typeOfOptimization == 1)
-        initialEnergy = maxEnergy(countPoints, abs(polygon->area()), chArea);
+        initialEnergy = maxEnergy(countPoints, *initialArea, chArea);
     else if(typeOfOptimization == 2)
-        initialEnergy = minEnergy(countPoints, abs(polygon->area()), chArea);
+        initialEnergy = minEnergy(countPoints, *initialArea, chArea);
     localMinimum(polygon,typeOfOptimization,L,finalArea,countPoints,initialEnergy,chArea);
 
 }
