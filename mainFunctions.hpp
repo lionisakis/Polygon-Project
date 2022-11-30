@@ -7,8 +7,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
 typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Segment_2<K> Segment;
 
 
-void incremental(Polygon* ,std::vector<Point>* , int , int ,double* , int flagSub=0);
+int incremental(Polygon* ,std::vector<Point>* , int , int ,double* , int flagSub=0,Segment* leftRight=NULL);
 void convexHull(Polygon* , std::vector<Point>* , int , double*, int flagSub=0);
 

@@ -24,52 +24,90 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 
 //flagSub=0: normal incremental, flagSub=1: incremental for subdivision
-void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area, int flagSub=0){
+int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area, int flagSub=0,Segment* leftRight=NULL){
     // make the triangle and short the points
-    Point mostLeft, mostRight;
-    vector<Point> LH;
-    vector<Point> UH;
-    if(!flagSub)
+    if(!flagSub){
         coordinatesSorting(polygon,points,sorting,area);
-    else{
-        cout<<"!"<<endl;
-        CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
-        CGAL::upper_hull_points_2(points->begin(), points->end(), back_inserter(UH));
-
-        mostLeft = LH.at(0);
-        mostRight = UH.at(0);
         polygon->push_back(points->at(0));
         polygon->push_back(points->at(1));
-        cout<<"!!"<<endl;
-        // so we are not collinear for KP reasons
-        for(int i=2;i<points->size();i++){
-            Point third=points->at(i);
-            // if they are not collinear
-            if (! CGAL::collinear(points->at(0),points->at(1),third)){
-                polygon->push_back(third);
-                // swap go to the 3rd position of points so we have almost sorted points
-                for(int j=i;j>2;j--){
-                    Point temp=points->at(j);
-                    points->at(j)=points->at(j-1);
-                    points->at(j-1)=temp;
-                }
+    }
+    else{
+        // it is clockwise so r->q
+        Point r=leftRight[0].point(1);
+        polygon->push_back(r);
+        polygon->push_back(points->at(0));
+        
+        // find posLeft
+        int posLeft;
+        for(int i=0;i<points->size();i++){
+            if(points->at(i)==r){
+                posLeft=i;
                 break;
             }
         }
-        *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
+        
+        // swap the r to be the first point
+        for(int i=0;i<posLeft;i++){
+            // swap go to the 3rd position of points so we have almost sorted points
+            for(int j=i;j>1;j--){
+                Point temp=points->at(j);
+                points->at(j)=points->at(j-1);
+                points->at(j-1)=temp;
+            }
+        }
     }
+
+    // so we are not collinear for KP reasons
+    for(int i=2;i<points->size();i++){
+        Point third=points->at(i);
+        // if they are not collinear
+        if (! CGAL::collinear(points->at(0),points->at(1),third)){
+            polygon->push_back(third);
+            // swap go to the 3rd position of points so we have almost sorted points
+            for(int j=i;j>2;j--){
+                Point temp=points->at(j);
+                points->at(j)=points->at(j-1);
+                points->at(j-1)=temp;
+            }
+            break;
+        }
+    }
+    *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
+
     cout<<"-"<<endl;
     for (int i=3;i<points->size();i++){
-        if(flagSub && (points->at(i) == mostLeft)){
+        if(flagSub&& i==points->size()-1){
+            Point p=leftRight[1].point(0);
+            Point q=leftRight[1].point(1);
+            EdgeIterator ei;
+            for (ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                if(ei->point(0)==p)
+                    break;
+            }
+            vector<Segment> reachable;
+            if((checkVisibility(polygon, q, ei->point(0)))&&(checkVisibility(polygon, q, ei->point(1)))){  
+                reachable.push_back(*ei);
+            }
+
+            if(reachable.size()==0){
+                cout<<"Incremental no. Need convex_hull\n";
+                return 1;
+            }
+            // select one edge
+            Segment newEdge = visibleEdgeSelector(q, &reachable, edge,area);
+            if(polygon->is_clockwise_oriented()==0){
+                polygon->reverse_orientation();
+            }
+
+            // and add it in the polygon
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
-                if(*vi==LH.at(1)){
-                    polygon->insert(vi, points->at(i));
+                if(*vi==newEdge.point(0)){
+                    polygon->insert(vi, q);
                     break;
                 }
             }
-            continue;
+            return 0;
         }
-
         // find the current Point we want to insert
         Point currentPoint= points->at(i);
 
@@ -113,9 +151,9 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                 // the edges between the start and end check if they are visible
                 for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
                     if(flagSub){
-                        if(mostRight==ei->point(1))
+                        if(leftRight[0] == *ei)
                             continue;
-                        if(mostLeft == ei->point(0))
+                        else if(leftRight[1] == *ei)
                             continue;
                     }
 
@@ -131,9 +169,9 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                 // [start,...,finish] 
                 for(EdgeIterator ei=positionStart;ei!=polygon->edges_end();ei++){
                     if(flagSub){
-                        if(mostRight==ei->point(1))
+                        if(leftRight[0] == *ei)
                             continue;
-                        if(mostLeft == ei->point(0))
+                        else if(leftRight[1] == *ei)
                             continue;
                     }
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
@@ -143,9 +181,9 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
                 // [begin,...,end]
                 for(EdgeIterator ei=polygon->edges_begin();ei<=positionEnd;ei++){
                     if(flagSub){
-                        if(mostRight==ei->point(1))
+                        if(leftRight[0] == *ei)
                             continue;
-                        if(mostLeft == ei->point(0))
+                        else if(leftRight[1] == *ei)
                             continue;
                     }
                     if((checkVisibility(polygon, currentPoint, ei->point(0)))&&(checkVisibility(polygon, currentPoint, ei->point(1)))){  
@@ -174,6 +212,7 @@ void incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,d
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
+    return 0;
 }
 
 //flagSub=0: normal convex hull, flagSub=1: convex hull for subdivision
@@ -202,18 +241,28 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
         }
     }
 
-    //may need changing we will see!!!!!!
-    vector<Point> LH;
-    CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
-    vector<Point> UH;
-    CGAL::upper_hull_points_2(points->begin(), points->end(), back_inserter(UH));
-
-    Point mostLeft, mostRight;
+    Segment left, right;
     if(flagSub){
-        mostLeft = LH.at(0);
-        mostRight = UH.at(0);
-    }
+        if(polygon->is_clockwise_oriented()==0){
+            polygon->reverse_orientation();
+        }
 
+        Point mostLeft = points->at(0);
+        Point mostRight = points->at(points->size()-1);
+        for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            if(ei->point(1)==mostLeft){
+                left=*ei;
+            }
+            if(ei->point(0)==mostRight){
+                right=*ei;
+            }
+        }   
+
+        if(polygon->is_counterclockwise_oriented()==0){
+            polygon->reverse_orientation();
+        }
+    }
+    
     while(remainingPoints.size()!=0){
         vector<edgePointPair*> pairs;
         //for every edge of polygon A find its closet point and create a pair that contains the edge the closest point and the area of the polygon that will be created
@@ -224,16 +273,12 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
                     if(flagSub){
-                        if(polygon->is_counterclockwise_oriented()==1){
-                            polygon->reverse_orientation();
-                        }
-                        if(ei->point(0) == mostRight || ei->point(1) == mostLeft){
+                        if(ei->point(0) == left.point(1)&&ei->point(1) == left.point(0)){
                             continue;
                         }
-                        if(polygon->is_counterclockwise_oriented()==0){
-                            polygon->reverse_orientation();
+                        else if(ei->point(0) == right.point(1)&&ei->point(1) == right.point(0)){
+                            continue;
                         }
-                            
                     }
                     if((checkVisibility(polygon, remainingPoints.at(i), ei->point(0)))&&(checkVisibility(polygon,remainingPoints.at(i), ei->point(1)))){
                         min=distance;

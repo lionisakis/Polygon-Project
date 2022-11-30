@@ -30,8 +30,6 @@ double triangularAreaCalculation(Point point0, Point point1, Point point2){
     return det/2;
 }
 
-
-
 //1: x decreasing 
 //2: x increasing 
 //3: y decreasing
