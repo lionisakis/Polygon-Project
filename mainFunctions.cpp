@@ -201,6 +201,8 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
             remainingPoints.push_back(points->at(k));
         }
     }
+
+    //may need changing we will see!!!!!!
     vector<Point> LH;
     CGAL::lower_hull_points_2(points->begin(), points->end(), back_inserter(LH));
     vector<Point> UH;
@@ -219,26 +221,13 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
             double min=INFINITY;
             int place;
             for(int i=0; i<remainingPoints.size(); i++){
-                // int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
-                    if(flagSub==1){
+                    if(flagSub){
                         if(polygon->is_counterclockwise_oriented()==1){
                             polygon->reverse_orientation();
                         }
                         if(ei->point(0) == mostRight || ei->point(1) == mostLeft){
-                            continue;
-                        }
-                        if(polygon->is_counterclockwise_oriented()==0){
-                            polygon->reverse_orientation();
-                        }
-                            
-                    }
-                    else if(flagSub==2){
-                        if(polygon->is_counterclockwise_oriented()==1){
-                            polygon->reverse_orientation();
-                        }
-                        if(ei->point(1) == mostRight || ei->point(0) == mostLeft){
                             continue;
                         }
                         if(polygon->is_counterclockwise_oriented()==0){
@@ -303,7 +292,5 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
             delete pairs.at(i);
         }        
     }
-    cout <<"most left = " << mostLeft << endl;
-    cout <<"most right = " << mostRight << endl;
 }
 
