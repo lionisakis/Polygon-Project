@@ -222,11 +222,23 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
                 // int distance = CGAL::sqrt(CGAL::squared_distance(remainingPoints.at(i), ei));
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
-                    if(flagSub){
+                    if(flagSub==1){
                         if(polygon->is_counterclockwise_oriented()==1){
                             polygon->reverse_orientation();
                         }
                         if(ei->point(0) == mostRight || ei->point(1) == mostLeft){
+                            continue;
+                        }
+                        if(polygon->is_counterclockwise_oriented()==0){
+                            polygon->reverse_orientation();
+                        }
+                            
+                    }
+                    else if(flagSub==2){
+                        if(polygon->is_counterclockwise_oriented()==1){
+                            polygon->reverse_orientation();
+                        }
+                        if(ei->point(1) == mostRight || ei->point(0) == mostLeft){
                             continue;
                         }
                         if(polygon->is_counterclockwise_oriented()==0){
