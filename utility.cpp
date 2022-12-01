@@ -15,6 +15,8 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 
 using namespace std;
+
+//computes the area of a triangle
 double triangularAreaCalculation(Point point0, Point point1, Point point2){
     
     // det|a b; c d|
@@ -68,6 +70,12 @@ void swap(Point* a, Point* b,int type){
         }
     }
 }
+
+//sort points in a vector based on type=
+//1: x decreasing 
+//2: x increasing 
+//3: y decreasing
+//4: y increasing
 void sortPoints(vector<Point>* points, int type){
     for (int i=0;i<points->size();i++){
         for(int j=i+1;j<points->size();j++){
@@ -76,6 +84,7 @@ void sortPoints(vector<Point>* points, int type){
     }
 }
 
+//sort points based on type and then create a triangle from the first 3 points
 void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* area){
     for (int i=0;i<points->size();i++){
         for(int j=i+1;j<points->size();j++){
@@ -105,7 +114,10 @@ void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* 
     *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
 }
 
-
+//choose from a list of various visible edges based on type=
+//1:choose randomly
+//2: choose the one that minimizes area
+//3: chooses the onat that maximizes area
 Segment visibleEdgeSelector(Point newPoint,vector<Segment>* vector, int type,double* area){
     Segment theValue;
     if (type==1){
@@ -189,7 +201,7 @@ int checkRed(vector<Point>* KP, Point newPoint, Point checkPoint){
 }
 
 //it has to be clockwise!!!
-//TODO: change function, create polygon and use triangle area
+//calculate the area that will be added/substracted to the total area of the polygon if we move the path in order to break edge u1u2
 double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, vector<Point>* path){
     double total=0;
     Point left2; //neighbour of left point 
@@ -243,16 +255,19 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     return total;
 }
 
+//calculate energy for maximization problem
 double maxEnergy(int n , int polygonArea, int chArea){
     double tmp = (double)polygonArea/(double)chArea;
     return n*tmp;
 }
 
+//calculate energy for minimization problem
 double minEnergy(int n, int polygonArea ,int chArea){
     double tmp = (double)polygonArea/(double)chArea;
     return n*(1-tmp);
 }
 
+//implement that change that we chose, move path V between u1u2
 void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     Point left=edge->getLeft();
     Point right=edge->getRight();
@@ -304,6 +319,7 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     }
 }
 
+//see if metropolis criterion holds
 int Metropolis(double DE,double T){    
     double R =(double)rand() / (double)((unsigned)RAND_MAX + 1);
     return exp(-DE/T)>R;

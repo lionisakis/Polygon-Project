@@ -238,6 +238,9 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     }
 
 }
+
+//typeOfOptimization=1:max, =2:min
+//flagSub=1: called for subdivison-have to maintain certain edges =0: no subdivision
 void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, int flagSub=0){
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -544,6 +547,7 @@ void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int
 
 //greedyAlgo=1: incremental, greedyAlgo=2: convex hull
 //greedyEdge=1: random, =2:min, =3:max
+//m=[10,100]
 void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, double L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m, int* initialArea){
     sortPoints(points, 2);
     double area;
