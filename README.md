@@ -58,8 +58,8 @@ There are stored the following:
 ***Important the command line arguments have to be given correctly and only in that order. The Initialization is needed only for the incremental algorithm.***
 
 # Files - Description
-There are 4 different code files: main,mainFunctions, edgePointpair and utility.
-The last 3 have header files of the same name, in these header files can be found the definions of the functions implemented in the code files and the #include and typedef that are necessary for these functions. 
+There are 6 different code files: main,mainFunctions, mainFunctions2, edgeChange, edgePointpair and utility.
+The last 5 have header files of the same name, in these header files can be found the definions of the functions implemented in the code files and the #include and typedef that are necessary for these functions. 
 
 ### Main 
 The main handles the input and then calls the appropriate algorithm function, and then makes the output.
@@ -73,9 +73,28 @@ The main handles the input and then calls the appropriate algorithm function, an
 #### Concex Hull
 The algorithm creates the convex hull of the polygon and initializes the polygon based on that, then until there are no internal points left, for each edge of the polygon we find its closest point(for this point the edge must be visible) and based on the edge selection we choose which edge we are going to break.
 
+### Main Functions2
+    Here lies the implementation of the local search algorithm and the simulated annealing with all 3 different versions(local step, global step and subdivison). Local search and  simulated annealing with global or local step take as input a polygon already constructed by one of the previous greedy algorithms(incremental or convex-hull) for all n starting points. Whereas simulated annealing with subdivision does not require that. Which greedy algorithm is to be used has to be specified in the command line arguments. 
+
+#### Local Search
+  The algorithm finds for every edge of the current polygon all valid paths with length <=L(L is given in the command line), the change is implemented as such: "Move path V = v1,...,vk, of k ≥ 1 vertices (in reverse order) between the endpoints of u1u2. This edge is replaced by a detour to include V.The 2 prior edges linking the chain to V are replaced by a single edge (top)." A path is considered valid if the change retains the simplicity of the polygon. We store all possible changes for the current polygon in a vector of type edgeChange, we choose which change we are going to implement based on the typeOfOptimization(max or min, given in command line arguments). For files with a lot of starting points n>50, we randomly choose 10 edges and search valid paths only for these 10 edges, as the algorithm in case we want to search for all edges becomes really slow. The threshold musy also be given by the user in the command line arguments. Changes are applied while DA>threshold where DA is the abs(previousPolygon.area() - currentPolygon.area()).
+
+#### Simulated Annealine with local step
+  The algorithm randomly chooses a point q and we swap its position with its succesor t. Let p the point that precedes q, and s the point that succeeds r.The resulting polygon is valid iff (a) the new edges pr, qs do not intersect each other, (b) these edges do not intersect another edge in the chain. To check the validity of the change we make use of the kd Tree class from the CGAL library. We aplly the transition only when DE<0 or the Metropolis criterion is satisfied, where DE=prevEnerg-currEnergy. The total number of valid changes that have to be found and considered for impementation are L(given as command line argument from user).
+
+#### Simulated Annealine with global step
+  The algorithm randomly chooses 2 points q, s.  Let p, r be the points that precede and succeed q resp., and let t be the point after s. Connect p and r (removing q from the chain); insert q between s and t. The resulting polygon is valid iff (a) the new edge pr does not intersect the other new edges sq, qt, (b) each of these new edges does not intersect another edge. We aplly the transition only when DE<0 or the Metropolis criterion is satisfied, where DE=prevEnerg-currEnergy. The total number of valid changes that have to be found and considered for impementation are L(given as command line argument from user).
+
+#### Simulated Annealine with subdivion
+  The algorithm separates the n points in k=ceil([n-1]/[m-1]) subsets of approximately m points each(m is given from user in command line arguments). But we make sure hat in every subset’s Lower Hull, the rightmost edge (e.g. qp) and the leftmost edge (e.g. qr), except in the last or the first subset, resp., is strictly monotone increasing or decreasing resp. (by y). Before we create the k subsets we order the n points according to x increasing, and then divide them. For each subset a greedy algorithm is called to constuct the initial polygon(we have modified the incremental and convex hull so as to to maintain the leftmost and rightmost edge descriped above). For each of the polygons constructed we apply the simulated annealing with global step(again we maintain the afformentioned edges). After all k polygons have been created and optimized with the global step, we connect them into one polygon. At last, we apply simulated annealing with local step on this polygon. 
+
+
 
 ### edgePointPair
   Here can be found our implementation of class edgePointPair, which we use in the convex hull algorithm. In this class we store 1)an edge,  2) its closest point that has not been added to the polygon yet and for which the edge is reachable and 3) the area that we will have to subtrack from the polygon if we choose to break this edge.
+
+### edgeChange
+  Here can be found our implementation of class edgeChange, which we use in the local search algorithm. In this class we store 1)the edge u1u2 that is to be broken,  2,3) the first and last vertex of the path with length <=L that is valid for this edge> 4) the area that we will have to add/substract to the polygon if we choose to break this edge.
 
 
 ### Utility
