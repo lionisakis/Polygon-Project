@@ -394,7 +394,7 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
             }
         }
         q=polygon->vertices_begin()+pos;
-        
+
         // find the next point
         if (q==polygon->vertices_end()-1)
             r=polygon->vertices_begin();
@@ -416,13 +416,21 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
         Segment pr=Segment(*p,*r);
         if(intersection(qs,pr))
             continue;
-        
+
         // do the search
         Fuzzy_box default_range1(*p,*r);
         std::vector<Point> result;
         kd->search(std::back_inserter( result ), default_range1);
         Fuzzy_box default_range2(*q,*s);
         kd->search(std::back_inserter( result ), default_range2);
+        cout <<"p = " << *p << endl;
+        cout <<"q = " << *q << endl;
+        cout <<"r = " << *r << endl;
+        cout <<"s = " << *s << endl;
+
+        // for(int k=0; k<result.size(); k++){
+        //     cout << result.at(k) << endl;
+        // }
         
         int flag=0;
         // check if there is a problem or not
@@ -430,22 +438,40 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
             Point x=result.at(i);
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 EdgeIterator seen=polygon->edges_end();
-                if(x==*s&&ei->point(1)==*s){
-                    seen=ei;
+                if(x==*r || x==*q || x==*p){
+                    continue;
                 }
-                else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
-                    seen=ei;
+                if(x ==*s && *s==ei->point(1))
+                    continue;
+                if(x == ei->point(0) || x == ei->point(1)){//may need removal
+                    if(ei->point(1)!=*p && ei->point(0) != *p && ei->point(1)!=*r && ei->point(0) != *r)
+                        seen = ei;
+                else
+                    continue;
                 }
+                // if(x==*s&&ei->point(0)==*s){//it was point(1)
+                //     seen=ei;
+                // }
+                // else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
+                //     seen=ei;
+                // }
                 if(seen!=polygon->edges_end()){
                     if(intersection(pr,*seen)){
                         flag=1;
+                        cout <<"prob"<<endl;
+                        cout << "pr = " << pr << endl;
+                        cout << "x = " << x << endl;
+                        cout <<"seen = " << *seen << endl;
+                        cout <<"seen0 = " << seen->point(0) << endl;
+                        cout <<"-----" << endl;
                         break;
                     }
+                    
                 }
             }
         }
         if (flag==1)
-            continue;        
+            continue;  
         
         // check if there is a problem or not
         flag=0;
@@ -454,12 +480,23 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
             Point x=result.at(i);
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 EdgeIterator seen=polygon->edges_end();
-                if(x==*p&&ei->point(0)==*p){
-                    seen=ei;
+                if(x==*s || x==*r || x==*q ){
+                    continue;
                 }
-                else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
-                    seen=ei;
+                if(x ==*p && *p==ei->point(0))
+                    continue;
+                if(x == ei->point(0) || x == ei->point(1)){//may need removal
+                    if(ei->point(1)!=*q && ei->point(0) != *q && ei->point(1)!=*s && ei->point(0) != *s)
+                        seen = ei;
                 }
+                else
+                    continue;
+                // if(x==*p&&ei->point(0)==*p){
+                //     seen=ei;
+                // }
+                // else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
+                //     seen=ei;
+                // }
                 if(seen!=polygon->edges_end()){
                     if(intersection(qs,*seen)){
                         flag=1;
@@ -491,8 +528,10 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
     int prevEnergy=initialEnergy;
     while (T>=0){
         VertexIterator q=localAlgorithm(polygon,&kd,countPoints);
-        if(q==polygon->vertices_end())
-            break;
+        if(q==polygon->vertices_end()){
+            T = T-1/L;
+            continue;
+        }
         VertexIterator r;
         if (q==polygon->vertices_end()-1)
             r=polygon->vertices_begin();
@@ -510,6 +549,7 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
 
         // do the transition
         double DE = currEnergy - prevEnergy;
+        cout <<"de = " << DE << endl;
         if(DE < 0 || Metropolis(DE,T)){//make function for metropolis
             Point temp=*r;
             Point x=*q;

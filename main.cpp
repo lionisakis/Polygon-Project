@@ -191,7 +191,7 @@ int main(int argc, char* argv[]){
     if (i==-1){
         allPoints.pop_back();
     }
-
+    cout <<"annealing = " << annealing << endl;
     cout <<"total points = " << allPoints.size() << endl;
 
     in.close();
@@ -226,8 +226,8 @@ int main(int argc, char* argv[]){
     }
     else if (algo==2){
         int initialEnergy;
+        cout <<"about to do greedy" << endl;
         if (annealing!=3){
-            //this has to be changed
             if(algo2 == 2)
                 convexHull(&p, &allPoints, edge, &ourArea);
             else if (algo2 == 1)
@@ -235,6 +235,7 @@ int main(int argc, char* argv[]){
 
         pArea = abs(p.area());//in this variable we store the area calculated by cgal function for the greedy solution
         ratio = ((double)pArea/(double)chArea);//ratio for the greedy solution
+        cout <<"done with greedy " << endl;
         if(max){
                 initialEnergy = maxEnergy(allPoints.size(), pArea, chArea);
                 simulated_annealing(&p, 1, L, &pArea2, allPoints.size(), annealing, initialEnergy, chArea);
