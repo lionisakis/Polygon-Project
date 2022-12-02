@@ -3,8 +3,7 @@
 !utility.hpp
 !main.cpp
 !README.md
-!runls.sh
-!runsa.sh
+!run.sh
 !mainFunctions.cpp
 !mainFunctions.hpp
 !edgePointPair.cpp

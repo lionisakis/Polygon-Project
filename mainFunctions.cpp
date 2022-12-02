@@ -92,7 +92,10 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             }
 
             if(reachable.size()==0){
-                return 1;
+                if(flagSub)
+                    return 1;
+                else
+                    exit(1);
             }
             // select one edge
             Segment newEdge = visibleEdgeSelector(q, &reachable, edge,area);
@@ -225,7 +228,7 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
 
 //flagSub=0: normal convex hull, flagSub=1: convex hull for subdivision
 //if flagsub=1 then vector points is ordered by x increasing
-void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, int flagSub=0){
+int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, int flagSub=0){
     
     //create convex hull and put it in the polygon
     vector<Point> KP;
@@ -305,7 +308,10 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
         //the program exits if no pair can be found, as was requested to do in one of the threads in eclass
         if(pairs.size() == 0){
             cout << "reached deadend --- about to exit"<< endl;;
-            exit(1);
+            if(flagSub)
+                return 1;
+            else
+                exit(1);
         }
         int choose;
         //based on the type of edge selection  choose the according pair
@@ -345,5 +351,6 @@ void convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area,
             delete pairs.at(i);
         } 
     }
+    return 0;
 }
 

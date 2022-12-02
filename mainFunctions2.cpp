@@ -631,11 +631,19 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                 while(vi!=polygons.at(i).vertices_end())
                     polygons.at(i).erase(vi);
     
-                convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
+                int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
+                if(result){
+                    cout<<"The polygon was not made so I cannot continue."<<endl;
+                    exit(1);
+                }
             }
         }
         else{
-            convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
+            int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
+            if(result){
+                cout<<"The polygon was not made so I cannot continue."<<endl;
+                exit(1);
+            }
         }
         
 

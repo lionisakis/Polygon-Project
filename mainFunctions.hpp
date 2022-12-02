@@ -11,5 +11,5 @@ typedef CGAL::Segment_2<K> Segment;
 
 
 int incremental(Polygon* ,std::vector<Point>* , int , int ,double* , int flagSub=0,Segment* leftRight=NULL);
-void convexHull(Polygon* , std::vector<Point>* , int , double*, int flagSub=0);
+int convexHull(Polygon* , std::vector<Point>* , int , double*, int flagSub=0);
 
