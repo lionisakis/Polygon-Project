@@ -15,7 +15,8 @@ There is a report file named "Report.md" where you can find our results and comm
 The command line arguments must be given strictly in the order described below. 
  
 # How to run the code for Local Search
-There is a bash script with the name `runls.sh` that you can run or modify the arguments to run the code.
+***run command ./run.sh 1***
+There is a bash script with the name `run.sh` that you can run or modify the arguments to run the code.
 Alternatively,  it can be run by following commands:
 ```
 cgal_create_CMakeLists -s main 
@@ -30,7 +31,8 @@ If you have already completed it, then you have to run only the command:
 ```
 
 # How to run the code for Simulated annealing
-There is a bash script with the name `runsa.sh` that you can run or modify the arguments to run the code.
+***run command ./run.sh 2***
+There is a bash script with the name `run.sh` that you can run or modify the arguments to run the code.
 Alternatively,  it can be run by following commands:
 ```
 cgal_create_CMakeLists -s main 
