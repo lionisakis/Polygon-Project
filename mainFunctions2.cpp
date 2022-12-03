@@ -189,7 +189,6 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         }
                         if(stop)
                             continue;
-
                             // do this when we have to start from the starting vertex again
                         for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
                             path.push_back(*vi2);
@@ -234,7 +233,6 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
-
     }
 
 }
@@ -418,52 +416,46 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
             continue;
 
         // do the search
-        Fuzzy_box default_range1(*p,*r);
+        Fuzzy_box default_range1(*q,*s);
         std::vector<Point> result;
         kd->search(std::back_inserter( result ), default_range1);
-        Fuzzy_box default_range2(*q,*s);
+        Fuzzy_box default_range2(*p,*r);
         kd->search(std::back_inserter( result ), default_range2);
-        cout <<"p = " << *p << endl;
-        cout <<"q = " << *q << endl;
-        cout <<"r = " << *r << endl;
-        cout <<"s = " << *s << endl;
+        Fuzzy_box default_range3(*p,*q);
+        kd->search(std::back_inserter( result ), default_range3);
+        Fuzzy_box default_range4(*r,*s);
+        kd->search(std::back_inserter( result ), default_range4);
+        Fuzzy_box default_range5(*p,*s);
+        kd->search(std::back_inserter( result ), default_range5);
+        Fuzzy_box default_range6(*r,*q);
+        kd->search(std::back_inserter( result ), default_range6);
 
-        // for(int k=0; k<result.size(); k++){
-        //     cout << result.at(k) << endl;
-        // }
+        for(int k=0; k<result.size(); k++){
+            cout << result.at(k) << endl;
+        }
         
         int flag=0;
         // check if there is a problem or not
         for(int i=0;i<result.size();i++){
             Point x=result.at(i);
+            if(x==*r || x==*q || x==*p){
+                continue;
+            }
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 EdgeIterator seen=polygon->edges_end();
-                if(x==*r || x==*q || x==*p){
-                    continue;
-                }
+                
                 if(x ==*s && *s==ei->point(1))
                     continue;
-                if(x == ei->point(0) || x == ei->point(1)){//may need removal
-                    if(ei->point(1)!=*p && ei->point(0) != *p && ei->point(1)!=*r && ei->point(0) != *r)
-                        seen = ei;
+                if(x ==*p && *p==ei->point(0))
+                    continue;
+                if(x == ei->point(0) || x == ei->point(1))
+                    seen = ei;
                 else
                     continue;
-                }
-                // if(x==*s&&ei->point(0)==*s){//it was point(1)
-                //     seen=ei;
-                // }
-                // else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
-                //     seen=ei;
-                // }
+                
                 if(seen!=polygon->edges_end()){
                     if(intersection(pr,*seen)){
                         flag=1;
-                        cout <<"prob"<<endl;
-                        cout << "pr = " << pr << endl;
-                        cout << "x = " << x << endl;
-                        cout <<"seen = " << *seen << endl;
-                        cout <<"seen0 = " << seen->point(0) << endl;
-                        cout <<"-----" << endl;
                         break;
                     }
                     
@@ -478,25 +470,19 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
 
         for(int i=0;i<result.size();i++){
             Point x=result.at(i);
+            if(x==*q || x==*r || x==*s){
+                continue;
+            }
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 EdgeIterator seen=polygon->edges_end();
-                if(x==*s || x==*r || x==*q ){
+                if(x ==*s && *s==ei->point(1))
                     continue;
-                }
                 if(x ==*p && *p==ei->point(0))
                     continue;
-                if(x == ei->point(0) || x == ei->point(1)){//may need removal
-                    if(ei->point(1)!=*q && ei->point(0) != *q && ei->point(1)!=*s && ei->point(0) != *s)
-                        seen = ei;
-                }
+                if(x == ei->point(0) || x == ei->point(1))
+                    seen = ei;
                 else
                     continue;
-                // if(x==*p&&ei->point(0)==*p){
-                //     seen=ei;
-                // }
-                // else if(x!=*s&&x!=*r&&x!=*q&&x!=*p){
-                //     seen=ei;
-                // }
                 if(seen!=polygon->edges_end()){
                     if(intersection(qs,*seen)){
                         flag=1;
@@ -549,7 +535,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
 
         // do the transition
         double DE = currEnergy - prevEnergy;
-        cout <<"de = " << DE << endl;
         if(DE < 0 || Metropolis(DE,T)){//make function for metropolis
             Point temp=*r;
             Point x=*q;

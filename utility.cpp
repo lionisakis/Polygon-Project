@@ -224,7 +224,6 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
         tmpPlus.push_back(path->at(0));
     else{
         for(int i=path->size()-1; i>=0; i--){
-            //cout << "path = " << path->at(i) << endl;
             tmpPlus.push_back(path->at(i));
         }
         
@@ -282,18 +281,15 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     vector<Point> points;
     VertexIterator vi=tempLeft;
     while(*vi!=right){
-        if(vi==polygon->vertices_end())
-            vi=polygon->vertices_begin();
+        
         Point temp=*vi;
         points.push_back(temp);
         polygon->erase(vi);
-        if(vi == polygon->vertices_begin()){
-            //cout << "hhh" << endl;
-        }
+        if(vi==polygon->vertices_end())
+            vi=polygon->vertices_begin();
     }
     points.push_back(right);
     polygon->erase(vi);
-    
     int count=0;
     Point prev;
     for (VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
