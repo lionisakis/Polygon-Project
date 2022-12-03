@@ -15,12 +15,12 @@ There is a report file named "Report.md" where you can find our results and comm
 The command line arguments must be given strictly in the order described below. 
  
 # How to run the code for Local Search
-***run command ./run.sh 1***
+***run command: ./run.sh 1***
 There is a bash script with the name `run.sh` that you can run or modify the arguments to run the code.
 Alternatively,  it can be run by following commands:
 ```
 cgal_create_CMakeLists -s main 
-cmake -DCGAL_DIR=/usr/lib/CGAL 
+cmake -DCGAL_DIR=/usr/lib/CGAL -DCMAKE_BUILD_TYPE=RELEASE
 make 
 ./main -i [path/input.txt] -o [path/output.txt] -algorithm local_search -L [1,10] -[min/max] -algorithm2 [incremental/convex_hull] -edge_selection [1,2,3] -initialization [1a,1b,2a,2b] (initialization is required only for the incremental)
 ```
@@ -31,12 +31,12 @@ If you have already completed it, then you have to run only the command:
 ```
 
 # How to run the code for Simulated annealing
-***run command ./run.sh 2***
+***run command: ./run.sh 2***
 There is a bash script with the name `run.sh` that you can run or modify the arguments to run the code.
 Alternatively,  it can be run by following commands:
 ```
 cgal_create_CMakeLists -s main 
-cmake -DCGAL_DIR=/usr/lib/CGAL 
+cmake -DCGAL_DIR=/usr/lib/CGAL -DCMAKE_BUILD_TYPE=RELEASE
 make 
 ./main -i [path/input.txt] -o [path/output.txt] -algorithm simulated_annealing -L [L>=1000] -[min/max] -annealing [local/global/subdivision] -algorithm2 [incremental/convex_hull] -edge_selection [1-2-3] -initialization [1a,1b,2a,2b] -m [10,100] (initialization only for incremental), (m only for annealing=subdivision)
 ```
@@ -79,7 +79,7 @@ There are stored the following:
 
 7. There are two types of optimization either max or min. 
 
-8. Command line argument m is required ***only*** for ***simulated annealing with subdivion***, has to be greater than 10 and less than 100. 
+8. Command line argument ***m**** is required ***only*** for ***simulated annealing with subdivion***, has to be greater than 10 and less than 100. 
 
 ***Important the command line arguments have to be given correctly and only in that order. The Initialization is needed only for the incremental algorithm.***
 
@@ -100,7 +100,7 @@ The main handles the input and then calls the appropriate algorithm function, an
 The algorithm creates the convex hull of the polygon and initializes the polygon based on that, then until there are no internal points left, for each edge of the polygon we find its closest point(for this point the edge must be visible) and based on the edge selection we choose which edge we are going to break.
 
 ### Main Functions2
-    Here lies the implementation of the local search algorithm and the simulated annealing with all 3 different versions(local step, global step and subdivison). Local search and  simulated annealing with global or local step take as input a polygon already constructed by one of the previous greedy algorithms(incremental or convex-hull) for all n starting points. Whereas simulated annealing with subdivision does not require that. Which greedy algorithm is to be used has to be specified in the command line arguments. Function checkPath is also implemented here, it checks if a givn path and edge u1u2 is a valid change, returns 0 for valid and 1 for invalid. 
+    Here lies the implementation of the local search algorithm and the simulated annealing with all 3 different versions(local step, global step and subdivison). Local search and  simulated annealing with global or local step take as input a polygon already constructed by one of the previous greedy algorithms(incremental or convex-hull) for all n starting points. Whereas simulated annealing with subdivision does not require that. Which greedy algorithm is to be used has to be specified in the command line arguments. Function checkPath is also implemented here, it checks if a given path and edge u1u2 is a valid change, returns 0 for valid and 1 for invalid. 
 
 #### Local Search
   The algorithm finds for every edge of the current polygon all valid paths with length <=L(L is given in the command line), the change is implemented as such: "Move path V = v1,...,vk, of k ≥ 1 vertices (in reverse order) between the endpoints of u1u2. This edge is replaced by a detour to include V.The 2 prior edges linking the chain to V are replaced by a single edge (top)." A path is considered valid if the change retains the simplicity of the polygon. We store all possible changes for the current polygon in a vector of type edgeChange, we choose which change we are going to implement based on the typeOfOptimization(max or min, given in command line arguments). For files with a lot of starting points n>50, we randomly choose 10 edges and search valid paths only for these 10 edges, as the algorithm in case we want to search for all edges becomes really slow. The threshold musy also be given by the user in the command line arguments. Changes are applied while DA>threshold where DA is the abs(previousPolygon.area() - currentPolygon.area()).

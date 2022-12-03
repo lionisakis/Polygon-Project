@@ -430,9 +430,6 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
         Fuzzy_box default_range6(*r,*q);
         kd->search(std::back_inserter( result ), default_range6);
 
-        for(int k=0; k<result.size(); k++){
-            cout << result.at(k) << endl;
-        }
         
         int flag=0;
         // check if there is a problem or not
@@ -547,7 +544,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             }
         }
 
-        cout<<"simple = "<<polygon->is_simple()<<endl;
         if(polygon->is_simple()==0)
             break;
         T=T-1/L;
@@ -775,7 +771,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             }
         }
         if(polygon->is_simple()==0){
-            cout <<"problem and i = "<< i << endl;
+            //cout <<"problem and i = "<< i << endl;
         }
 
     }
