@@ -11,7 +11,8 @@
 !CMakeLists.txt
 !input.txt
 !output.txt
-!Report.pdf
+!Report1.pdf
+!Report2.pdf
 !edgeChange.cpp
 !edgeChange.hpp
 !mainFunctions2.cpp
