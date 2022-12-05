@@ -72,6 +72,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
+    
 
     double DA=threshold+1;
     int countDA=0;
@@ -136,11 +137,10 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 }
             }
         }
-        else {
-            
-            while(changes.size() == 0){
+        else{
+            //while(changes.size() == 0){
                 vector<EdgeIterator>see;
-                while(see.size()<=10){
+                while(see.size()<10){
                     int flag;
                     do{
                         flag=0;
@@ -155,7 +155,10 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                             see.push_back(polygon->edges_begin()+random);
                         }
                     }while(flag==1);
-                    EdgeIterator ei=see.back();
+                }
+                for(int i=0; i<see.size(); i++){
+                    //EdgeIterator ei=see.back();
+                    EdgeIterator ei=see.at(i);
                     for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
                         int stop=0;
                         if(checkPath(polygon,vi,vi,ei))
@@ -210,9 +213,12 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                             continue;
                     }
                 }
-            }
+                //}
+            //}
         }
-
+        if(changes.size() == 0){//no new changes could be found
+            return;
+        }
         int temp=changes.at(0)->getArea();
         EdgeChange* theChange=changes.at(0);
         
@@ -228,9 +234,18 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 theChange=changes.at(i);
             }
         }
+        
         changeEdge(polygon,theChange, countPoints);
+        cout <<"init area = " << initialArea << endl;
         *finalArea = abs(polygon->area());
+        cout <<"final area = " << *finalArea << endl;
         DA = abs(theChange->getArea());
+        cout <<"DA = " << DA << endl;
+        if(polygon->is_simple() ==0 ){
+            cout << "simplicity broken" << endl;
+            exit(1);
+        }
+        
     }
 
 }
@@ -670,7 +685,11 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                 while(vi!=polygons.at(i).vertices_end())
                     polygons.at(i).erase(vi);
     
-                int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
+                int result;
+                if(lastSet)
+                    result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments, 1);
+                else
+                    result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
                 if(result){
                     cout<<"The polygon was not made so I cannot continue."<<endl;
                     exit(1);
@@ -691,6 +710,15 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         if(polygons.at(i).is_simple()==0){
             cout <<"not simple!!! after greedy creation" << endl;
         }
+        
+        // if(i==8){
+        //     cout <<"!s" << endl;
+        //     for(EdgeIterator ei=polygons.at(i).edges_begin();ei!=polygons.at(i).edges_end();ei++){
+        //         cout << *ei << endl;
+        //     }
+        //     cout <<"!e" << endl;
+        // }
+        
         Point mostLeft, mostRight;
         mostLeft = current.at(0);
         mostRight = current.at(current.size()-1);
@@ -796,6 +824,9 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         }
         
         if(polygon->is_simple()==0){
+            // for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            //     cout << *ei << endl;
+            // }
             cout <<"problem and i = "<< i << endl;
             exit(10);
         }

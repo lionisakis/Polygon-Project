@@ -214,9 +214,11 @@ int main(int argc, char* argv[]){
             convexHull(&p, &allPoints, edge, &ourArea);
         else if (algo2 == 1)
             incremental(&p,&allPoints,init,edge,&ourArea);
+        
 
         pArea = abs(p.area());//in this variable we store the area calculated by cgal function for the greedy solution
         ratio = ((double)pArea/(double)chArea);//ratio for the greedy solution
+        
         if(max)
             localSearch(&p, 1, threshold,  L, &pArea2,allPoints.size());
         else if(min)

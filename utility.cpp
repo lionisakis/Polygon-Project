@@ -201,54 +201,58 @@ int checkRed(vector<Point>* KP, Point newPoint, Point checkPoint){
 }
 
 //it has to be clockwise!!!
-//calculate the area that will be added/substracted to the total area of the polygon if we move the path in order to break edge u1u2
+//calculate the area of the polygon that will be created if we implement the change
+//substract from it the initial area and return the product
 double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right, vector<Point>* path){
-    double total=0;
-    Point left2; //neighbour of left point 
-    Point right2; //neighbour of right point 
+    double total=0.0;
     int length = path->size(); //length of path
-    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-        if(ei->point(0) == right)
-            right2 = ei->point(1);
+    //create a temporary polygon with its edges and compute its area
+    Polygon temporary(*polygon);
 
-        if(ei->point(1) == left )
-            left2 = ei->point(0);
-    }
-
-
-    //compute the area that we have to add
-    Polygon tmpPlus;
-    tmpPlus.push_back(left2);
-    tmpPlus.push_back(right2);
-    if((path->size()==2 ) && (path->at(0) == path->at(1)))
-        tmpPlus.push_back(path->at(0));
-    else{
-        for(int i=path->size()-1; i>=0; i--){
-            tmpPlus.push_back(path->at(i));
+    Point whereToInsert=edge.point(1);
+    VertexIterator tempLeft,tempRight,insert;
+    for (VertexIterator vi=temporary.vertices_begin();vi!=temporary.end();vi++){
+        if(*vi==left){
+            tempLeft=vi;
+            break;
         }
+    }
+    vector<Point> points;
+    VertexIterator vi=tempLeft;
+    while(*vi!=right){
         
+        Point temp=*vi;
+        points.push_back(temp);
+        temporary.erase(vi);
+        if(vi==temporary.vertices_end())
+            vi=temporary.vertices_begin();
     }
-    if(tmpPlus.is_simple() == 0){
-        cout <<"not simple" << endl;
-    }
-    total+=abs(tmpPlus.area());
-
-
-    //compute the area that we will lose
-    Polygon tmpMinus;
-    tmpMinus.push_back(edge.point(1));
-    if((path->size()==2 ) && (path->at(0) == path->at(1)))
-        tmpMinus.push_back(path->at(0));
-    else{
-        for(int i=0; i<path->size(); i++){
-            tmpMinus.push_back(path->at(i));
+    points.push_back(right);
+    temporary.erase(vi);
+    int count=0;
+    Point prev;
+    for (VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+        if (*vi==whereToInsert){
+            int i;
+            temporary.insert(vi,points.at(0));
+            count++;
+            prev = points.at(0);
+            break;
         }
     }
-    tmpMinus.push_back(edge.point(0));
-    if(tmpMinus.is_simple() == 0){
-        cout <<"not simple2" << endl;
+    while(count<points.size()){
+        VertexIterator tmp;
+        for (VertexIterator vi=temporary.vertices_begin();vi!=temporary.end();vi++){
+            if(*vi==prev){
+                tmp=vi;
+                break;
+            }
+        }
+        temporary.insert(tmp,points.at(count));
+        prev = points.at(count);
+        count++;
     }
-    total-=abs(tmpMinus.area());
+    total = abs(temporary.area()) - abs(polygon->area());
     return total;
 }
 
