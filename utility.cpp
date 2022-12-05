@@ -234,8 +234,6 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     total+=abs(tmpPlus.area());
 
 
-
-
     //compute the area that we will lose
     Polygon tmpMinus;
     tmpMinus.push_back(edge.point(1));

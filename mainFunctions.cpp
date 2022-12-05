@@ -250,7 +250,6 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
 //flagSub=0: normal convex hull, flagSub=1: convex hull for subdivision
 //if flagsub=1 then vector points is ordered by x increasing
 int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, int flagSub=0, Segment* leftRight=NULL){
-    
     //create convex hull and put it in the polygon
     vector<Point> KP;
     CGAL::convex_hull_2(points->begin(), points->end(), back_inserter(KP));
@@ -320,8 +319,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     }
                 }
                 if(polygon->is_simple()==0){
-                    cout <<"error ch from left not in remaining" << endl;
-                    exit(11);
+                    cout << "could not create edges requested 1"<< endl;
+                    return 1;
                 }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                     if(ei5->point(0)==mostLeft2 && ei5->point(1)==mostLeft){
@@ -340,8 +339,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     }
                 }
                 if(polygon->is_simple()==0){
-                    cout <<"error ch from left in remaining" << endl;
-                    exit(11);
+                    cout << "could not create edges requested 2"<< endl;
+                    return 1;
                 }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                     if(ei5->point(0)==mostLeft2 && ei5->point(1)==mostLeft){
@@ -350,11 +349,14 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     }
                 }
                 remainingPoints.erase(remainingPoints.begin()+pos2);
+                inRemaining2 =0;
             }
-
+        }
+        for(ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             //make sure rightmost edge is in polygon
             if(ei->point(0)==mostRight && ei->point(1)==mostRight2){
                 right=*ei;
+                
             }
             else if(ei->point(0)==mostRight && ei->point(1)!=mostRight2 && inRemaining==0){
                 whereToInsert = ei->point(1);
@@ -371,9 +373,10 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                         break;
                     }
                 }
+                
                 if(polygon->is_simple()==0){
-                    cout <<"error ch in right no in remaining" << endl;
-                    exit(11);
+                    cout << "could not create edges requested 3"<< endl;
+                    return 1;
                 }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                     if(ei5->point(0)==mostRight && ei5->point(1)==mostRight2){
@@ -392,8 +395,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     }
                 }
                 if(polygon->is_simple()==0){
-                    cout <<"error ch in right in remaining" << endl;
-                    exit(11);
+                    cout << "could not create edges requested 4"<< endl;
+                    return 1;
                 }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                     if(ei5->point(0)==mostRight && ei5->point(1)==mostRight2){
@@ -402,6 +405,7 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     }
                 }
                 remainingPoints.erase(remainingPoints.begin()+pos);
+                inRemaining =0;
             }
         }
         if(polygon->is_counterclockwise_oriented()==0){
