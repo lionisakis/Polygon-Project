@@ -255,13 +255,13 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
 }
 
 //calculate energy for maximization problem
-double maxEnergy(int n , int polygonArea, int chArea){
+double minEnergy(int n , int polygonArea, int chArea){
     double tmp = (double)polygonArea/(double)chArea;
     return n*tmp;
 }
 
 //calculate energy for minimization problem
-double minEnergy(int n, int polygonArea ,int chArea){
+double maxEnergy(int n, int polygonArea ,int chArea){
     double tmp = (double)polygonArea/(double)chArea;
     return n*(1-tmp);
 }

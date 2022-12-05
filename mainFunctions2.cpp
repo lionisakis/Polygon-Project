@@ -30,13 +30,13 @@ typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 //returns 1 when the path does not pass the validity check and 0 when it passes the validity check
 int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei2){
     // and not in our edge
+
     if(ei2->point(0)==*viPathLast||ei2->point(1)==*viPathLast){
         return 1;
     }
     // check visibility that the last point is visible
     if ((checkVisibility(polygon,*viPathLast,ei2->point(0))==0)||(checkVisibility(polygon,*viPathLast,ei2->point(1)))==0)
         return 1;
-    
     // check the change does not change our simplicity
     Segment segLeft=Segment(ei2->point(1),*viPathFirst);
     Segment segRight=Segment(*viPathLast,ei2->point(0));
@@ -53,7 +53,6 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
     }
     if(intersection(newEi,segLeft)||intersection(newEi,segRight))
         return 1;
-
     //check if the new edge newEi intersects with the other edges of the polygon
     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
         if(ei->point(0)==newEi.point(0)||ei->point(1)==newEi.point(0))
@@ -65,7 +64,6 @@ int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathL
         if(intersection(newEi,*ei))
             return 1;
     }
-
     return 0;
 }
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
@@ -246,6 +244,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
     Segment left,right;
     Point mostLeft;
     Point mostRight;
+    int totalIterations=0;
     if(flagSub){
         mostLeft =*polygon->left_vertex();
         mostRight =*polygon->right_vertex();
@@ -258,12 +257,14 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             }
         }   
     }
-
     double T=1;
     int currEnergy;
     int prevEnergy=initialEnergy;
     while (T>=0){
-
+        //put an upper bound on how many random choices global step can make sp that we avoid an infinite loop
+        if(totalIterations > 2*L){
+            return;
+        }
         //randomly find points q,s
         int currArea;
         int q1 = rand()%(countPoints);
@@ -281,6 +282,10 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         }while(flag==1);
         int tmp=0;
         VertexIterator q, s, p, t,r;
+        int tr=0;
+        for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+            tr++;
+        }
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
             if(tmp == q1){
                 q = vi;
@@ -305,7 +310,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             tmp++;
         }
         EdgeIterator st;//edge to be broken
-        for (EdgeIterator ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei){
+        EdgeIterator ei;
+        for (ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei){
             if(ei->point(0) == *s && ei->point(1) == *t){
                 st = ei;
                 break;
@@ -313,7 +319,6 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         }
         //check validity
         int valid=0;
-        
         if(checkPath(polygon, q, q, st) == 0)
             valid=1;
         
@@ -331,12 +336,11 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                 valid=0;
             if(mostLeft == *p)
                 valid=0;
-            if(mostRight == *r)
+            if(mostRight == *r )
                 valid=0;
             if(mostLeft == *r)
                 valid=0;
         }
-
         if(valid){
             currArea = abs(polygon->area());
             if(typeOfOptimization == 1)
@@ -344,6 +348,10 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             else if(typeOfOptimization == 2)
                 currEnergy = minEnergy(countPoints, currArea, chArea);
             double DE = currEnergy - prevEnergy;
+            if(polygon->is_simple()==0){
+                cout <<"not simple2 prev global" << endl;
+                return;
+            }
             if(DE < 0.0 || Metropolis(DE,T)){//make function for metropolis
                 Point tmp = *q;
                 Point tmp2 = *t;
@@ -355,7 +363,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                     }
                 }
                 if(polygon->is_simple()==0){
-                    cout <<"not simple" << endl;
+                    cout <<"not simple2 after global" << endl;
                     return;
                 }
             }
@@ -364,6 +372,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             prevEnergy = currEnergy;
             *finalArea=currArea;
         }
+        totalIterations++;
     }
 }
 
@@ -624,35 +633,44 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             // it satisfy the condition
             break;
         }
-        if(last>=countPoints-1-3)
+        int lastSet=0;
+        if(last>=countPoints-1-3){
             last=countPoints-1;
+            lastSet=1;
+        }
         while(offset<=last){
             current.push_back(points->at(offset));
             offset++;
         }
         offset--;
+        Segment segments[2];
+        Point left=current.at(0);
+        Point right=current.at(current.size()-1);
+        int flagFirst=1;
+        for(int i=1;i<current.size()-1;i++){
+            if(current.at(i).y()<left.y()&&flagFirst){
+                segments[0]=Segment(left,current.at(i));
+                flagFirst=0;
+            }
+            else if(current.at(i).y()<right.y()){
+                segments[1]=Segment(current.at(i),right);
+            }
+        }
         if(greedyAlgo==1){
             vector<Point>temp=current;
-            Segment segments[2];
-            Point left=current.at(0);
-            Point right=current.at(current.size()-1);
-            int flagFirst=1;
-            for(int i=1;i<current.size()-1;i++){
-                if(current.at(i).y()<left.y()&&flagFirst){
-                    segments[0]=Segment(left,current.at(i));
-                    flagFirst=0;
-                }
-                else if(current.at(i).y()<right.y()){
-                    segments[1]=Segment(current.at(i),right);
-                }
-            }
-            int result=incremental(&polygons.at(i), &temp, 2, greedyEdge, &area, 1, segments);
+            
+            int result;
+            if(lastSet)
+                result=incremental(&polygons.at(i), &temp, 2, greedyEdge, &area, 1, segments, 1);
+            else
+                result=incremental(&polygons.at(i), &temp, 2, greedyEdge, &area, 1, segments);
             if(result){
+                //cout <<"incremental could not make requested polygon, convex hull is called" << endl;
                 VertexIterator vi=polygons.at(i).vertices_begin();
                 while(vi!=polygons.at(i).vertices_end())
                     polygons.at(i).erase(vi);
     
-                int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
+                int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
                 if(result){
                     cout<<"The polygon was not made so I cannot continue."<<endl;
                     exit(1);
@@ -660,28 +678,25 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             }
         }
         else{
-            int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1);
+            int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
             if(result){
                 cout<<"The polygon was not made so I cannot continue."<<endl;
                 exit(1);
             }
         }
-        
-
+        int o=0;
+        for (VertexIterator vi = polygons.at(i).vertices_begin(); vi != polygons.at(i).vertices_end(); ++vi){
+            o++;
+        }
+        if(polygons.at(i).is_simple()==0){
+            cout <<"not simple!!! after greedy creation" << endl;
+        }
         Point mostLeft, mostRight;
         mostLeft = current.at(0);
         mostRight = current.at(current.size()-1);
 
-        //calculate initial energy of the greedy solution
-        int initialEnergy;
-        int pArea = abs(polygons.at(i).area());
-        if(typeOfOptimization == 1)
-            initialEnergy = maxEnergy(countPoints, pArea, chArea);
-        else if(typeOfOptimization == 2)
-            initialEnergy = minEnergy(countPoints, pArea, chArea);
-
         //apply global step to each subset
-        // find KP 
+        // find KP to computer KP area for the energy function
         vector<Point> KP2;
         Polygon tmp;
         const Polygon::Vertices& range = polygons.at(i).vertices();
@@ -690,6 +705,19 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             tmp.push_back(KP2.at(w));
 
         int chArea2 = abs(tmp.area());
+
+        //calculate initial energy of the greedy solution
+        int initialEnergy;
+        int pArea = abs(polygons.at(i).area());
+        if(typeOfOptimization == 1)
+            initialEnergy = maxEnergy(countPoints, pArea, chArea2);
+        else if(typeOfOptimization == 2)
+            initialEnergy = minEnergy(countPoints, pArea, chArea2);
+        int trsize=0;
+        for(VertexIterator vi = polygons.at(i).vertices_begin(); vi!=polygons.at(i).vertices_end(); vi++){
+            trsize++;
+        }
+        //apply global step
         globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, current.size(), initialEnergy, chArea2, 1);
     }
     
@@ -697,14 +725,12 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     for(VertexIterator vi=polygons.at(0).vertices_begin();vi!=polygons.at(0).vertices_end();vi++){
         polygon->push_back(*vi);
     }
-
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
     
     // for the other polygons
     for(int i=1;i<runs;i++){
-        
         // take the current polygon
         Polygon* current=&polygons.at(i);
         if(current->is_clockwise_oriented()==0){
@@ -737,6 +763,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                 }
             }
         }
+
         int count=0;
         Point temp=*p;
         int flagQ=0;
@@ -749,9 +776,6 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             for(VertexIterator vAll=polygon->vertices_begin();vAll!=polygon->vertices_end();vAll++){
                 if(*vAll==temp){
                     polygon->insert(vAll,*vCurrent2);
-                    if(polygon->is_simple()==0){
-                        break;
-                    }
                     break;
                 }
             }
@@ -770,8 +794,10 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                 count++;
             }
         }
+        
         if(polygon->is_simple()==0){
-            //cout <<"problem and i = "<< i << endl;
+            cout <<"problem and i = "<< i << endl;
+            exit(10);
         }
 
     }
