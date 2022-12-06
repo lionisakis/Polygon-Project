@@ -208,6 +208,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
                             double area=calculateNewArea(polygon,*ei,path.front(),path.back(),&path);
                             EdgeChange* newChange = new EdgeChange(path.front(),path.back(),*ei,area);
+                            
                             changes.push_back(newChange);
                         }
                         if(stop)
@@ -224,7 +225,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         
         for(int i=1;i<changes.size();i++){
             // max
-            if (typeOfOptimization==1 && temp<changes.at(i)->getArea()){
+            if (typeOfOptimization==1 && temp<changes.at(i)->getArea() ){
                 temp=changes.at(i)->getArea();                                                                                                                                                                                    
                 theChange=changes.at(i);
             }
@@ -234,13 +235,18 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 theChange=changes.at(i);
             }
         }
+        if(typeOfOptimization == 1){
+            if(theChange->getArea() < 0)
+                return;
+        }
+        else if(typeOfOptimization == 2){
+            if(theChange->getArea() > 0)
+                return;
+        }
         
         changeEdge(polygon,theChange, countPoints);
-        cout <<"init area = " << initialArea << endl;
         *finalArea = abs(polygon->area());
-        cout <<"final area = " << *finalArea << endl;
         DA = abs(theChange->getArea());
-        cout <<"DA = " << DA << endl;
         if(polygon->is_simple() ==0 ){
             cout << "simplicity broken" << endl;
             exit(1);
