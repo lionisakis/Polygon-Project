@@ -76,7 +76,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
     double DA=threshold+1;
     int countDA=0;
-    while(DA>threshold){
+    while(DA>=threshold){
 
         int initialArea=abs(polygon->area());
         vector<EdgeChange*> changes;
@@ -138,8 +138,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
             }
         }
         else{
-            //while(changes.size() == 0){
                 vector<EdgeIterator>see;
+                srand(time(NULL));
                 while(see.size()<10){
                     int flag;
                     do{
@@ -175,6 +175,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
                             // check if the path is ok with the size
                             if(path.size()>L){
+                                stop=1;
                                 break;
                             }
                             if(ei->point(0)==*vi2||ei->point(1)==*vi2){
@@ -214,7 +215,6 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                     }
                 }
                 //}
-            //}
         }
         if(changes.size() == 0){//no new changes could be found
             return;
@@ -276,7 +276,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
     int currEnergy;
     int prevEnergy=initialEnergy;
     while (T>=0){
-        //put an upper bound on how many random choices global step can make sp that we avoid an infinite loop
+        //put an upper bound on how many random choices global step can make so that we avoid an infinite loop
         if(totalIterations > 2*L){
             return;
         }
@@ -649,6 +649,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             break;
         }
         int lastSet=0;
+
         if(last>=countPoints-1-3){
             last=countPoints-1;
             lastSet=1;
@@ -657,7 +658,17 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             current.push_back(points->at(offset));
             offset++;
         }
-        offset--;
+        if (countPoints - offset <  (m/2)){
+            while(offset<=countPoints-1){
+                current.push_back(points->at(offset));
+                offset++;
+            }
+            lastSet=1;
+        }
+        else
+            offset--;
+
+        
         Segment segments[2];
         Point left=current.at(0);
         Point right=current.at(current.size()-1);
@@ -671,6 +682,10 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
                 segments[1]=Segment(current.at(i),right);
             }
         }
+
+        //we call the greedy algorithm requested from the user
+        //if incremental  fails we call convex hull, if convex hull ails the porgram terminates, you have to run it again as edge selection is random
+        //there is a different version called if we create the polygon of the last set as then we do not care about the existence of the rightmost edge
         if(greedyAlgo==1){
             vector<Point>temp=current;
             
@@ -680,7 +695,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             else
                 result=incremental(&polygons.at(i), &temp, 2, greedyEdge, &area, 1, segments);
             if(result){
-                //cout <<"incremental could not make requested polygon, convex hull is called" << endl;
+
                 VertexIterator vi=polygons.at(i).vertices_begin();
                 while(vi!=polygons.at(i).vertices_end())
                     polygons.at(i).erase(vi);
@@ -710,14 +725,6 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         if(polygons.at(i).is_simple()==0){
             cout <<"not simple!!! after greedy creation" << endl;
         }
-        
-        // if(i==8){
-        //     cout <<"!s" << endl;
-        //     for(EdgeIterator ei=polygons.at(i).edges_begin();ei!=polygons.at(i).edges_end();ei++){
-        //         cout << *ei << endl;
-        //     }
-        //     cout <<"!e" << endl;
-        // }
         
         Point mostLeft, mostRight;
         mostLeft = current.at(0);
