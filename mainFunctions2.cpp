@@ -247,10 +247,10 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
-        if(polygon->is_simple() ==0 ){
-            cout << "simplicity broken" << endl;
-            exit(1);
-        }
+        // if(polygon->is_simple() ==0 ){
+        //     cout << "simplicity broken" << endl;
+        //     exit(1);
+        // }
         
     }
 
@@ -369,10 +369,10 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             else if(typeOfOptimization == 2)
                 currEnergy = minEnergy(countPoints, currArea, chArea);
             double DE = currEnergy - prevEnergy;
-            if(polygon->is_simple()==0){
-                cout <<"not simple2 prev global" << endl;
-                return;
-            }
+            // if(polygon->is_simple()==0){
+            //     cout <<"not simple2 prev global" << endl;
+            //     return;
+            // }
             if(DE < 0.0 || Metropolis(DE,T)){//make function for metropolis
                 Point tmp = *q;
                 Point tmp2 = *t;
@@ -383,10 +383,10 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                         break;
                     }
                 }
-                if(polygon->is_simple()==0){
-                    cout <<"not simple2 after global" << endl;
-                    return;
-                }
+                // if(polygon->is_simple()==0){
+                //     cout <<"not simple2 after global" << endl;
+                //     return;
+                // }
             }
 
             T=T-1/L;
@@ -728,9 +728,9 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         for (VertexIterator vi = polygons.at(i).vertices_begin(); vi != polygons.at(i).vertices_end(); ++vi){
             o++;
         }
-        if(polygons.at(i).is_simple()==0){
-            cout <<"not simple!!! after greedy creation" << endl;
-        }
+        // if(polygons.at(i).is_simple()==0){
+        //     cout <<"not simple!!! after greedy creation" << endl;
+        // }
         
         Point mostLeft, mostRight;
         mostLeft = current.at(0);
@@ -836,13 +836,13 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             }
         }
         
-        if(polygon->is_simple()==0){
-            // for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            //     cout << *ei << endl;
-            // }
-            cout <<"problem and i = "<< i << endl;
-            exit(10);
-        }
+        // if(polygon->is_simple()==0){
+        //     // for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+        //     //     cout << *ei << endl;
+        //     // }
+        //     cout <<"problem and i = "<< i << endl;
+        //     exit(10);
+        // }
 
     }
     
