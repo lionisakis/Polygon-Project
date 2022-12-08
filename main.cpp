@@ -284,7 +284,6 @@ int main(int argc, char* argv[]){
 
 
     outfile << "Algorithm: <" << argv[6] <<">_<" << argv[9] << ">" << endl;
-    outfile << "Our Initial Area: " << ourArea << endl;
     outfile << "Initial Area: " << pArea << endl;
     outfile << "Final Area: " << pArea2 << endl;
     outfile << "Ratio Initial: " << ratio << endl;
