@@ -445,20 +445,46 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
         if(intersection(qs,pr))
             continue;
 
-        // do the search
-        Fuzzy_box default_range1(*q,*s);
+              // do the search
+        int minX=q->x();
+        int maxX=q->x();
+        
+        int minY=q->y();
+        int maxY=q->y();
+
+        if(minX>s->x())
+            minX=s->x();
+        else if(maxX<s->x())
+            maxX=s->x();
+
+        if(minX>r->x())
+            minX=r->x();
+        else if(maxX<r->x())
+            maxX=r->x();
+
+        if(minX>p->x())
+            minX=p->x();
+        else if(maxX<p->x())
+            maxX=p->x();
+
+        if(minY>s->y())
+            minY=s->y();
+        else if(maxY<s->y())
+            maxY=s->y();
+
+        if(minY>r->y())
+            minY=r->y();
+        else if(maxY<r->y())
+            maxY=r->y();
+
+        if(minY>p->y())
+            minY=p->y();
+        else if(maxY<p->y())
+            maxY=p->y();
+
+        Fuzzy_box default_range1(Point(minX,minY),Point(maxX,maxY));
         std::vector<Point> result;
         kd->search(std::back_inserter( result ), default_range1);
-        Fuzzy_box default_range2(*p,*r);
-        kd->search(std::back_inserter( result ), default_range2);
-        Fuzzy_box default_range3(*p,*q);
-        kd->search(std::back_inserter( result ), default_range3);
-        Fuzzy_box default_range4(*r,*s);
-        kd->search(std::back_inserter( result ), default_range4);
-        Fuzzy_box default_range5(*p,*s);
-        kd->search(std::back_inserter( result ), default_range5);
-        Fuzzy_box default_range6(*r,*q);
-        kd->search(std::back_inserter( result ), default_range6);
 
         
         int flag=0;
