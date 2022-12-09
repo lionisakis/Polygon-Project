@@ -363,7 +363,20 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                 valid=0;
         }
         if(valid){
-            currArea = abs(polygon->area());
+            Polygon temporary(*polygon);
+
+            //apply change to temporary polygon so that we can get the new area
+            Point tmp = *q;
+            Point tmp2 = *t;
+            temporary.erase(q);
+            for (VertexIterator vi = temporary.vertices_begin(); vi != temporary.vertices_end(); ++vi){
+                if(*vi == tmp2){
+                    temporary.insert(vi, tmp);
+                    break;
+                }
+            }
+
+            currArea = abs(temporary.area());
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
             else if(typeOfOptimization == 2)
@@ -577,9 +590,19 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
         else
             r=q+1;
 
+        Polygon temporary(*polygon);
+        Point temp=*r;
+        Point x=*q;
+        temporary.erase(r);
+        for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+            if(*vi==x){
+                temporary.insert(vi,temp);
+                break;
+            }
+        }
 
         // find the energy
-        int currArea=abs(polygon->area());
+        int currArea=abs(temporary.area());
         if(typeOfOptimization == 1)
             currEnergy = maxEnergy(countPoints, currArea, chArea);
         else if(typeOfOptimization == 2)
