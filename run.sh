@@ -8,5 +8,5 @@ then
     ./main -i ./instances/data/images/euro-night-0000100.instance -o output.txt -algorithm local_search -L 10 -max -threshold 1 -algorithm2 incremental -edgeselection 3 -initialization 1a
 elif [ $1 -eq 2 ]
 then
-    ./main -i ./instances/data/images/euro-night-0000100.instance -o output.txt -algorithm simulated_annealing -L 1000 -min -annealing local -algorithm2 incremental  -edgeselection 1 -initialization 1a
+    ./main -i ./instances/data/images/euro-night-0000100.instance -o output.txt -algorithm simulated_annealing -L 1000 -min -annealing global -algorithm2 incremental  -edgeselection 1 -initialization 1a
 fi

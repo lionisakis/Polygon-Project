@@ -365,21 +365,27 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         }
         if(valid){
 
-            Polygon temporary;//(*polygon);
-            for(VertexIterator vi = polygon->vertices_begin(); vi!= polygon->vertices_end(); vi++){
-                temporary.push_back(*vi);
-            }
 
             //apply change to temporary polygon so that we can get the new area
-            VertexIterator q2 = q;
-            cout <<"hereb" << endl;
-            VertexIterator t2 = t;
-            cout <<"herec" << endl;
-            Point tmp = *q2;
-            cout <<"hered" << endl;
-            Point tmp2 = *t2;
-            cout <<"heree = "<< *q2 <<" q1= "<< *q << endl;
-            temporary.erase(q2);
+            VertexIterator q2Temp;
+            VertexIterator t2Temp = t;
+            Polygon temporary(*polygon);
+
+            for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+                if (*vi==*q){
+                    q2Temp=vi;
+                }
+                if ( *q==*t){
+                    t2Temp=vi;
+                }
+            }      
+
+            Point tmp = *q2Temp;
+            Point tmp2 = *t2Temp;  
+
+
+            cout <<"heree = "<< *q2Temp <<" q1= "<< *q << endl;
+            temporary.erase(q2Temp);
             cout <<"here 1"<<endl;
             for (VertexIterator vi = temporary.vertices_begin(); vi != temporary.vertices_end(); ++vi){
                 if(*vi == tmp2){
