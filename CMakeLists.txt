@@ -36,7 +36,7 @@ endif()
 # Creating entries for target: main
 # ############################
 
-add_executable( main  edgeChange.cpp edgePointPair.cpp main.cpp mainFunctions.cpp mainFunctions2.cpp utility.cpp )
+add_executable( main  edgeChange.cpp edgePointPair.cpp main.cpp mainFunctions2.cpp mainFunctions.cpp utility.cpp )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS main )
 

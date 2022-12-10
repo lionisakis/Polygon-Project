@@ -608,19 +608,34 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             T = T-1/L;
             continue;
         }
-        VertexIterator r;
-        if (q==polygon->vertices_end()-1)
-            r=polygon->vertices_begin();
-        else
-            r=q+1;
-
-        cout <<"here" << endl;
+        VertexIterator rTemp;
         Polygon temporary(*polygon);
-        cout <<"here2"<<endl;
+        cout <<"here0"<<endl;
+        int count=0;
+        for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+            if (*vi==*q && vi==(temporary.vertices_end()-1)){
+                rTemp=temporary.vertices_begin();
+                printf("insert0\n");
+            }
+            else if ( *q==*vi){
+                rTemp=vi+1;
+            }
+            count++;
+        }        
+        cout <<"here1"<<endl;
+        VertexIterator r1;
+        if (q==polygon->vertices_end()-1)
+            r1=polygon->vertices_begin();
+        else
+            r1=q+1;
 
-        Point temp=*r;
+        cout <<"here2"<<endl;
+        Point temp=*rTemp;
+
+        cout<<temp<<endl;
         Point x=*q;
-        temporary.erase(r);
+        temporary.erase(rTemp);
+        cout <<"here3"<<endl;
         for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
             if(*vi==x){
                 temporary.insert(vi,temp);
@@ -628,6 +643,7 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             }
         }
 
+        cout <<"here4"<<endl;
         // find the energy
         int currArea=abs(temporary.area());
         if(typeOfOptimization == 1)
@@ -636,12 +652,13 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             currEnergy = minEnergy(countPoints, currArea, chArea);
 
 
+        cout <<"here5"<<endl;
         // do the transition
         double DE = currEnergy - prevEnergy;
         if(DE < 0 || Metropolis(DE,T)){//make function for metropolis
-            Point temp=*r;
+            Point temp=*r1;
             Point x=*q;
-            polygon->erase(r);
+            polygon->erase(r1);
             for(VertexIterator vi=polygon->vertices_begin();vi!=polygon->vertices_end();vi++){
                 if(*vi==x){
                     polygon->insert(vi,temp);
