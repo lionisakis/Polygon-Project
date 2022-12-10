@@ -301,7 +301,6 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                 s1=random;
             }
         }while(flag==1);
-        cout <<"s1 = " << s1 << " q1 = " << q1 << endl;
         int tmp=0;
         VertexIterator q, s, p, t,r;
         int tr=0;
@@ -383,36 +382,28 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             Point tmp = *q2Temp;
             Point tmp2 = *t2Temp;  
 
-
-            cout <<"heree = "<< *q2Temp <<" q1= "<< *q << endl;
             temporary.erase(q2Temp);
-            cout <<"here 1"<<endl;
             for (VertexIterator vi = temporary.vertices_begin(); vi != temporary.vertices_end(); ++vi){
                 if(*vi == tmp2){
                     temporary.insert(vi, tmp);
                     break;
                 }
             }
-            cout <<"here2"<<endl;
             currArea = abs(temporary.area());
-            cout <<"here3"<<endl;
             if(typeOfOptimization == 1)
                 currEnergy = maxEnergy(countPoints, currArea, chArea);
             else if(typeOfOptimization == 2)
                 currEnergy = minEnergy(countPoints, currArea, chArea);
-            cout <<"here4"<<endl;
             double DE = currEnergy - prevEnergy;
-            cout <<"here5"<<endl;
-            if(polygon->is_simple()==0){
-                cout <<"not simple2 prev global2" << endl;
-                for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-                    cout << *ei << endl;
-                }
+            // if(polygon->is_simple()==0){
+            //     cout <<"not simple2 prev global2" << endl;
+            //     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            //         cout << *ei << endl;
+            //     }
 
-                return;
-            }
+            //     return;
+            // }
             if(DE < 0.0 || Metropolis(DE,T)){//make function for metropolis
-                cout <<"passed criteria" << endl;
                 Point tmp = *q;
                 Point tmp2 = *t;
                 polygon->erase(q);
@@ -422,20 +413,15 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
                         break;
                     }
                 }
-                if(polygon->is_simple()==0){
-                    cout <<"not simple2 after global" << endl;
-                    return;
-                }
-                else{
-                    cout <<"changes success" << endl;
-                }
+                // if(polygon->is_simple()==0){
+                //     cout <<"not simple2 after global" << endl;
+                //     return;
+                // }
             }
-            cout <<"here6"<<endl;
             T=T-1/L;
             prevEnergy = currEnergy;
             *finalArea=currArea;
         }
-        cout <<"in iteration "<< totalIterations << endl;
         totalIterations++;
     }
 }
@@ -613,7 +599,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
     int countInterator=0;
     while (T>=0){
         if(countInterator>=2*L){
-            cout<<"MAX\n";
             break;
         }
         VertexIterator q=localAlgorithm(polygon,&kd,countPoints,&countInterator,2*L);
