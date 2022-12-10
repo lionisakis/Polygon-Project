@@ -441,11 +441,12 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
 }
 
 
-VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
+VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* interation,int maxL){
     vector<int> seen;
     VertexIterator p,q,r,s;
     // find a random point until there is no problem
     while(1){
+        (*interation)++;
         // find a random point that you have not seen yet
         int notSeen=0;
         int pos;
@@ -460,8 +461,9 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints){
                 notSeen=1;
                 seen.push_back(pos);
             }
-            if(seen.size()==10){
-                return polygon->vertices_end();
+            if(maxL>=seen.size()){
+                (*interation)--;
+                break;
             }
         }
         q=polygon->vertices_begin()+pos;
@@ -608,40 +610,40 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
     double T=1;
     int currEnergy;
     int prevEnergy=initialEnergy;
+    int countInterator=0;
     while (T>=0){
-        VertexIterator q=localAlgorithm(polygon,&kd,countPoints);
+        if(countInterator>=2*L){
+            cout<<"MAX\n";
+            break;
+        }
+        VertexIterator q=localAlgorithm(polygon,&kd,countPoints,&countInterator,2*L);
+        countInterator++;
         if(q==polygon->vertices_end()){
-            T = T-1/L;
             continue;
         }
+
         VertexIterator rTemp;
         Polygon temporary(*polygon);
-        cout <<"here0"<<endl;
         int count=0;
         for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
             if (*vi==*q && vi==(temporary.vertices_end()-1)){
                 rTemp=temporary.vertices_begin();
-                printf("insert0\n");
             }
             else if ( *q==*vi){
                 rTemp=vi+1;
             }
             count++;
         }        
-        cout <<"here1"<<endl;
         VertexIterator r1;
         if (q==polygon->vertices_end()-1)
             r1=polygon->vertices_begin();
         else
             r1=q+1;
 
-        cout <<"here2"<<endl;
         Point temp=*rTemp;
 
-        cout<<temp<<endl;
         Point x=*q;
         temporary.erase(rTemp);
-        cout <<"here3"<<endl;
         for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
             if(*vi==x){
                 temporary.insert(vi,temp);
@@ -649,7 +651,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             }
         }
 
-        cout <<"here4"<<endl;
         // find the energy
         int currArea=abs(temporary.area());
         if(typeOfOptimization == 1)
@@ -658,7 +659,6 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
             currEnergy = minEnergy(countPoints, currArea, chArea);
 
 
-        cout <<"here5"<<endl;
         // do the transition
         double DE = currEnergy - prevEnergy;
         if(DE < 0 || Metropolis(DE,T)){//make function for metropolis
