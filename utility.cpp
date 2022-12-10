@@ -320,5 +320,5 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
 //see if metropolis criterion holds
 int Metropolis(double DE,double T){    
     double R =(double)rand() / (double)((unsigned)RAND_MAX + 1);
-    return exp(-DE/T)>R;
+    return exp(-DE/T)>=R;
 }
