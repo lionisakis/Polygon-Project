@@ -51,5 +51,5 @@ add_executable( main  main.cpp )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS main )
 
 # Link the executable to CGAL and third-party libraries
-target_link_libraries(main PRIVATE CGAL::CGAL )
+target_link_libraries(main PRIVATE CGAL::CGAL ${EXTRA_LIBS})
 
