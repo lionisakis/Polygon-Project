@@ -24,11 +24,8 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <ctype.h> 
-#include <signal.h>
-#include <pthread.h>
 #include <dirent.h>
 #include <fcntl.h> 
-#include <errno.h>
 #include <sys/stat.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include  <CGAL/Polygon_2.h>
@@ -36,9 +33,10 @@
 #include <cstring>
 #include <cstdlib>
 
-// #include  "mainFunctions.hpp"
-// #include  "utility.hpp"
-// #include  "mainFunctions2.hpp"
+#include  "./include/incremental.hpp"
+#include "./include/convexHull.hpp"
+#include "./include/localSearch.hpp"
+#include "./include/simulatedAnnealing.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -219,6 +217,14 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
         *outfile << allPoints.size() << "\t\t";
 
         //run case 1
+        Polygon p;
+        double ourArea=0;//in this variable we store the area calculated by our algorithm
+
+
+
+        //this has to be changed
+        convexHull(&p, &allPoints, 1, &ourArea);
+        incremental(&p,&allPoints,1,1,&ourArea);
         
         makeOutputRunCase(outfile,0,0,0,0);
 

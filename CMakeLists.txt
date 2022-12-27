@@ -29,6 +29,9 @@ if ( NOT Boost_FOUND )
 endif()
 
 # include for local directory
+include_directories( BEFORE include )
+add_subdirectory(include)
+list(APPEND EXTRA_LIBS utils)
 
 # include for local package
 
@@ -36,7 +39,7 @@ endif()
 # Creating entries for target: main
 # ############################
 
-add_executable( main  edgeChange.cpp edgePointPair.cpp main.cpp mainFunctions2.cpp mainFunctions.cpp utility.cpp )
+add_executable( main  main.cpp )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS main )
 

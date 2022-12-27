@@ -129,54 +129,6 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
-edgeChange.o: edgeChange.cpp.o
-.PHONY : edgeChange.o
-
-# target to build an object file
-edgeChange.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgeChange.cpp.o
-.PHONY : edgeChange.cpp.o
-
-edgeChange.i: edgeChange.cpp.i
-.PHONY : edgeChange.i
-
-# target to preprocess a source file
-edgeChange.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgeChange.cpp.i
-.PHONY : edgeChange.cpp.i
-
-edgeChange.s: edgeChange.cpp.s
-.PHONY : edgeChange.s
-
-# target to generate assembly for a file
-edgeChange.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgeChange.cpp.s
-.PHONY : edgeChange.cpp.s
-
-edgePointPair.o: edgePointPair.cpp.o
-.PHONY : edgePointPair.o
-
-# target to build an object file
-edgePointPair.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgePointPair.cpp.o
-.PHONY : edgePointPair.cpp.o
-
-edgePointPair.i: edgePointPair.cpp.i
-.PHONY : edgePointPair.i
-
-# target to preprocess a source file
-edgePointPair.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgePointPair.cpp.i
-.PHONY : edgePointPair.cpp.i
-
-edgePointPair.s: edgePointPair.cpp.s
-.PHONY : edgePointPair.s
-
-# target to generate assembly for a file
-edgePointPair.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgePointPair.cpp.s
-.PHONY : edgePointPair.cpp.s
-
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -201,78 +153,6 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
-mainFunctions.o: mainFunctions.cpp.o
-.PHONY : mainFunctions.o
-
-# target to build an object file
-mainFunctions.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainFunctions.cpp.o
-.PHONY : mainFunctions.cpp.o
-
-mainFunctions.i: mainFunctions.cpp.i
-.PHONY : mainFunctions.i
-
-# target to preprocess a source file
-mainFunctions.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainFunctions.cpp.i
-.PHONY : mainFunctions.cpp.i
-
-mainFunctions.s: mainFunctions.cpp.s
-.PHONY : mainFunctions.s
-
-# target to generate assembly for a file
-mainFunctions.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainFunctions.cpp.s
-.PHONY : mainFunctions.cpp.s
-
-mainFunctions2.o: mainFunctions2.cpp.o
-.PHONY : mainFunctions2.o
-
-# target to build an object file
-mainFunctions2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainFunctions2.cpp.o
-.PHONY : mainFunctions2.cpp.o
-
-mainFunctions2.i: mainFunctions2.cpp.i
-.PHONY : mainFunctions2.i
-
-# target to preprocess a source file
-mainFunctions2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainFunctions2.cpp.i
-.PHONY : mainFunctions2.cpp.i
-
-mainFunctions2.s: mainFunctions2.cpp.s
-.PHONY : mainFunctions2.s
-
-# target to generate assembly for a file
-mainFunctions2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainFunctions2.cpp.s
-.PHONY : mainFunctions2.cpp.s
-
-utility.o: utility.cpp.o
-.PHONY : utility.o
-
-# target to build an object file
-utility.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/utility.cpp.o
-.PHONY : utility.cpp.o
-
-utility.i: utility.cpp.i
-.PHONY : utility.i
-
-# target to preprocess a source file
-utility.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/utility.cpp.i
-.PHONY : utility.cpp.i
-
-utility.s: utility.cpp.s
-.PHONY : utility.s
-
-# target to generate assembly for a file
-utility.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/utility.cpp.s
-.PHONY : utility.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -282,24 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
-	@echo "... edgeChange.o"
-	@echo "... edgeChange.i"
-	@echo "... edgeChange.s"
-	@echo "... edgePointPair.o"
-	@echo "... edgePointPair.i"
-	@echo "... edgePointPair.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... mainFunctions.o"
-	@echo "... mainFunctions.i"
-	@echo "... mainFunctions.s"
-	@echo "... mainFunctions2.o"
-	@echo "... mainFunctions2.i"
-	@echo "... mainFunctions2.s"
-	@echo "... utility.o"
-	@echo "... utility.i"
-	@echo "... utility.s"
 .PHONY : help
 
 
