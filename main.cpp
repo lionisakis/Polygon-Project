@@ -30,8 +30,8 @@
 #include <fcntl.h> 
 #include <errno.h>
 #include <sys/stat.h>
-// #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-// #include  <CGAL/Polygon_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include  <CGAL/Polygon_2.h>
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
@@ -40,12 +40,12 @@
 // #include  "utility.hpp"
 // #include  "mainFunctions2.hpp"
 
-// typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-// typedef CGAL::Point_2<K> Point;
-// typedef CGAL::Polygon_2<K> Polygon;
-// typedef CGAL::Segment_2<K> Segment;
-// typedef Polygon::Vertex_iterator VertexIterator;
-// typedef Polygon::Edge_const_iterator EdgeIterator;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Point_2<K> Point;
+typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Segment_2<K> Segment;
+typedef Polygon::Vertex_iterator VertexIterator;
+typedef Polygon::Edge_const_iterator EdgeIterator;
 
 using namespace std;
 
