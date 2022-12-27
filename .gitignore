@@ -2,6 +2,7 @@ CMakeFiles
 .vscode
 *.cmake 
 CMakeCache.txt
-CMakeLists*.txt
+CMakeLists*.txt*
+instances
 
 
