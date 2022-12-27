@@ -49,14 +49,15 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 using namespace std;
 
-void makeOutputRunCase(ofstream outfile,double minScore,double maxScore,double minBound,double maxBound){
+void makeOutputRunCase(ofstream* outfile,double minScore,double maxScore,double minBound,double maxBound){
     //create file where output is to be written
-    outfile << "||\t" << minScore <<"\t"<< maxScore <<"\t"<< minBound<<"\t"<< maxBound<<"\t";
+    *outfile << "||\t" << minScore <<"\t\t\t"<< maxScore <<"\t\t\t"<< minBound<<"\t\t\t"<< maxBound<<"\t\t\t";
 }
 
 void readFile(string input,vector<Point>* allPoints){
     //read contents of input file, ignoring first line with #
     fstream in;
+    cout <<"name of file = " << input << endl;
     in.open(input, ios::in);
     if(!in){
         cout <<"error while opening file" << endl;
@@ -96,6 +97,9 @@ void readFile(string input,vector<Point>* allPoints){
         char delim2[3] = " \t";
         char tmp[text.size() + 1];
         strcpy(tmp, text.c_str());
+        if(strlen(tmp) <= 2){
+            continue;
+        }
         char *token = strtok(tmp,delim2);
         int counter=0;
         while (token) {
@@ -110,15 +114,6 @@ void readFile(string input,vector<Point>* allPoints){
         }
         Point temp(x, y);
         allPoints->push_back(temp);
-    }
-    int i=0;
-    string check=".instance";
-    for(i= 8; i>=0; i--){
-        if(check[i]!=input[input.size()-9+i])
-            break;
-    }
-    if (i==-1){
-        allPoints->pop_back();
     }
     cout <<"total points = " << allPoints->size() << endl;
 
@@ -197,7 +192,7 @@ void readFile(string input,vector<Point>* allPoints){
 //     auto end = chrono::steady_clock::now();
 // }
 
-int readFile(string path,ofstream outfile, int preprocessor){
+int readFolder(string path,ofstream* outfile, int preprocessor){
     DIR *dir=opendir( path.c_str() );
     struct dirent *theDir;
     // try to open the path
@@ -217,15 +212,24 @@ int readFile(string path,ofstream outfile, int preprocessor){
         // if the folder name is . or .. then do nothing
         if(strcmp(theDir->d_name,".")==0||strcmp(theDir->d_name,"..")==0)
             continue;
-        
+        string temp(theDir->d_name);
         // for all the files
         vector<Point> allPoints;
-        readFile(theDir->d_name,&allPoints);
+        readFile(newPath+temp,&allPoints);
+        *outfile << allPoints.size() << "\t\t";
 
+        //run case 1
+        
         makeOutputRunCase(outfile,0,0,0,0);
-    }
 
+        //run case2
+        makeOutputRunCase(outfile,0,0,0,0);
+
+        *outfile << "||"<<endl;
+    }
     closedir(dir);
+    return 0;
+    
 }
 
 #define CASES 2
@@ -290,6 +294,7 @@ int main(int argc, char* argv[]){
     cout<< folderInput<<endl;
     cout<< fileOutput<<endl;
     cout<< preprocess<<endl;
+
     unsigned int tmp = (unsigned) time(NULL);
     srand(tmp);
     ofstream outfile(fileOutput);
@@ -302,8 +307,7 @@ int main(int argc, char* argv[]){
         outfile <<"||\t"  <<"min Score \t"<<"Max Score\t" <<"Min Bound\t"<< "Max Bound\t";
     outfile<<"||"<<endl;
 
-
-
+    readFolder(folderInput, &outfile, preprocess);
 
     outfile.close();
 
