@@ -33,10 +33,10 @@
 #include <cstring>
 #include <cstdlib>
 
-#include  "./include/incremental.hpp"
-#include "./include/convexHull.hpp"
+// #include  "./include/incremental.hpp"
+// #include "./include/convexHull.hpp"
 #include "./include/localSearch.hpp"
-#include "./include/simulatedAnnealing.hpp"
+// #include "./include/simulatedAnnealing.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -223,8 +223,8 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
 
 
         //this has to be changed
-        convexHull(&p, &allPoints, 1, &ourArea);
-        incremental(&p,&allPoints,1,1,&ourArea);
+        // convexHull(&p, &allPoints, 1, &ourArea);
+        // incremental(&p,&allPoints,1,1,&ourArea);
         
         makeOutputRunCase(outfile,0,0,0,0);
 

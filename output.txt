@@ -1,5 +1,5 @@
 		||					Algorithm	1					||					Algorithm	2					||
 Size 	||	min Score 	Max Score	Min Bound	Max Bound	||	min Score 	Max Score	Min Bound	Max Bound	||
-20		||	0			0			0			0			||	0			0			0			0			||
-15		||	0			0			0			0			||	0			0			0			0			||
 10		||	0			0			0			0			||	0			0			0			0			||
+15		||	0			0			0			0			||	0			0			0			0			||
+20		||	0			0			0			0			||	0			0			0			0			||

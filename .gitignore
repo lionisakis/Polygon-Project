@@ -4,4 +4,4 @@ CMakeFiles
 CMakeCache.txt
 CMakeLists.txt.*
 instances
-
+*.a
