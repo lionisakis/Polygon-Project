@@ -4,8 +4,9 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/convex_hull_2.h>
-#include "utility.hpp"
-#include "edgePointPair.hpp"
+#include "../include/geoUtil.hpp"
+#include "../include/genericUtil.hpp"
+#include "../include/edgePointPair.hpp"
 
 using namespace std;
 

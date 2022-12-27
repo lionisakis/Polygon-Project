@@ -3,7 +3,8 @@
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-#include "edgeChange.hpp"
+#include "../include/edgeChange.hpp"
+#include "../include/genericUtil.hpp"
 #include <math.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -32,57 +33,6 @@ double triangularAreaCalculation(Point point0, Point point1, Point point2){
     return det/2;
 }
 
-//1: x decreasing 
-//2: x increasing 
-//3: y decreasing
-//4: y increasing
-void swap(Point* a, Point* b,int type){
-    // x decreasing
-    if (type==1){
-        if(a->x()<b->x()){
-            Point temp=*a;
-            *a=*b;
-            *b=temp;
-        }
-    }
-    // x increasing
-    else if (type==2){
-        if(a->x()>b->x()){
-            Point temp=*a;
-            *a=*b;
-            *b=temp;
-        }
-    }
-    // y decreasing
-    else if(type==3){
-        if(a->y()<b->y()){
-            Point temp=*a;
-            *a=*b;
-            *b=temp;
-        }
-    }
-    // y increasing
-    else{
-        if(a->y()>b->y()){
-            Point temp=*a;
-            *a=*b;
-            *b=temp;
-        }
-    }
-}
-
-//sort points in a vector based on type=
-//1: x decreasing 
-//2: x increasing 
-//3: y decreasing
-//4: y increasing
-void sortPoints(vector<Point>* points, int type){
-    for (int i=0;i<points->size();i++){
-        for(int j=i+1;j<points->size();j++){
-            swap(&points->at(i),&points->at(j),type);
-        }
-    }
-}
 
 //sort points based on type and then create a triangle from the first 3 points
 void coordinatesSorting(Polygon* polygon,vector<Point>* points,int type,double* area){
@@ -256,18 +206,6 @@ double calculateNewArea(Polygon* polygon, Segment edge, Point left, Point right,
     return total;
 }
 
-//calculate energy for maximization problem
-double minEnergy(int n , int polygonArea, int chArea){
-    double tmp = (double)polygonArea/(double)chArea;
-    return n*tmp;
-}
-
-//calculate energy for minimization problem
-double maxEnergy(int n, int polygonArea ,int chArea){
-    double tmp = (double)polygonArea/(double)chArea;
-    return n*(1-tmp);
-}
-
 //implement that change that we chose, move path V between u1u2
 void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     Point left=edge->getLeft();
@@ -317,8 +255,44 @@ void changeEdge(Polygon* polygon,EdgeChange* edge, int total){
     }
 }
 
-//see if metropolis criterion holds
-int Metropolis(double DE,double T){    
-    double R =(double)rand() / (double)((unsigned)RAND_MAX + 1);
-    return exp(-DE/T)>=R;
+//returns 1 when the path does not pass the validity check and 0 when it passes the validity check
+int checkPath(Polygon* polygon,VertexIterator viPathFirst,VertexIterator viPathLast,EdgeIterator ei2){
+    // and not in our edge
+
+    if(ei2->point(0)==*viPathLast||ei2->point(1)==*viPathLast){
+        return 1;
+    }
+    // check visibility that the last point is visible
+    if ((checkVisibility(polygon,*viPathLast,ei2->point(0))==0)||(checkVisibility(polygon,*viPathLast,ei2->point(1)))==0)
+        return 1;
+    // check the change does not change our simplicity
+    Segment segLeft=Segment(ei2->point(1),*viPathFirst);
+    Segment segRight=Segment(*viPathLast,ei2->point(0));
+    Segment newEi;    
+
+    if(viPathLast==polygon->vertices_end()-1){
+        newEi=Segment(*(viPathFirst-1),*(polygon->vertices_begin()));  
+    }
+    else if (viPathFirst==polygon->vertices_begin()){
+        newEi=Segment(*(polygon->vertices_end()-1),*(viPathLast+1));                                      
+    }
+    else{
+        newEi=Segment(*(viPathFirst-1),*(viPathLast+1));                             
+    }
+    if(intersection(newEi,segLeft)||intersection(newEi,segRight))
+        return 1;
+    //check if the new edge newEi intersects with the other edges of the polygon
+    for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+        if(ei->point(0)==newEi.point(0)||ei->point(1)==newEi.point(0))
+            continue;
+        if(ei->point(0)==newEi.point(1)||ei->point(1)==newEi.point(1))
+            continue;
+        if((*ei == Segment(ei2->point(0), *viPathFirst)) || (*ei == Segment(*viPathLast, ei->point(1))))
+            continue;
+        if(intersection(newEi,*ei))
+            return 1;
+    }
+    return 0;
 }
+
+
