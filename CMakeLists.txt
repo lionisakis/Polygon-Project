@@ -29,9 +29,16 @@ if ( NOT Boost_FOUND )
 endif()
 
 # include for local directory
-include_directories( BEFORE include )
-add_subdirectory(include)
-list(APPEND EXTRA_LIBS utils)
+add_subdirectory(modules)
+add_subdirectory(algorithms)
+list(APPEND EXTRA_LIBS convexHull)
+list(APPEND EXTRA_LIBS edgeChange)
+list(APPEND EXTRA_LIBS edgePointPair)
+list(APPEND EXTRA_LIBS genericUtil)
+list(APPEND EXTRA_LIBS geoUtil)
+list(APPEND EXTRA_LIBS incremental)
+list(APPEND EXTRA_LIBS localSearch)
+list(APPEND EXTRA_LIBS simulatedAnnealing)
 
 # include for local package
 
