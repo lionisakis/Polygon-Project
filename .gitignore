@@ -2,7 +2,5 @@ CMakeFiles
 .vscode
 *.cmake 
 CMakeCache.txt
-CMakeLists*.txt*
 instances
-
 
