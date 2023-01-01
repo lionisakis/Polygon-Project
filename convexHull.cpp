@@ -6,9 +6,9 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
-#include "../include/geoUtil.hpp"
-#include "../include/genericUtil.hpp"
-#include "../include/edgePointPair.hpp"
+#include "geoUtil.hpp"
+#include "genericUtil.hpp"
+#include "edgePointPair.hpp"
 
 using namespace std;
 

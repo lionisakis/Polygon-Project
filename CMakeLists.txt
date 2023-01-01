@@ -29,16 +29,16 @@ if ( NOT Boost_FOUND )
 endif()
 
 # include for local directory
-add_subdirectory(modules)
-add_subdirectory(algorithms)
-list(APPEND EXTRA_LIBS convexHull)
-list(APPEND EXTRA_LIBS edgeChange)
-list(APPEND EXTRA_LIBS edgePointPair)
-list(APPEND EXTRA_LIBS genericUtil)
-list(APPEND EXTRA_LIBS geoUtil)
-list(APPEND EXTRA_LIBS incremental)
-list(APPEND EXTRA_LIBS localSearch)
-list(APPEND EXTRA_LIBS simulatedAnnealing)
+#add_subdirectory(modules)
+#add_subdirectory(algorithms)
+#list(APPEND EXTRA_LIBS convexHull)
+#list(APPEND EXTRA_LIBS edgeChange)
+#list(APPEND EXTRA_LIBS edgePointPair)
+#list(APPEND EXTRA_LIBS genericUtil)
+#list(APPEND EXTRA_LIBS geoUtil)
+#list(APPEND EXTRA_LIBS incremental)
+#list(APPEND EXTRA_LIBS localSearch)
+#list(APPEND EXTRA_LIBS simulatedAnnealing)
 
 # include for local package
 
@@ -46,7 +46,7 @@ list(APPEND EXTRA_LIBS simulatedAnnealing)
 # Creating entries for target: main
 # ############################
 
-add_executable( main  main.cpp )
+add_executable( main  main.cpp edgeChange.cpp convexHull.cpp edgePointPair.cpp genericUtil.cpp geoUtil.cpp incremental.cpp localSearch.cpp simulatedAnnealing.cpp)
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS main )
 

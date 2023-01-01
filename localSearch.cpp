@@ -7,11 +7,11 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
-#include "../include/geoUtil.hpp"
-#include "../include/genericUtil.hpp"
-#include "../include/edgeChange.hpp"
-#include "../include/incremental.hpp"
-#include "../include/convexHull.hpp"
+#include "geoUtil.hpp"
+#include "genericUtil.hpp"
+#include "edgeChange.hpp"
+#include "incremental.hpp"
+#include "convexHull.hpp"
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Fuzzy_iso_box.h>

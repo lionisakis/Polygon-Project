@@ -33,10 +33,11 @@
 #include <cstring>
 #include <cstdlib>
 
-// #include  "./include/incremental.hpp"
-// #include "./include/convexHull.hpp"
-#include "./include/localSearch.hpp"
-// #include "./include/simulatedAnnealing.hpp"
+#include  "incremental.hpp"
+#include "convexHull.hpp"
+#include "localSearch.hpp"
+#include "simulatedAnnealing.hpp"
+#include "outputInfo.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -47,10 +48,23 @@ typedef Polygon::Edge_const_iterator EdgeIterator;
 
 using namespace std;
 
-void makeOutputRunCase(ofstream* outfile,double minScore,double maxScore,double minBound,double maxBound){
-    //create file where output is to be written
-    *outfile << "||\t" << minScore <<"\t\t\t"<< maxScore <<"\t\t\t"<< minBound<<"\t\t\t"<< maxBound<<"\t\t\t";
+
+void swap(outputInfo** xp, outputInfo** yp){
+    outputInfo* temp = *xp;
+    *xp = *yp;
+    *yp = temp;
 }
+ 
+// bubble sort, to sort the vectors with the statistics with increasing order of file size
+//must be called for each vector of each case we run
+void bubbleSort(vector<outputInfo*> arr, int n){
+    int i, j;
+    for (i = 0; i < n - 1; i++)
+        for (j = 0; j < n - i - 1; j++)
+            if (arr.at(j)->getSize() > arr.at(j+1)->getSize())
+                swap(&arr.at(j), &arr.at(j+1));
+}
+
 
 void readFile(string input,vector<Point>* allPoints){
     //read contents of input file, ignoring first line with #
@@ -192,6 +206,8 @@ void readFile(string input,vector<Point>* allPoints){
 
 int readFolder(string path,ofstream* outfile, int preprocessor){
     DIR *dir=opendir( path.c_str() );
+    vector<outputInfo*> infoCase1;//for each case(combination of algorithms we have a separate vector for its ratio statistics)
+    int totalSizes=0;//how many different totalPoint sizes we have
     struct dirent *theDir;
     // try to open the path
     if ( dir  == NULL ){
@@ -215,25 +231,58 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
         vector<Point> allPoints;
         readFile(newPath+temp,&allPoints);
         *outfile << allPoints.size() << "\t\t";
+        double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
+        double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
+        double minBound;
+        double maxBound;
 
         //run case 1
+        int flag=0;
+        for(int i=0; i<infoCase1.size(); i++){
+            if(infoCase1.at(i)->getSize() == allPoints.size()){
+                flag=1;
+                break;
+            }
+        }
+        //if flag=0 then a new file size was found so have to add a new element to all vectors of type <outputInfo*>
+        if(!flag){
+            outputInfo*  newSize = new outputInfo(allPoints.size());
+            infoCase1.push_back(newSize);
+            totalSizes++;
+        }
+
         Polygon p;
         double ourArea=0;//in this variable we store the area calculated by our algorithm
 
 
-
-        //this has to be changed
-        // convexHull(&p, &allPoints, 1, &ourArea);
-        // incremental(&p,&allPoints,1,1,&ourArea);
+        //run case1
         
-        makeOutputRunCase(outfile,0,0,0,0);
+        //after the algorithm has finished we updates the scores for the specific size
+        for(int i=0; i<infoCase1.size(); i++){
+            if(infoCase1.at(i)->getSize() == allPoints.size()){
+                infoCase1.at(i)->setminScore(minScore);
+                infoCase1.at(i)->setmaxScore(maxScore);
+                infoCase1.at(i)->setmaxBound(maxScore);
+                infoCase1.at(i)->setminBound(minScore);
+                break;
+            }
+        }
+
 
         //run case2
-        makeOutputRunCase(outfile,0,0,0,0);
-
-        *outfile << "||"<<endl;
+       
     }
     closedir(dir);
+
+    //call bubble sort for all vectors of type <outputInfo*>
+    bubbleSort(infoCase1, totalSizes);
+
+    //aftetr all cases are implemented for all files we print statistics
+    for(int i=0; i<totalSizes; i++){
+        infoCase1.at(i)->printInfo(outfile);
+        *outfile << "||"<<endl;
+        //then printinfo of next case
+    }
     return 0;
     
 }
