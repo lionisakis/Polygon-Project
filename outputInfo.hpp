@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cstdlib>
 
 
 class outputInfo{
@@ -18,9 +19,9 @@ class outputInfo{
         const double getmaxScore();
         const double getmaxBound();
         const double getminBound();
-        double setminScore(double sc);
-        double setmaxScore(double sc);
-        double setmaxBound(double sc);
-        double setminBound(double sc);
-        void printInfo(ofstream* );
+        void setminScore(double sc);
+        void setmaxScore(double sc);
+        void setmaxBound(double sc);
+        void setminBound(double sc);
+        void printInfo(std::ofstream* );
 };

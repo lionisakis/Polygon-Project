@@ -33,17 +33,17 @@ const double outputInfo::getminBound(){
     return this->minBound;
 }
 
-double outputInfo::setminScore(double sc){
+void outputInfo::setminScore(double sc){
     this->minScore+=sc;
 }
-double outputInfo::setmaxScore(double sc){
+void outputInfo::setmaxScore(double sc){
     this->maxScore+=sc;
 }
-double outputInfo::setmaxBound(double sc){
+void outputInfo::setmaxBound(double sc){
     if(sc<maxBound)
         this->maxBound = sc;
 }
-double outputInfo::setminBound(double sc){
+void outputInfo::setminBound(double sc){
     if(sc>minBound)
         this->minBound = sc;
 }

@@ -321,6 +321,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+outputInfo.o: outputInfo.cpp.o
+.PHONY : outputInfo.o
+
+# target to build an object file
+outputInfo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/outputInfo.cpp.o
+.PHONY : outputInfo.cpp.o
+
+outputInfo.i: outputInfo.cpp.i
+.PHONY : outputInfo.i
+
+# target to preprocess a source file
+outputInfo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/outputInfo.cpp.i
+.PHONY : outputInfo.cpp.i
+
+outputInfo.s: outputInfo.cpp.s
+.PHONY : outputInfo.s
+
+# target to generate assembly for a file
+outputInfo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/outputInfo.cpp.s
+.PHONY : outputInfo.cpp.s
+
 simulatedAnnealing.o: simulatedAnnealing.cpp.o
 .PHONY : simulatedAnnealing.o
 
@@ -378,6 +402,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... outputInfo.o"
+	@echo "... outputInfo.i"
+	@echo "... outputInfo.s"
 	@echo "... simulatedAnnealing.o"
 	@echo "... simulatedAnnealing.i"
 	@echo "... simulatedAnnealing.s"
