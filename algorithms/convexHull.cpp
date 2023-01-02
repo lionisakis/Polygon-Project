@@ -9,6 +9,7 @@
 #include "../include/geoUtil.hpp"
 #include "../include/genericUtil.hpp"
 #include "../include/edgePointPair.hpp"
+#include "../include/timeManager.hpp"
 
 using namespace std;
 
@@ -38,6 +39,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
     *area = polygon->area();
     vector<Point> remainingPoints, remainingPoints2;//store points that are not part of convex hull
     for(int k=0; k<points->size(); k++){
+        if(checkCutOf())
+            return -10;
         int flag=1;
         for(int l=0; l<KP.size(); l++){
             if(points->at(k) == KP.at(l)){
@@ -89,6 +92,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
         //make sure left most edge is in polygon
         int flagl=0, flagr=0;
         for(ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            if(checkCutOf())
+                return -10;
             if(flagl)
                 break;
             //make sure leftmost edge is in polygon
@@ -99,12 +104,16 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
             else if(ei->point(1)==mostLeft && ei->point(0) != mostLeft2 && inRemaining2==0){
                 whereToInsert = mostLeft;
                 for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                    if(checkCutOf())
+                        return -10;
                     if(*vi == mostLeft2){
                         polygon->erase(vi);
                         break;
                     }
                 }
                 for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                    if(checkCutOf())
+                        return -10;
                     if(*vi == whereToInsert){
                         polygon->insert(vi, mostLeft2);
                         flagl=1;
@@ -116,6 +125,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                 //     return 1;
                 // }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
+                    if(checkCutOf())
+                        return -10;
                     if(ei5->point(0)==mostLeft2 && ei5->point(1)==mostLeft){
                         left=*ei5;
                         break;
@@ -126,6 +137,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
             else if(ei->point(0)!=mostLeft2 && ei->point(1)==mostLeft && inRemaining2){
                 whereToInsert = mostLeft;
                 for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                    if(checkCutOf())
+                        return -10;
                     if(*vi == whereToInsert){
                         polygon->insert(vi, mostLeft2);
                         flagl=1;
@@ -137,6 +150,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                 //     return 1;
                 // }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
+                    if(checkCutOf())
+                        return -10;
                     if(ei5->point(0)==mostLeft2 && ei5->point(1)==mostLeft){
                         left=*ei5;
                         break;
@@ -147,6 +162,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
         if(lastSet==0){
             //make sure rightmost edge is in polygon
             for(ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                if(checkCutOf())
+                        return -10;
                 if(flagr)
                     break;
                 //make sure rightmost edge is in polygon
@@ -159,12 +176,16 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     whereToInsert = ei->point(1);
                     VertexIterator vi2;
                     for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                        if(checkCutOf())
+                            return -10;
                         if(*vi == mostRight2){
                             polygon->erase(vi);
                             break;
                         }
                     }
                     for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                        if(checkCutOf())
+                            return -10;
                         if(*vi == whereToInsert){
                             polygon->insert(vi, mostRight2);
                             flagr=1;
@@ -177,6 +198,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     //     return 1;
                     // }
                     for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
+                        if(checkCutOf())
+                            return -10;
                         if(ei5->point(0)==mostRight && ei5->point(1)==mostRight2){
                             right=*ei5;
                             break;
@@ -188,6 +211,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                 else if(ei->point(0)==mostRight && ei->point(1)!=mostRight2 && inRemaining){
                     whereToInsert = ei->point(1);
                     for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                        if(checkCutOf())
+                            return -10;
                         if(*vi == whereToInsert){
                             polygon->insert(vi, mostRight2);
                             flagr=1;
@@ -199,6 +224,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                     //     return 1;
                     // }
                     for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
+                        if(checkCutOf())
+                            return -10;
                         if(ei5->point(0)==mostRight && ei5->point(1)==mostRight2){
                             right=*ei5;
                             break;
@@ -214,6 +241,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
     }
     else{//if we are not in subdivision we want all the remaining points to be added
         for(int g=0; g<remainingPoints2.size(); g++){
+            if(checkCutOf())
+                return -10;
             remainingPoints.push_back(remainingPoints2.at(g));
         }
     }
@@ -221,12 +250,16 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
     
     
     while(remainingPoints.size()!=0){
+        if(checkCutOf())
+            return -10;
         vector<edgePointPair*> pairs;
         //for every edge of polygon A find its closet point and create a pair that contains the edge the closest point and the area of the polygon that will be created
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
             double min=INFINITY;
             int place;
             for(int i=0; i<remainingPoints.size(); i++){
+                if(checkCutOf())
+                    return -10;
                 double distance =triangularAreaCalculation(remainingPoints.at(i),ei->point(0),ei->point(1));
                 if(distance < min){
                     if(flagSub){
@@ -267,6 +300,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
         else if(edge==3){
             double minArea=INFINITY;
             for(int j=0; j<pairs.size(); j++){
+                if(checkCutOf())
+                    return -10;
                 if(pairs.at(j)->getArea()<minArea){
                     minArea=pairs.at(j)->getArea();
                     choose = j;
@@ -276,6 +311,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
         else if(edge==2){
             int maxArea=0;
             for(int j=0; j<pairs.size(); j++){
+                if(checkCutOf())
+                    return -10;
                 if(pairs.at(j)->getArea()>maxArea){
                     maxArea=pairs.at(j)->getArea();
                     choose = j;
@@ -284,6 +321,8 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
         }
         
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+            if(checkCutOf())
+                return -10;
             Point tmp = pairs.at(choose)->getSegment().point(1);
             if(*vi==tmp){
                 polygon->insert(vi, pairs.at(choose)->getPoint());
@@ -291,11 +330,6 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                 break;
             }
         }
-        // if(polygon->is_simple() == 0){
-        //     cout<<"not simple after insertion in ch "<< pairs.at(choose)->getPoint()<< endl;
-        //     exit(1);
-
-        // }
         remainingPoints.erase(remainingPoints.begin()+pairs.at(choose)->getPosition());
 
         for (int i=0;i<pairs.size();i--){

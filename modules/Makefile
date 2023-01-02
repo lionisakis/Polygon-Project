@@ -156,6 +156,21 @@ edgePointPair/fast:
 .PHONY : edgePointPair/fast
 
 # Convenience name for target.
+modules/CMakeFiles/timeManager.dir/rule:
+	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/timeManager.dir/rule
+.PHONY : modules/CMakeFiles/timeManager.dir/rule
+
+# Convenience name for target.
+timeManager: modules/CMakeFiles/timeManager.dir/rule
+
+.PHONY : timeManager
+
+# fast build rule for target.
+timeManager/fast:
+	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f modules/CMakeFiles/timeManager.dir/build.make modules/CMakeFiles/timeManager.dir/build
+.PHONY : timeManager/fast
+
+# Convenience name for target.
 modules/CMakeFiles/edgeChange.dir/rule:
 	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/edgeChange.dir/rule
 .PHONY : modules/CMakeFiles/edgeChange.dir/rule
@@ -278,6 +293,33 @@ geoUtil.cpp.s:
 	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f modules/CMakeFiles/geoUtil.dir/build.make modules/CMakeFiles/geoUtil.dir/geoUtil.cpp.s
 .PHONY : geoUtil.cpp.s
 
+timeManager.o: timeManager.cpp.o
+
+.PHONY : timeManager.o
+
+# target to build an object file
+timeManager.cpp.o:
+	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f modules/CMakeFiles/timeManager.dir/build.make modules/CMakeFiles/timeManager.dir/timeManager.cpp.o
+.PHONY : timeManager.cpp.o
+
+timeManager.i: timeManager.cpp.i
+
+.PHONY : timeManager.i
+
+# target to preprocess a source file
+timeManager.cpp.i:
+	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f modules/CMakeFiles/timeManager.dir/build.make modules/CMakeFiles/timeManager.dir/timeManager.cpp.i
+.PHONY : timeManager.cpp.i
+
+timeManager.s: timeManager.cpp.s
+
+.PHONY : timeManager.s
+
+# target to generate assembly for a file
+timeManager.cpp.s:
+	cd "/media/akis/Ubuntu-Windows1/Uni/4 ετος/Polygon-Project" && $(MAKE) -f modules/CMakeFiles/timeManager.dir/build.make modules/CMakeFiles/timeManager.dir/timeManager.cpp.s
+.PHONY : timeManager.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -289,6 +331,7 @@ help:
 	@echo "... geoUtil"
 	@echo "... genericUtil"
 	@echo "... edgePointPair"
+	@echo "... timeManager"
 	@echo "... edgeChange"
 	@echo "... edgeChange.o"
 	@echo "... edgeChange.i"
@@ -302,6 +345,9 @@ help:
 	@echo "... geoUtil.o"
 	@echo "... geoUtil.i"
 	@echo "... geoUtil.s"
+	@echo "... timeManager.o"
+	@echo "... timeManager.i"
+	@echo "... timeManager.s"
 .PHONY : help
 
 

@@ -34,8 +34,9 @@
 #include <cstdlib>
 
 // #include  "./include/incremental.hpp"
-// #include "./include/convexHull.hpp"
+#include "./include/convexHull.hpp"
 #include "./include/localSearch.hpp"
+#include "./include/timeManager.hpp"
 // #include "./include/simulatedAnnealing.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -220,15 +221,22 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
         Polygon p;
         double ourArea=0;//in this variable we store the area calculated by our algorithm
 
-
-
-        //this has to be changed
+        
+        initializeTime(allPoints.size());
         // convexHull(&p, &allPoints, 1, &ourArea);
-        // incremental(&p,&allPoints,1,1,&ourArea);
         
         makeOutputRunCase(outfile,0,0,0,0);
 
+
         //run case2
+        initializeTime(allPoints.size());
+        while(1){
+        // incremental(&p,&allPoints,1,1,&ourArea);
+            if(checkCutOf()){
+                printf("CUTOFF2\n");
+                break;
+            }
+        }
         makeOutputRunCase(outfile,0,0,0,0);
 
         *outfile << "||"<<endl;

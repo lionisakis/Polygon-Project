@@ -163,6 +163,19 @@ edgePointPair/fast:
 .PHONY : edgePointPair/fast
 
 #=============================================================================
+# Target rules for targets named timeManager
+
+# Build rule for target.
+timeManager: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 timeManager
+.PHONY : timeManager
+
+# fast build rule for target.
+timeManager/fast:
+	$(MAKE) -f modules/CMakeFiles/timeManager.dir/build.make modules/CMakeFiles/timeManager.dir/build
+.PHONY : timeManager/fast
+
+#=============================================================================
 # Target rules for targets named edgeChange
 
 # Build rule for target.
@@ -266,6 +279,7 @@ help:
 	@echo "... geoUtil"
 	@echo "... genericUtil"
 	@echo "... edgePointPair"
+	@echo "... timeManager"
 	@echo "... edgeChange"
 	@echo "... simulatedAnnealing"
 	@echo "... localSearch"

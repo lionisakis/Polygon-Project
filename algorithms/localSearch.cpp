@@ -15,6 +15,8 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
+#include "../include/timeManager.hpp"
+
 using namespace std;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -41,12 +43,15 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
     double DA=threshold+1;
     int countDA=0;
     while(DA>=threshold){
-
+        if(checkCutOf())
+            return -10;
         int initialArea=abs(polygon->area());
         vector<EdgeChange*> changes;
         if (countPoints<=10){
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
                 for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                    if(checkCutOf())
+                        return -10;
                     int stop=0;
                     if(checkPath(polygon,vi,vi,ei))
                         continue;
@@ -58,6 +63,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
                     // until we have gone out of bounds do this
                     for (VertexIterator vi2 = vi+1; vi2 != polygon->vertices_end(); ++vi2){
+                        if(checkCutOf())
+                            return -10;
                         path.push_back(*vi2);
 
                         // check if the path is ok with the size
@@ -79,6 +86,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                         continue;
                         // do this when we have to start from the starting vertex again
                     for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
+                        if(checkCutOf())
+                            return -10;
                         path.push_back(*vi2);
 
                         // check if the path is ok with the size
@@ -107,6 +116,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 while(see.size()<10){
                     int flag;
                     do{
+                        if(checkCutOf())
+                            return -10;
                         flag=0;
                         int random=rand()%(countPoints);
                         for(int i=0;i<see.size();i++){
@@ -124,6 +135,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                     //EdgeIterator ei=see.back();
                     EdgeIterator ei=see.at(i);
                     for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+                        if(checkCutOf())
+                            return -10;
                         int stop=0;
                         if(checkPath(polygon,vi,vi,ei))
                             continue;
@@ -135,6 +148,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
 
                         // until we have gone out of bounds do this
                         for (VertexIterator vi2 = vi+1; vi2 != polygon->vertices_end(); ++vi2){
+                            if(checkCutOf())
+                                return -10;
                             path.push_back(*vi2);
 
                             // check if the path is ok with the size
@@ -157,6 +172,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                             continue;
                             // do this when we have to start from the starting vertex again
                         for (VertexIterator vi2 = polygon->vertices_begin(); vi2 != vi; ++vi2){
+                            if(checkCutOf())
+                                return -10;
                             path.push_back(*vi2);
 
                             // check if the path is ok with the size
@@ -188,6 +205,8 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         EdgeChange* theChange=changes.at(0);
         
         for(int i=1;i<changes.size();i++){
+            if(checkCutOf())
+                return -10;
             // max
             if (typeOfOptimization==1 && temp<changes.at(i)->getArea() ){
                 temp=changes.at(i)->getArea();                                                                                                                                                                                    
@@ -211,11 +230,6 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
-        // if(polygon->is_simple() ==0 ){
-        //     cout << "simplicity broken" << endl;
-        //     exit(1);
-        // }
-        
     }
 
 }
