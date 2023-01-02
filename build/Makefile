@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/elenaliarou/Downloads/Polygon-Project
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/elenaliarou/Downloads/Polygon-Project
+CMAKE_BINARY_DIR = /Users/elenaliarou/Downloads/Polygon-Project/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/elenaliarou/Downloads/Polygon-Project/CMakeFiles /Users/elenaliarou/Downloads/Polygon-Project//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/elenaliarou/Downloads/Polygon-Project/build/CMakeFiles /Users/elenaliarou/Downloads/Polygon-Project/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/elenaliarou/Downloads/Polygon-Project/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/elenaliarou/Downloads/Polygon-Project/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -164,21 +164,10 @@ edgeChange.cpp.o:
 edgeChange.i: edgeChange.cpp.i
 .PHONY : edgeChange.i
 
-#=============================================================================
-# Target rules for targets named timeManager
-
-# Build rule for target.
-timeManager: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 timeManager
-.PHONY : timeManager
-
-# fast build rule for target.
-timeManager/fast:
-	$(MAKE) -f modules/CMakeFiles/timeManager.dir/build.make modules/CMakeFiles/timeManager.dir/build
-.PHONY : timeManager/fast
-
-#=============================================================================
-# Target rules for targets named edgeChange
+# target to preprocess a source file
+edgeChange.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/edgeChange.cpp.i
+.PHONY : edgeChange.cpp.i
 
 edgeChange.s: edgeChange.cpp.s
 .PHONY : edgeChange.s
@@ -389,15 +378,27 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
-	@echo "... geoUtil"
-	@echo "... genericUtil"
-	@echo "... edgePointPair"
-	@echo "... timeManager"
-	@echo "... edgeChange"
-	@echo "... simulatedAnnealing"
-	@echo "... localSearch"
-	@echo "... incremental"
-	@echo "... convexHull"
+	@echo "... convexHull.o"
+	@echo "... convexHull.i"
+	@echo "... convexHull.s"
+	@echo "... edgeChange.o"
+	@echo "... edgeChange.i"
+	@echo "... edgeChange.s"
+	@echo "... edgePointPair.o"
+	@echo "... edgePointPair.i"
+	@echo "... edgePointPair.s"
+	@echo "... genericUtil.o"
+	@echo "... genericUtil.i"
+	@echo "... genericUtil.s"
+	@echo "... geoUtil.o"
+	@echo "... geoUtil.i"
+	@echo "... geoUtil.s"
+	@echo "... incremental.o"
+	@echo "... incremental.i"
+	@echo "... incremental.s"
+	@echo "... localSearch.o"
+	@echo "... localSearch.i"
+	@echo "... localSearch.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

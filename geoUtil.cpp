@@ -3,8 +3,8 @@
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
-#include "../include/edgeChange.hpp"
-#include "../include/genericUtil.hpp"
+#include "edgeChange.hpp"
+#include "genericUtil.hpp"
 #include <math.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;

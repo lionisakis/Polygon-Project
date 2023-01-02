@@ -2,8 +2,8 @@
 #include <cstdlib>
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include "../include/genericUtil.hpp"
-#include "../include/geoUtil.hpp"
+#include "genericUtil.hpp"
+#include "geoUtil.hpp"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
