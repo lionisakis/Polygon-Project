@@ -10,7 +10,7 @@
 #include "allIncludes.hpp"
 
 // subdivision -> localSearch
-void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double chArea){
+void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double chArea){
     double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
     double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
     double minBound;
@@ -24,12 +24,11 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     int finalRes;
     int flagCont=1;
     
-    double L=10;
+    double L=1000;
     int m=100;
-    if(subdivision(&pMin, allPoints, 2, L, &pArea2, allPoints->size(), chArea, 2, 1, m, &pArea) == -10)//4th argument either 2 or 1 (min or random edge selection)
+    if(subdivision(&pMin, allPoints, 2, L, &pArea2, allPoints->size(), chArea, 2, 1, m, &pArea) == -10)//3rd argument from end either 2 or 1 (min or random edge selection)
         flagCont=0;
 
-    pArea = abs(pMin.area());
     if(flagCont){
         int threshold=1;
         L=10;
@@ -54,7 +53,7 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     initializeTime(allPoints->size());
     double L=10;
     int m=100;
-    if(subdivision(&pMin, allPoints, 2, L, &pArea2, allPoints->size(), chArea, 2, 1, m, &pArea) == -10)//4th argument either 2 or 1 (min or random edge selection)
+    if(subdivision(&pMin, allPoints, 1, L, &pArea2, allPoints->size(), chArea, 2, 3, m, &pArea) == -10)//3rd argument from end either 3 or 1 (max or random edge selection)
         flagCont=0;
 
     if(flagCont){
@@ -63,8 +62,6 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
         finalRes = localSearch(&pMax, 1, threshold, L, &pArea2, allPoints->size());
     }
 
-    if(pArea2 == 0)
-        pArea2 = pArea;
 
     if(flagCont == 0 || finalRes == -10)
         maxScore=0;
@@ -72,12 +69,12 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
         maxScore = (double)pArea2/(double)chArea;
 
     //update info case vector with the new scores/bounds
-    for(int i=0; i<infoCase2->size(); i++){
-        if(infoCase2->at(i)->getSize() == allPoints->size()){
-            infoCase2->at(i)->setMinScore(minScore);
-            infoCase2->at(i)->setMinBound(minScore);
-            infoCase2->at(i)->setMaxScore(maxScore);
-            infoCase2->at(i)->setMaxBound(maxScore);
+    for(int i=0; i<infoCase1->size(); i++){
+        if(infoCase1->at(i)->getSize() == allPoints->size()){
+            infoCase1->at(i)->setMinScore(minScore);
+            infoCase1->at(i)->setMinBound(minScore);
+            infoCase1->at(i)->setMaxScore(maxScore);
+            infoCase1->at(i)->setMaxBound(maxScore);
             break;
         }
     }    
