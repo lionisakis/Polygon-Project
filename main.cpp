@@ -39,6 +39,9 @@
 #include "simulatedAnnealing.hpp"
 #include "outputInfo.hpp"
 #include "timeManager.hpp"
+#include "genericUtil.hpp"
+
+#define CASES 2
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;
@@ -67,7 +70,7 @@ void bubbleSort(vector<outputInfo*> arr, int n){
 }
 
 
-void readFile(string input,vector<Point>* allPoints){
+void readFile(string input,vector<Point>* allPoints, double* chArea){
     //read contents of input file, ignoring first line with #
     fstream in;
     cout <<"name of file = " << input << endl;
@@ -77,7 +80,6 @@ void readFile(string input,vector<Point>* allPoints){
     }
     int totalPoints=0;//variable to store the total amount of 2D points given in input file
     int count=0;
-    double chArea;//area of convex hull, written in second line of input line
     while(!in.eof()){
         string text;
         getline(in, text);
@@ -92,7 +94,7 @@ void readFile(string input,vector<Point>* allPoints){
             while (token2) {
                 wordCounter++;
                 if(wordCounter==6){
-                    chArea=stod(token2);
+                    *chArea=stod(token2);
                 }
                 token2 = strtok(NULL,delim);
             }
@@ -132,7 +134,85 @@ void readFile(string input,vector<Point>* allPoints){
 
     in.close();
 }
+void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double chArea){
+        double L;
+        double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
+        double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
+        double minBound;
+        double maxBound;
 
+        //first for minimization
+        Polygon pMin;
+        double ourArea=0;
+        int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
+        initializeTime(allPoints->size());
+        int finalres;
+        int flagcont=1;
+        if(incremental(&pMin, allPoints, 1, 2, &ourArea) == -10)//4th argument either 2 or 1 (min or random edge selection)
+            flagcont=0;
+        pArea = abs(pMin.area());
+        if(flagcont){
+            L=1000;
+            int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
+            if(localMinimum(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+                flagcont=0;
+            }
+        }
+        if(flagcont){
+            int threshold=1;
+            L=10;
+            finalres = localSearch(&pMin, 2, threshold, L, &pArea2, allPoints->size());
+        }
+        if(pArea2 == 0)
+            pArea2 = pArea;
+
+        if(flagcont == 0 || finalres == -10)
+            minScore = 1;
+        else
+            minScore = (double)pArea2/(double)chArea;
+        
+
+        //then for maximization
+        flagcont=1;
+        Polygon pMax;
+        ourArea=0;
+        pArea=0;
+        pArea2=0;//in this variable we store the area calculated by our algorithm
+
+        initializeTime(allPoints->size());
+        if(incremental(&pMax, allPoints, 1, 3, &ourArea) == -10)//4th argument either 3 or 1 (max or random edge selection)
+            flagcont=0;
+        pArea = abs(pMax.area());
+        if(flagcont){
+            L=1000;
+            int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
+            if(localMinimum(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+                flagcont=0;
+            }
+        }
+        if(flagcont){
+            int threshold=1;
+            L=10;
+            finalres = localSearch(&pMax, 1, threshold, L, &pArea2, allPoints->size());
+        }
+        if(pArea2 == 0)
+            pArea2 = pArea;
+
+        if(flagcont == 0 || finalres == -10)
+            maxScore=0;
+        else
+            maxScore = (double)pArea2/(double)chArea;
+
+        for(int i=0; i<infoCase2->size(); i++){
+            if(infoCase2->at(i)->getSize() == allPoints->size()){
+                infoCase2->at(i)->setminScore(minScore);
+                infoCase2->at(i)->setmaxScore(maxScore);
+                infoCase2->at(i)->setmaxBound(maxScore);
+                infoCase2->at(i)->setminBound(minScore);
+                break;
+            }
+        }
+}
 // // put all the correct arguments such as L,m,edge_selection etc
 // void runCase1(vector<Point>* allPoints){
 //     //start timer 
@@ -208,7 +288,9 @@ void readFile(string input,vector<Point>* allPoints){
 int readFolder(string path,ofstream* outfile, int preprocessor){
     DIR *dir=opendir( path.c_str() );
     vector<outputInfo*> infoCase1;//for each case(combination of algorithms we have a separate vector for its ratio statistics)
+    vector<outputInfo*> infoCase2;
     int totalSizes=0;//how many different totalPoint sizes we have
+    double L;
     struct dirent *theDir;
     // try to open the path
     if ( dir  == NULL ){
@@ -225,75 +307,79 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
     // read the folder
     while ( ( theDir=readdir(dir) ) != NULL ){ 
         // if the folder name is . or .. then do nothing
-        if(strcmp(theDir->d_name,".")==0||strcmp(theDir->d_name,"..")==0)
-            continue;
-        string temp(theDir->d_name);
-        // for all the files
-        vector<Point> allPoints;
-        readFile(newPath+temp,&allPoints);
-        *outfile << allPoints.size() << "\t\t";
-        double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
-        double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
-        double minBound;
-        double maxBound;
+            if(strcmp(theDir->d_name,".")==0||strcmp(theDir->d_name,"..")==0)
+                continue;
+            string temp(theDir->d_name);
+            // for all the files
+            vector<Point> allPoints;
+            double chArea;
+            readFile(newPath+temp, &allPoints, &chArea);
+            *outfile << allPoints.size() << "\t\t";
+            double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
+            double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
+            double minBound;
+            double maxBound;
 
-        //run case 1
-        int flag=0;
-        for(int i=0; i<infoCase1.size(); i++){
-            if(infoCase1.at(i)->getSize() == allPoints.size()){
-                flag=1;
-                break;
+            //run case 1
+            int flag=0;
+            for(int i=0; i<infoCase1.size(); i++){
+                if(infoCase1.at(i)->getSize() == allPoints.size()){
+                    flag=1;
+                    break;
+                }
             }
-        }
-        //if flag=0 then a new file size was found so have to add a new element to all vectors of type <outputInfo*>
-        if(!flag){
-            outputInfo*  newSize = new outputInfo(allPoints.size());
-            infoCase1.push_back(newSize);
-            totalSizes++;
-        }
+            //if flag=0 then a new file size was found so have to add a new element to all vectors of type <outputInfo*>
+            if(!flag){
+                outputInfo*  newSize = new outputInfo(allPoints.size());
+                infoCase1.push_back(newSize);
+                infoCase2.push_back(newSize);
+                totalSizes++;
+            }
 
-        Polygon p;
-        double ourArea=0;//in this variable we store the area calculated by our algorithm
+            
+            
 
+            //run case1
+
+            //auta vgalta tha mpoun mesa stin sinartisi
+            initializeTime(allPoints.size());
+            // convexHull(&p, &allPoints, 1, &ourArea);
+            
+            //after the algorithm has finished we updates the scores for the specific size
+            for(int i=0; i<infoCase1.size(); i++){
+                if(infoCase1.at(i)->getSize() == allPoints.size()){
+                    infoCase1.at(i)->setminScore(minScore);
+                    infoCase1.at(i)->setmaxScore(maxScore);
+                    infoCase1.at(i)->setmaxBound(maxScore);
+                    infoCase1.at(i)->setminBound(minScore);
+                    break;
+                }
+            }
+
+            //run case2
+            runCase2(&allPoints, &infoCase2, chArea);
         
-        initializeTime(allPoints.size());
-        // convexHull(&p, &allPoints, 1, &ourArea);
-        
-        //after the algorithm has finished we updates the scores for the specific size
-        for(int i=0; i<infoCase1.size(); i++){
-            if(infoCase1.at(i)->getSize() == allPoints.size()){
-                infoCase1.at(i)->setminScore(minScore);
-                infoCase1.at(i)->setmaxScore(maxScore);
-                infoCase1.at(i)->setmaxBound(maxScore);
-                infoCase1.at(i)->setminBound(minScore);
-                break;
-            }
-        }
-
-
-
-        //run case2
-        initializeTime(allPoints.size());
-        while(1){
-        // incremental(&p,&allPoints,1,1,&ourArea);
-            if(checkCutOf()){
-                printf("CUTOFF2\n");
-                break;
-            }
-        }
-        makeOutputRunCase(outfile,0,0,0,0);
-
+    
+    }
     //aftetr all cases are implemented for all files we print statistics
     for(int i=0; i<totalSizes; i++){
         infoCase1.at(i)->printInfo(outfile);
         *outfile << "||"<<endl;
+        infoCase2.at(i)->printInfo(outfile);
+        *outfile << "||"<<endl;
         //then printinfo of next case
+    }
+
+    //delete all vectors of type <outputInfo*>
+    for (int i=0;i<infoCase1.size();i--){
+        delete infoCase1.at(i);
+        delete infoCase2.at(i);
     }
     return 0;
     
 }
 
-#define CASES 2
+
 
 int main(int argc, char* argv[]){ 
 
@@ -353,7 +439,7 @@ int main(int argc, char* argv[]){
         return -1;
     }
     cout<< folderInput<<endl;
-    cout<< fileOutput<<endl;
+    cout << fileOutput<<endl;
     cout<< preprocess<<endl;
 
     unsigned int tmp = (unsigned) time(NULL);

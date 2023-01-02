@@ -9,4 +9,4 @@ typedef CGAL::Point_2<K> Point;
 typedef CGAL::Polygon_2<K> Polygon;
 
 
-void localSearch(Polygon* , int , int , int , int*,int );
+int localSearch(Polygon* , int , int , int , int*,int );

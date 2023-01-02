@@ -7,12 +7,12 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
-#include "../include/geoUtil.hpp"
-#include "../include/genericUtil.hpp"
-#include "../include/edgeChange.hpp"
-#include "../include/incremental.hpp"
-#include "../include/convexHull.hpp"
-#include "../include/timeManager.hpp"
+#include "geoUtil.hpp"
+#include "genericUtil.hpp"
+#include "edgeChange.hpp"
+#include "incremental.hpp"
+#include "convexHull.hpp"
+#include "timeManager.hpp"
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
@@ -35,7 +35,7 @@ typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 
 //typeOfOptimization=1:max, =2:min
 //flagSub=1: called for subdivison-have to maintain certain edges =0: no subdivision
-void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, int flagSub=0){
+int globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea, int flagSub=0){
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
     }
@@ -65,7 +65,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             return -10;
         //put an upper bound on how many random choices global step can make so that we avoid an infinite loop
         if(totalIterations > 2*L){
-            return;
+            return 0;
         }
         //randomly find points q,s
         int currArea;
@@ -207,6 +207,7 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         }
         totalIterations++;
     }
+    return 0;
 }
 
 
@@ -215,8 +216,8 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
     VertexIterator p,q,r,s;
     // find a random point until there is no problem
     while(1){
-        if(checkCutOf())
-            return -10;
+        // if(checkCutOf())
+        //     return -10;
         (*interation)++;
         // find a random point that you have not seen yet
         int notSeen=0;
@@ -306,8 +307,8 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
         int flag=0;
         // check if there is a problem or not
         for(int i=0;i<result.size();i++){
-            if(checkCutOf())
-                return -10;
+            // if(checkCutOf())
+            //     return -10;
             Point x=result.at(i);
             if(x==*r || x==*q || x==*p){
                 continue;
@@ -340,8 +341,8 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
         flag=0;
 
         for(int i=0;i<result.size();i++){
-            if(checkCutOf())
-                return -10;
+            // if(checkCutOf())
+            //     return -10;
             Point x=result.at(i);
             if(x==*q || x==*r || x==*s){
                 continue;
@@ -373,7 +374,7 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
     return q;
 }
 
-void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea){
+int localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalArea, int countPoints, int initialEnergy, int chArea){
      // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -394,6 +395,9 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
         }
         VertexIterator q=localAlgorithm(polygon,&kd,countPoints,&countInterator,2*L);
         countInterator++;
+        if(checkCutOf())
+            return -10;
+
         if(q==polygon->vertices_end()){
             continue;
         }
@@ -458,27 +462,29 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
         T=T-1/L;
         *finalArea=currArea;
         prevEnergy = currEnergy;
-    }    
+    }   
+    return 0; 
 
 }
 
 //typeOfOptimization=1: max, =2:min
 //typeOfStep=1: local step, =2: global step
-void simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
+int simulated_annealing(Polygon* polygon, int typeOfOptimization, double L, int* finalArea,int countPoints, int typeOfStep, int initialEnergy, int chArea){
     //local step
     if(typeOfStep==1){
-        localMinimum(polygon,typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
+        return localMinimum(polygon,typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
     }
     //global step
     else if(typeOfStep==2){
-        globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
+        return globalStep(polygon, typeOfOptimization, L, finalArea, countPoints, initialEnergy, chArea);
     }
+    return 0;
 }
 
 //greedyAlgo=1: incremental, greedyAlgo=2: convex hull
 //greedyEdge=1: random, =2:min, =3:max
 //m=[10,100]
-void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, double L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m, int* initialArea){
+int subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization, double L, int *finalArea, int countPoints, int chArea, int greedyAlgo, int greedyEdge, int m, int* initialArea){
     sortPoints(points, 2);
     double area;
     int howManyToAdd=m-1;
@@ -645,7 +651,9 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             initialEnergy = minEnergy(countPoints, pArea, chArea2);
 
         //apply global step
-        globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, current.size(), initialEnergy, chArea2, 1);
+        int resgs = globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, current.size(), initialEnergy, chArea2, 1);
+        if(resgs == -10)
+            return -10;
     }
     
     // just insert the first polygon
@@ -738,6 +746,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         initialEnergy = maxEnergy(countPoints, *initialArea, chArea);
     else if(typeOfOptimization == 2)
         initialEnergy = minEnergy(countPoints, *initialArea, chArea);
-    localMinimum(polygon,typeOfOptimization,L,finalArea,countPoints,initialEnergy,chArea);
+    if(checkCutOf())
+        return -10;
+    return localMinimum(polygon,typeOfOptimization,L,finalArea,countPoints,initialEnergy,chArea);
     
 }

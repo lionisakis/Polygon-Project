@@ -15,7 +15,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
-#include "../include/timeManager.hpp"
+#include "timeManager.hpp"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 
 
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
-void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea,int countPoints){
+int localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea,int countPoints){
     // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();
@@ -199,7 +199,7 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
                 //}
         }
         if(changes.size() == 0){//no new changes could be found
-            return;
+            return -1;
         }
         int temp=changes.at(0)->getArea();
         EdgeChange* theChange=changes.at(0);
@@ -220,16 +220,17 @@ void localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L,
         }
         if(typeOfOptimization == 1){
             if(theChange->getArea() < 0)
-                return;
+                return 0;
         }
         else if(typeOfOptimization == 2){
             if(theChange->getArea() > 0)
-                return;
+                return 0;
         }
         
         changeEdge(polygon,theChange, countPoints);
         *finalArea = abs(polygon->area());
         DA = abs(theChange->getArea());
     }
+    return 0;
 
 }
