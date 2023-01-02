@@ -117,7 +117,7 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
             double chArea;
             readFile(newPath+temp, &allPoints, &chArea);
 
-            //update infocase vectors
+            //update info case vectors
             int flag=0;
             for(int i=0; i<infoCase1.size(); i++){
                 if(infoCase1.at(i)->getSize() == allPoints.size()){
@@ -139,6 +139,7 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
             }
 
             //run case1
+            runCase1(&allPoints, &infoCase1, chArea);
 
             //run case2
             runCase2(&allPoints, &infoCase2, chArea);
@@ -147,7 +148,7 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
             runCase3(&allPoints, &infoCase3, chArea);
 
             //run case4
-        
+            runCase4(&allPoints, &infoCase4, chArea);
     
     }
     //sort all vectors in increasing order of size
@@ -156,16 +157,15 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
     bubbleSort(&infoCase3, infoCase3.size());
     bubbleSort(&infoCase4, infoCase4.size());
 
-    //aftetr all cases are implemented for all files we print statistics
+    //after all cases are implemented for all files we print statistics
     for(int i=0; i<totalSizes; i++){
         *outfile << infoCase2.at(i)->getSize() << "\t\t";
         infoCase1.at(i)->printInfo(outfile);
         infoCase2.at(i)->printInfo(outfile);
         infoCase3.at(i)->printInfo(outfile);
         infoCase4.at(i)->printInfo(outfile);
-        *outfile << "||";
-        //then printinfo of next case
-        *outfile <<endl;
+        //then print info of next case
+        *outfile << "||"<<endl;
     }
 
     //delete all vectors of type <outputInfo*>

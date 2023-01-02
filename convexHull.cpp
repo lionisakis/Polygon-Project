@@ -120,10 +120,6 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                         break;
                     }
                 }
-                // if(polygon->is_simple()==0){
-                //     cout << "could not create edges requested 1"<< endl;
-                //     return 1;
-                // }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                     if(checkCutOf())
                         return -10;
@@ -193,10 +189,6 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                         }
                     }
                     
-                    // if(polygon->is_simple()==0){
-                    //     cout << "could not create edges requested 3"<< endl;
-                    //     return 1;
-                    // }
                     for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                         if(checkCutOf())
                             return -10;
@@ -219,10 +211,6 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                             break;
                         }
                     }
-                    // if(polygon->is_simple()==0){
-                    //     cout << "could not create edges requested 4"<< endl;
-                    //     return 1;
-                    // }
                     for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                         if(checkCutOf())
                             return -10;
