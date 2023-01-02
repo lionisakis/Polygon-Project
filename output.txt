@@ -1,5 +1,0 @@
-		||					Algorithm	1					||					Algorithm	2					||
-Size 	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||
-10		||	0	0	0	inf	||	0.51542	0.723292	0.51542	0.723292	||
-15		||	0	0	0	inf	||	0.277234	0.868924	0.277234	0.868924	||
-20		||	0	0	0	inf	||	0.576169	1.69293	0.291958	0.00937952	||

@@ -89,6 +89,8 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
     DIR *dir=opendir( path.c_str() );
     vector<outputInfo*> infoCase1;//for each case(combination of algorithms we have a separate vector for its ratio statistics)
     vector<outputInfo*> infoCase2;
+    vector<outputInfo*> infoCase3;
+    vector<outputInfo*> infoCase4;
     int totalSizes=0;//how many different totalPoint sizes we have
     double L;
     struct dirent *theDir;
@@ -127,8 +129,12 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
             if(!flag){
                 outputInfo*  newSize1 = new outputInfo(allPoints.size());
                 outputInfo*  newSize2 = new outputInfo(allPoints.size());
+                outputInfo*  newSize3 = new outputInfo(allPoints.size());
+                outputInfo*  newSize4 = new outputInfo(allPoints.size());
                 infoCase1.push_back(newSize1);
                 infoCase2.push_back(newSize2);
+                infoCase3.push_back(newSize3);
+                infoCase4.push_back(newSize4);
                 totalSizes++;
             }
 
@@ -136,17 +142,27 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
 
             //run case2
             runCase2(&allPoints, &infoCase2, chArea);
+
+            //run case3
+            runCase3(&allPoints, &infoCase3, chArea);
+
+            //run case4
         
     
     }
-
+    //sort all vectors in increasing order of size
     bubbleSort(&infoCase1, infoCase1.size());
     bubbleSort(&infoCase2, infoCase2.size());
+    bubbleSort(&infoCase3, infoCase3.size());
+    bubbleSort(&infoCase4, infoCase4.size());
+
     //aftetr all cases are implemented for all files we print statistics
     for(int i=0; i<totalSizes; i++){
         *outfile << infoCase2.at(i)->getSize() << "\t\t";
         infoCase1.at(i)->printInfo(outfile);
         infoCase2.at(i)->printInfo(outfile);
+        infoCase3.at(i)->printInfo(outfile);
+        infoCase4.at(i)->printInfo(outfile);
         *outfile << "||";
         //then printinfo of next case
         *outfile <<endl;
@@ -156,6 +172,8 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
     for (int i=0;i<infoCase1.size();i--){
         delete infoCase1.at(i);
         delete infoCase2.at(i);
+        delete infoCase3.at(i);
+        delete infoCase4.at(i);
     }
     return 0;
     
