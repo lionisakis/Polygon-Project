@@ -49,6 +49,6 @@ void outputInfo::setminBound(double sc){
 }
 
 void outputInfo::printInfo(ofstream* outfile){
-    *outfile << "||\t" << getminScore() <<"\t\t\t"<< getmaxScore() <<"\t\t\t"<< getminBound() <<"\t\t\t"<< getmaxBound() <<"\t\t\t";
+    *outfile << "||\t" << this->minScore <<"\t"<< this->maxScore <<"\t"<< this->minBound <<"\t"<< this->maxBound <<"\t";
 
 }

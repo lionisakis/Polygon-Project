@@ -321,6 +321,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+mainUtil.o: mainUtil.cpp.o
+.PHONY : mainUtil.o
+
+# target to build an object file
+mainUtil.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainUtil.cpp.o
+.PHONY : mainUtil.cpp.o
+
+mainUtil.i: mainUtil.cpp.i
+.PHONY : mainUtil.i
+
+# target to preprocess a source file
+mainUtil.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainUtil.cpp.i
+.PHONY : mainUtil.cpp.i
+
+mainUtil.s: mainUtil.cpp.s
+.PHONY : mainUtil.s
+
+# target to generate assembly for a file
+mainUtil.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/mainUtil.cpp.s
+.PHONY : mainUtil.cpp.s
+
 outputInfo.o: outputInfo.cpp.o
 .PHONY : outputInfo.o
 
@@ -344,6 +368,30 @@ outputInfo.s: outputInfo.cpp.s
 outputInfo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/outputInfo.cpp.s
 .PHONY : outputInfo.cpp.s
+
+runCases.o: runCases.cpp.o
+.PHONY : runCases.o
+
+# target to build an object file
+runCases.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/runCases.cpp.o
+.PHONY : runCases.cpp.o
+
+runCases.i: runCases.cpp.i
+.PHONY : runCases.i
+
+# target to preprocess a source file
+runCases.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/runCases.cpp.i
+.PHONY : runCases.cpp.i
+
+runCases.s: runCases.cpp.s
+.PHONY : runCases.s
+
+# target to generate assembly for a file
+runCases.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/runCases.cpp.s
+.PHONY : runCases.cpp.s
 
 simulatedAnnealing.o: simulatedAnnealing.cpp.o
 .PHONY : simulatedAnnealing.o
@@ -426,9 +474,15 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... mainUtil.o"
+	@echo "... mainUtil.i"
+	@echo "... mainUtil.s"
 	@echo "... outputInfo.o"
 	@echo "... outputInfo.i"
 	@echo "... outputInfo.s"
+	@echo "... runCases.o"
+	@echo "... runCases.i"
+	@echo "... runCases.s"
 	@echo "... simulatedAnnealing.o"
 	@echo "... simulatedAnnealing.i"
 	@echo "... simulatedAnnealing.s"

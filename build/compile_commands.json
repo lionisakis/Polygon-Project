@@ -11,6 +11,11 @@
 },
 {
   "directory": "/Users/elenaliarou/Downloads/Polygon-Project/build",
+  "command": "/usr/bin/clang++ -DCGAL_USE_GMPXX=1 -isystem /opt/homebrew/include -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++14 -o CMakeFiles/main.dir/runCases.cpp.o -c /Users/elenaliarou/Downloads/Polygon-Project/runCases.cpp",
+  "file": "/Users/elenaliarou/Downloads/Polygon-Project/runCases.cpp"
+},
+{
+  "directory": "/Users/elenaliarou/Downloads/Polygon-Project/build",
   "command": "/usr/bin/clang++ -DCGAL_USE_GMPXX=1 -isystem /opt/homebrew/include -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++14 -o CMakeFiles/main.dir/edgeChange.cpp.o -c /Users/elenaliarou/Downloads/Polygon-Project/edgeChange.cpp",
   "file": "/Users/elenaliarou/Downloads/Polygon-Project/edgeChange.cpp"
 },
@@ -53,5 +58,10 @@
   "directory": "/Users/elenaliarou/Downloads/Polygon-Project/build",
   "command": "/usr/bin/clang++ -DCGAL_USE_GMPXX=1 -isystem /opt/homebrew/include -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++14 -o CMakeFiles/main.dir/timeManager.cpp.o -c /Users/elenaliarou/Downloads/Polygon-Project/timeManager.cpp",
   "file": "/Users/elenaliarou/Downloads/Polygon-Project/timeManager.cpp"
+},
+{
+  "directory": "/Users/elenaliarou/Downloads/Polygon-Project/build",
+  "command": "/usr/bin/clang++ -DCGAL_USE_GMPXX=1 -isystem /opt/homebrew/include -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++14 -o CMakeFiles/main.dir/mainUtil.cpp.o -c /Users/elenaliarou/Downloads/Polygon-Project/mainUtil.cpp",
+  "file": "/Users/elenaliarou/Downloads/Polygon-Project/mainUtil.cpp"
 }
 ]

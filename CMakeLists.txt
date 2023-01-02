@@ -47,7 +47,7 @@ endif()
 # Creating entries for target: main
 # ############################
 
-add_executable( main  main.cpp outputInfo.cpp edgeChange.cpp convexHull.cpp edgePointPair.cpp genericUtil.cpp geoUtil.cpp incremental.cpp localSearch.cpp simulatedAnnealing.cpp timeManager.cpp)
+add_executable( main  main.cpp outputInfo.cpp runCases.cpp edgeChange.cpp convexHull.cpp edgePointPair.cpp genericUtil.cpp geoUtil.cpp incremental.cpp localSearch.cpp simulatedAnnealing.cpp timeManager.cpp mainUtil.cpp)
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS main )
 
