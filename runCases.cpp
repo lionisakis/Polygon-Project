@@ -53,7 +53,7 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double 
     initializeTime(allPoints->size());
     double L=10;
     int m=100;
-    if(subdivision(&pMin, allPoints, 1, L, &pArea2, allPoints->size(), chArea, 2, 3, m, &pArea) == -10)//3rd argument from end either 3 or 1 (max or random edge selection)
+    if(subdivision(&pMax, allPoints, 1, L, &pArea2, allPoints->size(), chArea, 2, 3, m, &pArea) == -10)//3rd argument from end either 3 or 1 (max or random edge selection)
         flagCont=0;
 
     if(flagCont){
@@ -275,8 +275,8 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     }
     if(flagCont){
         L=1000;
-        int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
-        if(globalStep(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+        int initialEnergy2 = minEnergy(allPoints->size(), pArea2, chArea);
+        if(globalStep(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy2, chArea)== -10){
             flagCont=0;
         }
     }
@@ -311,8 +311,8 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
         int threshold=1;
         L=10;
         L=1000;
-        int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
-        if(globalStep(&pMin, 1, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+        int initialEnergy2 = maxEnergy(allPoints->size(), pArea2, chArea);
+        if(globalStep(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy2, chArea)== -10){
             flagCont=0;
         }
     }
