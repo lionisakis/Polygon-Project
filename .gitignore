@@ -6,3 +6,4 @@ CMakeLists.txt.*
 instances
 *.a
 *.cmake
+main

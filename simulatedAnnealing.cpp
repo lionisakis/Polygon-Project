@@ -196,10 +196,6 @@ int globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAre
                         break;
                     }
                 }
-                // if(polygon->is_simple()==0){
-                //     cout <<"not simple2 after global" << endl;
-                //     return;
-                // }
             }
             T=T-1/L;
             prevEnergy = currEnergy;
@@ -216,8 +212,6 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
     VertexIterator p,q,r,s;
     // find a random point until there is no problem
     while(1){
-        // if(checkCutOf())
-        //     return -10;
         (*interation)++;
         // find a random point that you have not seen yet
         int notSeen=0;
@@ -341,8 +335,6 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
         flag=0;
 
         for(int i=0;i<result.size();i++){
-            // if(checkCutOf())
-            //     return -10;
             Point x=result.at(i);
             if(x==*q || x==*r || x==*s){
                 continue;
@@ -623,9 +615,6 @@ int subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization,
         for (VertexIterator vi = polygons.at(i).vertices_begin(); vi != polygons.at(i).vertices_end(); ++vi){
             o++;
         }
-        // if(polygons.at(i).is_simple()==0){
-        //     cout <<"not simple!!! after greedy creation" << endl;
-        // }
         
         Point mostLeft, mostRight;
         mostLeft = current.at(0);

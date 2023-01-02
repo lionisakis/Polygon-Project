@@ -16,13 +16,13 @@ class outputInfo{
     public:
         outputInfo(int);
         const double getSize();
-        const double getminScore();
-        const double getmaxScore();
-        const double getmaxBound();
-        const double getminBound();
-        void setminScore(double sc);
-        void setmaxScore(double sc);
-        void setmaxBound(double sc);
-        void setminBound(double sc);
+        const double getMinScore();
+        const double getMaxScore();
+        const double getMaxBound();
+        const double getMinBound();
+        void setMinScore(double sc);
+        void setMaxScore(double sc);
+        void setMaxBound(double sc);
+        void setMinBound(double sc);
         void printInfo(std::ofstream* );
 };

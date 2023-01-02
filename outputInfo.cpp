@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
-#include "outputInfo.hpp"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fstream>
+#include "outputInfo.hpp"
 
 using namespace std;
 
@@ -20,30 +20,30 @@ outputInfo::outputInfo(int n){
 const double outputInfo::getSize(){
     return this->size;
 }
-const double outputInfo::getminScore(){
+const double outputInfo::getMinScore(){
     return this->minScore;
 }
-const double outputInfo::getmaxScore(){
+const double outputInfo::getMaxScore(){
     return this->maxScore;
 }
-const double outputInfo::getmaxBound(){
+const double outputInfo::getMaxBound(){
     return this->maxBound;
 }
-const double outputInfo::getminBound(){
+const double outputInfo::getMinBound(){
     return this->minBound;
 }
 
-void outputInfo::setminScore(double sc){
+void outputInfo::setMinScore(double sc){
     this->minScore+=sc;
 }
-void outputInfo::setmaxScore(double sc){
+void outputInfo::setMaxScore(double sc){
     this->maxScore+=sc;
 }
-void outputInfo::setmaxBound(double sc){
+void outputInfo::setMaxBound(double sc){
     if(sc<maxBound)
         this->maxBound = sc;
 }
-void outputInfo::setminBound(double sc){
+void outputInfo::setMinBound(double sc){
     if(sc>minBound)
         this->minBound = sc;
 }
