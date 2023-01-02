@@ -7,14 +7,17 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
-#include "geoUtil.hpp"
-#include "genericUtil.hpp"
-#include "edgeChange.hpp"
-#include "incremental.hpp"
-#include "convexHull.hpp"
+#include "../include/geoUtil.hpp"
+#include "../include/genericUtil.hpp"
+#include "../include/edgeChange.hpp"
+#include "../include/incremental.hpp"
+#include "../include/convexHull.hpp"
+#include "../include/timeManager.hpp"
+
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
+
 using namespace std;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -44,6 +47,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         mostLeft =*polygon->left_vertex();
         mostRight =*polygon->right_vertex();
         for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+            if(checkCutOf())
+                return -10;
             if(ei->point(1)==mostLeft){
                 left=*ei;
             }
@@ -56,6 +61,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
     int currEnergy;
     int prevEnergy=initialEnergy;
     while (T>=0){
+        if(checkCutOf())
+            return -10;
         //put an upper bound on how many random choices global step can make so that we avoid an infinite loop
         if(totalIterations > 2*L){
             return;
@@ -66,6 +73,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         int s1;
         int flag;
         do{
+            if(checkCutOf())
+                return -10;
             flag=0;
             int random=rand()%(countPoints);
             if(q1==random){
@@ -82,6 +91,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             tr++;
         }
         for (VertexIterator vi = polygon->vertices_begin(); vi != polygon->vertices_end(); ++vi){
+            if(checkCutOf())
+                return -10;
             if(tmp == q1){
                 q = vi;
                 if (q==polygon->vertices_end()-1)
@@ -107,6 +118,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
         EdgeIterator st;//edge to be broken
         EdgeIterator ei;
         for (ei = polygon->edges_begin(); ei != polygon->edges_end(); ++ei){
+            if(checkCutOf())
+                return -10;
             if(ei->point(0) == *s && ei->point(1) == *t){
                 st = ei;
                 break;
@@ -145,6 +158,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             Polygon temporary(*polygon);
 
             for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+                if(checkCutOf())
+                    return -10;
                 if (*vi==*q){
                     q2Temp=vi;
                 }
@@ -158,6 +173,8 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
 
             temporary.erase(q2Temp);
             for (VertexIterator vi = temporary.vertices_begin(); vi != temporary.vertices_end(); ++vi){
+                if(checkCutOf())
+                    return -10;
                 if(*vi == tmp2){
                     temporary.insert(vi, tmp);
                     break;
@@ -169,14 +186,6 @@ void globalStep(Polygon* polygon, int typeOfOptimization, double L, int* finalAr
             else if(typeOfOptimization == 2)
                 currEnergy = minEnergy(countPoints, currArea, chArea);
             double DE = currEnergy - prevEnergy;
-            // if(polygon->is_simple()==0){
-            //     cout <<"not simple2 prev global2" << endl;
-            //     for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-            //         cout << *ei << endl;
-            //     }
-
-            //     return;
-            // }
             if(DE < 0.0 || Metropolis(DE,T)){//make function for metropolis
                 Point tmp = *q;
                 Point tmp2 = *t;
@@ -206,6 +215,8 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
     VertexIterator p,q,r,s;
     // find a random point until there is no problem
     while(1){
+        if(checkCutOf())
+            return -10;
         (*interation)++;
         // find a random point that you have not seen yet
         int notSeen=0;
@@ -295,6 +306,8 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
         int flag=0;
         // check if there is a problem or not
         for(int i=0;i<result.size();i++){
+            if(checkCutOf())
+                return -10;
             Point x=result.at(i);
             if(x==*r || x==*q || x==*p){
                 continue;
@@ -327,6 +340,8 @@ VertexIterator localAlgorithm(Polygon* polygon, Tree* kd,int countPoints,int* in
         flag=0;
 
         for(int i=0;i<result.size();i++){
+            if(checkCutOf())
+                return -10;
             Point x=result.at(i);
             if(x==*q || x==*r || x==*s){
                 continue;
@@ -372,6 +387,8 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
     int prevEnergy=initialEnergy;
     int countInterator=0;
     while (T>=0){
+        if(checkCutOf())
+            return -10;
         if(countInterator>=2*L){
             break;
         }
@@ -385,6 +402,8 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
         Polygon temporary(*polygon);
         int count=0;
         for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+            if(checkCutOf())
+                return -10;
             if (*vi==*q && vi==(temporary.vertices_end()-1)){
                 rTemp=temporary.vertices_begin();
             }
@@ -404,6 +423,8 @@ void localMinimum(Polygon* polygon,int typeOfOptimization, double L, int* finalA
         Point x=*q;
         temporary.erase(rTemp);
         for(VertexIterator vi=temporary.vertices_begin();vi!=temporary.vertices_end();vi++){
+            if(checkCutOf())
+                return -10;
             if(*vi==x){
                 temporary.insert(vi,temp);
                 break;
@@ -467,6 +488,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     int offset=0;
     int runs=0;
     for(int i=0; i<k; i++){
+        if(checkCutOf())
+            return -10;
         // no more k
         if(offset>=countPoints-1)
             break;
@@ -479,6 +502,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         // countPoints-1 the last point and -3 as we do not want the last subset to be size =3
         int last;
         for(last=offset+howManyToAdd;last<countPoints-1-3;last++){
+            if(checkCutOf())
+                return -10;
             // condition 1
             int flag=0;
             for(int j=offset;j<offset+howManyToAdd;j++){
@@ -497,6 +522,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             // condition 2
             flag=0;
             for(int j=offset+howManyToAdd+1;j<offset+2*howManyToAdd;j++){
+                if(checkCutOf())
+                    return -10;
                 if(j==countPoints)
                     break;       
                 if(points->at(last).y()>points->at(j).y()){
@@ -519,6 +546,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             lastSet=1;
         }
         while(offset<=last){
+            if(checkCutOf())
+                return -10;
             current.push_back(points->at(offset));
             offset++;
         }
@@ -538,6 +567,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         Point right=current.at(current.size()-1);
         int flagFirst=1;
         for(int i=1;i<current.size()-1;i++){
+            if(checkCutOf())
+                return -10;
             if(current.at(i).y()<left.y()&&flagFirst){
                 segments[0]=Segment(left,current.at(i));
                 flagFirst=0;
@@ -612,10 +643,7 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             initialEnergy = maxEnergy(countPoints, pArea, chArea2);
         else if(typeOfOptimization == 2)
             initialEnergy = minEnergy(countPoints, pArea, chArea2);
-        int trsize=0;
-        for(VertexIterator vi = polygons.at(i).vertices_begin(); vi!=polygons.at(i).vertices_end(); vi++){
-            trsize++;
-        }
+
         //apply global step
         globalStep(&polygons.at(i), typeOfOptimization, L, finalArea, current.size(), initialEnergy, chArea2, 1);
     }
@@ -630,6 +658,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     
     // for the other polygons
     for(int i=1;i<runs;i++){
+        if(checkCutOf())
+            return -10;
         // take the current polygon
         Polygon* current=&polygons.at(i);
         if(current->is_clockwise_oriented()==0){
@@ -641,6 +671,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         VertexIterator p,next;
         for(VertexIterator vAll=polygon->vertices_begin();vAll!=polygon->vertices_end();vAll++){
             for(VertexIterator vCurrent=current->vertices_begin();vCurrent!=current->vertices_end();vCurrent++){
+                if(checkCutOf())
+                    return -10;
                 if(*vAll==*vCurrent ){
                     // we found q=vALL=vCurrent
                     q=*vCurrent;
@@ -685,6 +717,8 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
         if(flagQ==0){
             for(VertexIterator vCurrent2=current->vertices_begin();*vCurrent2!=q;vCurrent2++){
                 for(VertexIterator vAll=polygon->vertices_begin();vAll!=polygon->vertices_end();vAll++){
+                    if(checkCutOf())
+                        return -10;
                     if(*vAll==temp){
                         polygon->insert(vAll,*vCurrent2);
                         break;
@@ -694,13 +728,6 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
             }
         }
         
-        // if(polygon->is_simple()==0){
-        //     // for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
-        //     //     cout << *ei << endl;
-        //     // }
-        //     cout <<"problem and i = "<< i << endl;
-        //     exit(10);
-        // }
 
     }
     
@@ -712,5 +739,5 @@ void subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization
     else if(typeOfOptimization == 2)
         initialEnergy = minEnergy(countPoints, *initialArea, chArea);
     localMinimum(polygon,typeOfOptimization,L,finalArea,countPoints,initialEnergy,chArea);
-
+    
 }

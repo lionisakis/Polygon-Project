@@ -1,5 +1,0 @@
-add_library(edgeChange edgeChange.cpp)
-add_library(edgePointPair edgePointPair.cpp)
-add_library(genericUtil genericUtil.cpp)
-add_library(geoUtil geoUtil.cpp)
-add_library(timeManager timeManager.cpp)

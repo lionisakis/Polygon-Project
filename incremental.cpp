@@ -9,6 +9,7 @@
 #include "geoUtil.hpp"
 #include "genericUtil.hpp"
 #include "edgePointPair.hpp"
+#include "timeManager.hpp"
 
 using namespace std;
 
@@ -25,6 +26,8 @@ typedef CGAL::CartesianKernelFunctors::Intersect_2<K> Intersect;
 
 //flagSub=0: normal incremental, flagSub=1: incremental for subdivision
 int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,double* area, int flagSub=0,Segment* leftRight=NULL, int lastSet=0){
+    if(checkCutOf())
+        return -10;
     // make the triangle and short the points
     if(!flagSub){
         coordinatesSorting(polygon,points,sorting,area);
@@ -61,6 +64,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
         }
         // so we are not collinear for KP reasons
         for(int i=2;i<points->size();i++){
+            if(checkCutOf())
+                return -10;
             Point third=points->at(i);
             // if they are not collinear
             if (! CGAL::collinear(points->at(0),points->at(1),third)){
@@ -77,6 +82,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
         *area=triangularAreaCalculation(points->at(0),points->at(1),points->at(2));
     }
     for (int i=3;i<points->size();i++){
+        if(checkCutOf())
+            return -10;
         if(flagSub && i==points->size()-1 && lastSet==0){
             Point p=leftRight[1].point(0);
             Point q=leftRight[1].point(1);
@@ -104,6 +111,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
 
             // and add it in the polygon
             for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+                if(checkCutOf())
+                    return -10;
                 if(*vi==newEdge.point(1)){
                     polygon->insert(vi, q);
                     break;
@@ -115,6 +124,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             }
 
             for(EdgeIterator ei = polygon->edges_begin(); ei!=polygon->edges_end(); ei++){
+                if(checkCutOf())
+                    return -10;
                 if(*ei == leftRight[0]){
                     flagl=1;
                 }
@@ -142,6 +153,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
         // the previous is the last point so we can do a circle
         Point previous=KP.at(KP.size()-1);
         for(int i=0;i<KP.size();i++){
+            if(checkCutOf())
+                return -10;
             // if positive then it is red
             if(checkRed(&KP,currentPoint,KP.at(i)) &&checkRed(&KP,currentPoint,previous)){    
                 redLine.push_back(Segment(previous,KP.at(i)));
@@ -153,6 +166,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
         }
         vector<Segment> reachable;
         for(int j=0;j<redLine.size();j++){
+            if(checkCutOf())
+                return -10;
             Point leftPoint=redLine.at(j).point(0);
             Point rightPoint=redLine.at(j).point(1);
 
@@ -162,6 +177,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             }
             // find the begin and end
             for(EdgeIterator ei=polygon->edges_begin();ei!=polygon->edges_end();ei++){
+                if(checkCutOf())
+                    return -10;
                 if (ei->point(0)==leftPoint){
                     positionStart=ei;
                 }
@@ -175,6 +192,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             if(positionStart<=positionEnd){    
                 // the edges between the start and end check if they are visible
                 for(EdgeIterator ei=positionStart;ei<=positionEnd;ei++){
+                    if(checkCutOf())
+                        return -10;
                     if(flagSub){
                         if(leftRight[0] == *ei)
                             continue;
@@ -193,6 +212,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             else{
                 // [start,...,finish] 
                 for(EdgeIterator ei=positionStart;ei!=polygon->edges_end();ei++){
+                    if(checkCutOf())
+                        return -10;
                     if(flagSub){
                         if(leftRight[0] == *ei){
                             continue;
@@ -207,6 +228,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
                 }
                 // [begin,...,end]
                 for(EdgeIterator ei=polygon->edges_begin();ei<=positionEnd;ei++){
+                    if(checkCutOf())
+                        return -10;
                     if(flagSub){
                         if(leftRight[0] == *ei){
                             continue;
@@ -234,6 +257,8 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
 
         // and add it in the polygon
         for(VertexIterator vi=polygon->vertices_begin(); vi!=polygon->vertices_end(); vi++){
+            if(checkCutOf())
+                return -10;
             if(*vi==newEdge.point(0)){
                 polygon->insert(vi, currentPoint);
                 break;

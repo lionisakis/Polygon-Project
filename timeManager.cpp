@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <sys/resource.h>
 #include <signal.h>
-#include "../include/timeManager.hpp"
+#include "timeManager.hpp"
 int cutOff=0;
 using namespace std;
 void TimeHandler(int sig){
