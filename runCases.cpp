@@ -114,7 +114,7 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double 
     //first for minimization
     double L=10000, L2=10,LMax;
     int m=100,mMax;
-    double threshold=0.1;
+    double threshold=1;
     
     //preprocess 
     if(preprocess){
@@ -170,15 +170,12 @@ double runCase2Min(vector<Point>* allPoints, double chArea, int m, double L, dou
         flagCont=0;
     pArea = abs(pMin.area());
     if(flagCont){
-        L=1000;
         int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
         if(localMinimum(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
             flagCont=0;
         }
     }
     if(flagCont){
-        double threshold=1;
-        L=10;
         finalRes = localSearch(&pMin, 2, threshold, 10, &pArea2, allPoints->size());
     }
     if(pArea2 == 0)
@@ -203,7 +200,6 @@ double runCase2Max(vector<Point>* allPoints, double chArea, int m, double L, dou
         flagCont=0;
     pArea = abs(pMax.area());
     if(flagCont){
-        L=1000;
         int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
         if(localMinimum(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
             flagCont=0;
@@ -230,7 +226,7 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     //first for minimization
     double L=10000, L2=10,LMax;
     int m=100,mMax;
-    double threshold=0.1;
+    double threshold=1;
     
     //preprocess 
     if(preprocess){
@@ -348,7 +344,7 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
     //first for minimization
     double L=10000, L2=10,LMax;
     int m=100,mMax;
-    double threshold=0.1;
+    double threshold=1;
     
     //preprocess 
     if(preprocess){
@@ -465,7 +461,7 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     //first for minimization
     double L=10000, L2=10,LMax;
     int m=100,mMax;
-    double threshold=0.1;
+    double threshold=1;
     
     //preprocess 
     if(preprocess){

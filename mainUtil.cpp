@@ -142,13 +142,13 @@ int readFolder(string path,ofstream* outfile, int preprocess){
             runCase1(&allPoints, &infoCase1, chArea, preprocess);
 
             //run case2
-            // runCase2(&allPoints, &infoCase2, chArea, preprocess);
+            runCase2(&allPoints, &infoCase2, chArea, preprocess);
 
-            // //run case3
-            // runCase3(&allPoints, &infoCase3, chArea, preprocess);
+            //run case3
+            runCase3(&allPoints, &infoCase3, chArea, preprocess);
 
-            // //run case4
-            // runCase4(&allPoints, &infoCase4, chArea, preprocess);
+            //run case4
+            runCase4(&allPoints, &infoCase4, chArea, preprocess);
     
     }
     //sort all vectors in increasing order of size
