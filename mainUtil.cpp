@@ -147,8 +147,8 @@ int readFolder(string path,ofstream* outfile, int preprocess){
             cout <<"done with case 2" << endl;
 
             //run case3
-            // runCase3(&allPoints, &infoCase3, chArea, preprocess);
-            // cout <<"done with case 3" << endl;
+            runCase3(&allPoints, &infoCase3, chArea, preprocess);
+            cout <<"done with case 3" << endl;
 
             //run case4
             runCase4(&allPoints, &infoCase4, chArea, preprocess);
