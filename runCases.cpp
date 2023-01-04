@@ -126,8 +126,8 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
-                minAllTemp.push_back(runCase1Min(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
-                maxAllTemp.push_back(runCase1Max(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
+                minAllTemp.push_back(runCase1Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
+                maxAllTemp.push_back(runCase1Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }
         }
 
@@ -135,7 +135,7 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double 
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase1Min(allPoints, chArea, m, L, L2, threshold);
+    minScore = runCase1Min(allPoints, chArea, m, L, threshold);
     
     //then for maximization
     if(preprocess){
@@ -144,7 +144,7 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double 
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase1Max(allPoints, chArea, m, L, L2, threshold);
+    maxScore = runCase1Max(allPoints, chArea, m, L, threshold);
 
 
     //update info case vector with the new scores/bounds
@@ -242,8 +242,8 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
-                minAllTemp.push_back(runCase2Min(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
-                maxAllTemp.push_back(runCase2Max(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
+                minAllTemp.push_back(runCase2Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
+                maxAllTemp.push_back(runCase2Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }
         }
 
@@ -251,7 +251,7 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase2Min(allPoints, chArea, m, L, L2, threshold);
+    minScore = runCase2Min(allPoints, chArea, m, L, threshold);
     
     //then for maximization
     if(preprocess){
@@ -260,7 +260,7 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase2Max(allPoints, chArea, m, L, L2, threshold);
+    maxScore = runCase2Max(allPoints, chArea, m, L, threshold);
 
 
     //update info case vector with the new scores/bounds
@@ -360,8 +360,8 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
-                minAllTemp.push_back(runCase3Min(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
-                maxAllTemp.push_back(runCase3Max(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
+                minAllTemp.push_back(runCase3Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
+                maxAllTemp.push_back(runCase3Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }
         }
 
@@ -369,7 +369,7 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase3Min(allPoints, chArea, m, L, L2, threshold);
+    minScore = runCase3Min(allPoints, chArea, m, L, threshold);
     
     //then for maximization
     if(preprocess){
@@ -378,7 +378,7 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase3Max(allPoints, chArea, m, L, L2, threshold);
+    maxScore = runCase3Max(allPoints, chArea, m, L, threshold);
 
     //update info case vector with the new scores/bounds
     for(int i=0; i<infoCase3->size(); i++){
@@ -477,8 +477,8 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
-                minAllTemp.push_back(runCase4Min(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
-                maxAllTemp.push_back(runCase4Max(allPoints, chArea, mValues.at(j), LValues.at(i), L2, threshold));
+                minAllTemp.push_back(runCase4Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
+                maxAllTemp.push_back(runCase4Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }
         }
 
@@ -486,7 +486,7 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase4Min(allPoints, chArea, m, L, L2, threshold);
+    minScore = runCase4Min(allPoints, chArea, m, L, threshold);
     
     //then for maximization
     if(preprocess){
@@ -495,7 +495,7 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase4Max(allPoints, chArea, m, L, L2, threshold);
+    maxScore = runCase4Max(allPoints, chArea, m, L, threshold);
 
     //update info case vector with the new scores/bounds
     for(int i=0; i<infoCase4->size(); i++){
