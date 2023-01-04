@@ -1,0 +1,5 @@
+		||					Algorithm	1					||					Algorithm	2					||					Algorithm	3					||					Algorithm	4					||
+Size 	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||
+10		||	0.364886	0.893206	0.364886	0.893206	||	0	0	0	inf	||	0	0	0	inf	||	0	0	0	inf	||
+15		||	0.202058	0.863374	0.202058	0.863374	||	0	0	0	inf	||	0	0	0	inf	||	0	0	0	inf	||
+20		||	0.46049	1.6053	0.238682	0.779977	||	0	0	0	inf	||	0	0	0	inf	||	0	0	0	inf	||

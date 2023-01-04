@@ -33,7 +33,7 @@ typedef CGAL::Fuzzy_iso_box<Traits>  Fuzzy_box;
 
 
 //typeOfOptimization=1: max area, typeOfOptimization=2: min area
-int localSearch(Polygon* polygon, int typeOfOptimization, int threshold, int L, int* finalArea,int countPoints){
+int localSearch(Polygon* polygon, int typeOfOptimization, double threshold, int L, int* finalArea,int countPoints){
     // change to clockwise 
     if(polygon->is_clockwise_oriented()==0){
         polygon->reverse_orientation();

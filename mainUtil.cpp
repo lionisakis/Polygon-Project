@@ -85,7 +85,7 @@ void readFile(string input,vector<Point>* allPoints, double* chArea){
     in.close();
 }
 
-int readFolder(string path,ofstream* outfile, int preprocessor){
+int readFolder(string path,ofstream* outfile, int preprocess){
     DIR *dir=opendir( path.c_str() );
     vector<outputInfo*> infoCase1;//for each case(combination of algorithms we have a separate vector for its ratio statistics)
     vector<outputInfo*> infoCase2;
@@ -139,16 +139,16 @@ int readFolder(string path,ofstream* outfile, int preprocessor){
             }
 
             //run case1
-            runCase1(&allPoints, &infoCase1, chArea);
+            runCase1(&allPoints, &infoCase1, chArea, preprocess);
 
             //run case2
-            runCase2(&allPoints, &infoCase2, chArea);
+            // runCase2(&allPoints, &infoCase2, chArea, preprocess);
 
-            //run case3
-            runCase3(&allPoints, &infoCase3, chArea);
+            // //run case3
+            // runCase3(&allPoints, &infoCase3, chArea, preprocess);
 
-            //run case4
-            runCase4(&allPoints, &infoCase4, chArea);
+            // //run case4
+            // runCase4(&allPoints, &infoCase4, chArea, preprocess);
     
     }
     //sort all vectors in increasing order of size
