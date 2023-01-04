@@ -68,10 +68,20 @@ double runCase1Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     double minScore;
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
-
-    if(subdivision(&pMin, allPoints, 2, L, &pArea2, allPoints->size(), chArea, 2, 1, m, &pArea) == -10)//3rd argument from end either 2 or 1 (min or random edge selection)
-            flagCont=0;
-
+    int res=5;
+    while(res == 5){
+        pMin.clear();
+        if((res= subdivision(&pMin, allPoints, 2, L, &pArea2, allPoints->size(), chArea, 2, 1, m, &pArea)) == -10)//3rd argument from end either 2 or 1 (min or random edge selection)
+                flagCont=0;
+        
+        if(res==5){
+            cout <<"we cannot create a polygon so we change m" << endl;
+            if(m>20) 
+                m = m-10;
+            else 
+                m = 100;
+        }
+    }
     if(flagCont)
         finalRes = localSearch(&pMin, 2, threshold, 10, &pArea2, allPoints->size());
 
@@ -92,10 +102,20 @@ double runCase1Max(vector<Point>* allPoints, double chArea, int m, double L, dou
     double maxScore;
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
-    
-    if(subdivision(&pMax, allPoints, 1, L, &pArea2, allPoints->size(), chArea, 2, 3, m, &pArea) == -10)//3rd argument from end either 3 or 1 (max or random edge selection)
-        flagCont=0;
-
+    int res=5;
+    while(res == 5){
+        pMax.clear();
+        if((res= subdivision(&pMax, allPoints, 1, L, &pArea2, allPoints->size(), chArea, 2, 1, m, &pArea)) == -10)//3rd argument from end either 2 or 1 (min or random edge selection)
+                flagCont=0;
+        
+        if(res==5){
+            cout <<"we cannot create a polygon so we change m" << endl;
+            if(m>20) 
+                m = m-10;
+            else 
+                m = 100;
+        }
+    }
     if(flagCont)
         finalRes = localSearch(&pMax, 1, threshold, 10, &pArea2, allPoints->size());
 
@@ -165,9 +185,15 @@ double runCase2Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     double minScore;
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
+    int res=5;
 
-    if(incremental(&pMin, allPoints, 1, 2, &ourArea) == -10)//4th argument either 2 or 1 (min or random edge selection)
-        flagCont=0;
+    while(res == 5){
+        pMin.clear();
+        if((res=incremental(&pMin, allPoints, 1, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
+
     pArea = abs(pMin.area());
     if(flagCont){
         int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
@@ -196,8 +222,14 @@ double runCase2Max(vector<Point>* allPoints, double chArea, int m, double L, dou
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
     
-    if(incremental(&pMax, allPoints, 1, 3, &ourArea) == -10)//4th argument either 3 or 1 (max or random edge selection)
-        flagCont=0;
+    int res=5;
+    while(res == 5){
+        pMax.clear();
+        if((res=incremental(&pMax, allPoints, 1, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
+
     pArea = abs(pMax.area());
     if(flagCont){
         int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
@@ -238,6 +270,9 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
+                //m is not required for this case but to maintain the same arguments for the helper functions we leave it as a dummy 
+                if(j!=0)
+                    continue;
                 minAllTemp.push_back(runCase2Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
                 maxAllTemp.push_back(runCase2Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }
@@ -278,8 +313,14 @@ double runCase3Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
 
-    if(convexHull(&pMin, allPoints, 1, &ourArea) == -10)//3rd argument either 2 or 1 (min or random edge selection)
-        flagCont=0;
+    int res=5;
+    while(res == 5){
+        pMin.clear();
+        if((res=convexHull(&pMin, allPoints, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
+
     pArea = abs(pMin.area());
 
     if(flagCont){
@@ -311,8 +352,13 @@ double runCase3Max(vector<Point>* allPoints, double chArea, int m, double L, dou
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
     
-    if(convexHull(&pMax, allPoints, 1, &ourArea) == -10)//3rd argument either 3 or 1 (max or random edge selection)
-        flagCont=0;
+    int res=5;
+    while(res == 5){
+        pMax.clear();
+        if((res=convexHull(&pMax, allPoints, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
     pArea = abs(pMax.area());
     
     if(flagCont){
@@ -356,6 +402,9 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
+                //m is not required for this case but to maintain the same arguments for the helper functions we leave it as a dummy 
+                if(j!=0)
+                    continue;
                 minAllTemp.push_back(runCase3Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
                 maxAllTemp.push_back(runCase3Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }
@@ -395,8 +444,14 @@ double runCase4Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
 
-    if(incremental(&pMin, allPoints, 1, 1, &ourArea) == -10)//4th argument either 2 or 1 (min or random edge selection)
-        flagCont=0;
+    int res=5;
+    while(res == 5){
+        pMin.clear();
+        if((res=incremental(&pMin, allPoints, 1, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
+
     pArea = abs(pMin.area());
     if(flagCont){
         int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
@@ -428,8 +483,13 @@ double runCase4Max(vector<Point>* allPoints, double chArea, int m, double L, dou
     double ourArea=0;
     int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
 
-    if(incremental(&pMax, allPoints, 1, 1, &ourArea) == -10)//4th argument either 3 or 1 (max or random edge selection)
-        flagCont=0;
+   int res=5;
+    while(res == 5){
+        pMax.clear();
+        if((res=incremental(&pMax, allPoints, 1, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
     pArea = abs(pMax.area());
     if(flagCont){
         int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
@@ -473,6 +533,9 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
 
         for(int i=0; i<LValues.size(); i++){
             for(int j=0; j<mValues.size(); j++){
+                //m is not required for this case but to maintain the same arguments for the helper functions we leave it as a dummy 
+                if(j!=0)
+                    continue;
                 minAllTemp.push_back(runCase4Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
                 maxAllTemp.push_back(runCase4Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
             }

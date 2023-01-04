@@ -141,10 +141,6 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
                         break;
                     }
                 }
-                // if(polygon->is_simple()==0){
-                //     cout << "could not create edges requested 2"<< endl;
-                //     return 1;
-                // }
                 for(EdgeIterator ei5=polygon->edges_begin();ei5!=polygon->edges_end();ei5++){
                     if(checkCutOf())
                         return -10;
@@ -274,11 +270,11 @@ int convexHull(Polygon* polygon, vector<Point>* points, int edge, double* area, 
         }
         //the program exits if no pair can be found, as was requested to do in one of the threads in eclass
         if(pairs.size() == 0){
-            cout << "reached deadend --- about to exit"<< endl;
+            cout << "reached deadend --- about to re-run"<< endl;
             if(flagSub)
-                return 1;
+                return 5;
             else
-                exit(1);
+                return 5;
         }
         int choose;
         //based on the type of edge selection  choose the according pair

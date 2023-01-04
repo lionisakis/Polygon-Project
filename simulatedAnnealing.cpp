@@ -575,7 +575,6 @@ int subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization,
                 segments[1]=Segment(current.at(i),right);
             }
         }
-
         //we call the greedy algorithm requested from the user
         //if incremental  fails we call convex hull, if convex hull ails the porgram terminates, you have to run it again as edge selection is random
         //there is a different version called if we create the polygon of the last set as then we do not care about the existence of the rightmost edge
@@ -598,17 +597,25 @@ int subdivision(Polygon* polygon, vector<Point>* points, int typeOfOptimization,
                     result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments, 1);
                 else
                     result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
-                if(result){
-                    cout<<"The polygon was not made so I cannot continue."<<endl;
-                    exit(1);
+
+                while(result==5){
+                    polygons.at(i).clear();
+                    if(lastSet)
+                        result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments, 1);
+                    else
+                        result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
                 }
             }
         }
         else{
             int result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
-            if(result){
-                cout<<"The polygon was not made so I cannot continue."<<endl;
-                exit(1);
+            int counter=0;
+            while(result==5){
+                if(counter >=10)
+                    return 5;
+                polygons.at(i).clear();
+                result=convexHull(&polygons.at(i), &current, greedyEdge, &area, 1, segments);
+                counter++;
             }
         }
         int o=0;

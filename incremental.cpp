@@ -99,9 +99,9 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
 
             if(reachable.size()==0){
                 if(flagSub)
-                    return 1;
+                    return 5;
                 else
-                    exit(1);
+                    return 5;
             }
             // select one edge
             Segment newEdge = visibleEdgeSelector(q, &reachable, edge,area);
@@ -135,10 +135,10 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             }
             if(flagl == 0 || flagr == 0){
                 //cout <<"flagl = " << flagl << " flagr = " << flagr << endl;
-                return 1;
+                return 5;
             }
             if(polygon->is_simple() == 0)
-                return 1;
+                return 5;
             return 0;
         }
         // find the current Point we want to insert
@@ -162,7 +162,7 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
             previous=KP.at(i);
         }
         if(flagSub && redLine.size()==0){
-            return 1;
+            return 5;
         }
         vector<Segment> reachable;
         for(int j=0;j<redLine.size();j++){
@@ -247,7 +247,7 @@ int incremental(Polygon* polygon,vector<Point>* points, int sorting, int edge,do
 
         }  
         if(flagSub && reachable.size()==0){
-            return 1;
+            return 5;
         }
         // select one edge
         Segment newEdge = visibleEdgeSelector(currentPoint, &reachable, edge,area);
