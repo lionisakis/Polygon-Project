@@ -62,6 +62,50 @@ void findL_M(vector<double>* minAllTemp,vector<double>* maxAllTemp,vector<int>* 
     }
 }
 
+void findL(vector<double>* minAllTemp,vector<double>* maxAllTemp,double* LMin,double* LMax){
+    double minAll=minAllTemp->at(0);
+    int minPos=0;
+    double maxAll=maxAllTemp->at(0);
+    int maxPos=0;
+    for(int i=1; i<minAllTemp->size(); i++){
+        if(minAllTemp->at(i)<minAll){
+            minAll=minAllTemp->at(i);
+            minPos=i;
+        }
+
+        if(maxAllTemp->at(i)>maxAll){
+            maxAll=maxAllTemp->at(i);
+            maxPos=i;
+        }
+    }
+    
+    if(minPos<4){
+        *LMin=1000;
+    }
+    else if(minPos<8){
+        *LMin=5000;
+    }
+    else if(minPos<12){
+        *LMin=10000;
+    }
+    else if(minPos<16){
+        *LMin=15000;
+    }
+
+    if(maxPos<4){
+        *LMax=1000;
+    }
+    else if(maxPos<8){
+        *LMax=5000;
+    }
+    else if(maxPos<12){
+        *LMax=10000;
+    }
+    else if(maxPos<16){
+        *LMax=15000;
+    }
+}
+
 double runCase1Min(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
     Polygon pMin;
     int finalRes=0, flagCont=1;
@@ -179,7 +223,7 @@ void runCase1(vector<Point>* allPoints, vector<outputInfo *>* infoCase1, double 
     }
 }
 
-double runCase2Min(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
+double runCase2Min(vector<Point>* allPoints, double chArea, double L, double threshold){
     Polygon pMin;
     int finalRes=0, flagCont=1;
     double minScore;
@@ -215,7 +259,7 @@ double runCase2Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     return minScore;
 }
 
-double runCase2Max(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
+double runCase2Max(vector<Point>* allPoints, double chArea, double L, double threshold){
     Polygon pMax;
     int finalRes=0, flagCont=1;
     double maxScore;
@@ -257,41 +301,33 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
     //first for minimization
     double L=10000, L2=10,LMax;
-    int m=100,mMax;
     double threshold=1;
     
     //preprocess 
     if(preprocess){
         //first find best parameters for subdivision, L and m
         vector<double> LValues{1000, 5000, 10000, 15000};
-        vector<int> mValues{25, 50, 75, 100};
         vector<double> minAllTemp;
         vector<double> maxAllTemp;
 
         for(int i=0; i<LValues.size(); i++){
-            for(int j=0; j<mValues.size(); j++){
-                //m is not required for this case but to maintain the same arguments for the helper functions we leave it as a dummy 
-                if(j!=0)
-                    continue;
-                minAllTemp.push_back(runCase2Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
-                maxAllTemp.push_back(runCase2Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
-            }
+            minAllTemp.push_back(runCase2Min(allPoints, chArea, LValues.at(i), threshold));
+            maxAllTemp.push_back(runCase2Max(allPoints, chArea, LValues.at(i), threshold));
         }
 
-        findL_M(&minAllTemp,&maxAllTemp,&mValues,&L,&m,&LMax,&mMax);
+        findL(&minAllTemp,&maxAllTemp,&L,&LMax);
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase2Min(allPoints, chArea, m, L, threshold);
+    minScore = runCase2Min(allPoints, chArea, L, threshold);
     
     //then for maximization
     if(preprocess){
         L=LMax;
-        m=mMax;
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase2Max(allPoints, chArea, m, L, threshold);
+    maxScore = runCase2Max(allPoints, chArea,  L, threshold);
 
 
     //update info case vector with the new scores/bounds
@@ -306,7 +342,7 @@ void runCase2(vector<Point>* allPoints, vector<outputInfo *>* infoCase2, double 
     }
 }
 
-double runCase3Min(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
+double runCase3Min(vector<Point>* allPoints, double chArea, double L, double threshold){
     Polygon pMin;
     int finalRes=0, flagCont=1;
     double minScore;
@@ -345,7 +381,7 @@ double runCase3Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     return minScore;
 }
 
-double runCase3Max(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
+double runCase3Max(vector<Point>* allPoints, double chArea, double L, double threshold){
     Polygon pMax;
     int finalRes=0, flagCont=1;
     double maxScore;
@@ -389,7 +425,6 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
     double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
     //first for minimization
     double L=10000, L2=10,LMax;
-    int m=100,mMax;
     double threshold=1;
     
     //preprocess 
@@ -401,29 +436,23 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
         vector<double> maxAllTemp;
 
         for(int i=0; i<LValues.size(); i++){
-            for(int j=0; j<mValues.size(); j++){
-                //m is not required for this case but to maintain the same arguments for the helper functions we leave it as a dummy 
-                if(j!=0)
-                    continue;
-                minAllTemp.push_back(runCase3Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
-                maxAllTemp.push_back(runCase3Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
-            }
+            minAllTemp.push_back(runCase3Min(allPoints, chArea, LValues.at(i), threshold));
+            maxAllTemp.push_back(runCase3Max(allPoints, chArea, LValues.at(i), threshold));
         }
 
-        findL_M(&minAllTemp,&maxAllTemp,&mValues,&L,&m,&LMax,&mMax);
+        findL(&minAllTemp,&maxAllTemp,&L,&LMax);
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase3Min(allPoints, chArea, m, L, threshold);
+    minScore = runCase3Min(allPoints, chArea, L, threshold);
     
     //then for maximization
     if(preprocess){
         L=LMax;
-        m=mMax;
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase3Max(allPoints, chArea, m, L, threshold);
+    maxScore = runCase3Max(allPoints, chArea, L, threshold);
 
     //update info case vector with the new scores/bounds
     for(int i=0; i<infoCase3->size(); i++){
@@ -437,7 +466,7 @@ void runCase3(vector<Point>* allPoints, vector<outputInfo *>* infoCase3, double 
     }
 }
 
-double runCase4Min(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
+double runCase4Min(vector<Point>* allPoints, double chArea, double L, double threshold){
     Polygon pMin;
     int finalRes=0, flagCont=1;
     double minScore;
@@ -476,7 +505,7 @@ double runCase4Min(vector<Point>* allPoints, double chArea, int m, double L, dou
     return minScore;
 }
 
-double runCase4Max(vector<Point>* allPoints, double chArea, int m, double L, double threshold){
+double runCase4Max(vector<Point>* allPoints, double chArea, double L, double threshold){
     Polygon pMax;
     int finalRes=0, flagCont=1;
     double maxScore;
@@ -520,7 +549,6 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
     //first for minimization
     double L=10000, L2=10,LMax;
-    int m=100,mMax;
     double threshold=1;
     
     //preprocess 
@@ -532,20 +560,15 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
         vector<double> maxAllTemp;
 
         for(int i=0; i<LValues.size(); i++){
-            for(int j=0; j<mValues.size(); j++){
-                //m is not required for this case but to maintain the same arguments for the helper functions we leave it as a dummy 
-                if(j!=0)
-                    continue;
-                minAllTemp.push_back(runCase4Min(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
-                maxAllTemp.push_back(runCase4Max(allPoints, chArea, mValues.at(j), LValues.at(i), threshold));
-            }
+            minAllTemp.push_back(runCase4Min(allPoints, chArea, LValues.at(i), threshold));
+            maxAllTemp.push_back(runCase4Max(allPoints, chArea, LValues.at(i), threshold));
         }
 
-        findL_M(&minAllTemp,&maxAllTemp,&mValues,&L,&m,&LMax,&mMax);
+        findL(&minAllTemp,&maxAllTemp,&L,&LMax);
     }
     
     initializeTime(allPoints->size());
-    minScore = runCase4Min(allPoints, chArea, m, L, threshold);
+    minScore = runCase4Min(allPoints, chArea, L, threshold);
     
     //then for maximization
     if(preprocess){
@@ -554,7 +577,7 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     }
     
     initializeTime(allPoints->size());
-    maxScore = runCase4Max(allPoints, chArea, m, L, threshold);
+    maxScore = runCase4Max(allPoints, chArea, L, threshold);
 
     //update info case vector with the new scores/bounds
     for(int i=0; i<infoCase4->size(); i++){
