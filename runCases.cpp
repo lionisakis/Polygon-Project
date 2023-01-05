@@ -573,7 +573,6 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
     //then for maximization
     if(preprocess){
         L=LMax;
-        m=mMax;
     }
     
     initializeTime(allPoints->size());
