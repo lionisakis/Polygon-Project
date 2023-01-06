@@ -66,13 +66,13 @@ int main(int argc, char* argv[]){
     unsigned int tmp = (unsigned) time(NULL);
     srand(tmp);
     ofstream outfile(fileOutput);
-    outfile <<"\t\t";
+    outfile <<"\t\t\t";
     for (int i=0;i<CASES;i++)
-        outfile <<"||\t\t\t\t\tAlgorithm\t"<<i+1<<"\t\t\t\t\t";
+        outfile <<"||\t\t\t\t\t\t\tAlgorithm\t"<<i+1<<"\t\t\t\t\t\t\t";
     outfile<<"||"<<endl;
-    outfile <<"Size \t";
+    outfile <<"Size \t\t";
     for (int i=0;i<CASES;i++)
-        outfile <<"||\t"  <<"Min Score \t"<<"Max Score\t" <<"Min Bound\t"<< "Max Bound\t";
+        outfile <<"||\t"  <<"Min Score \t\t"<<"Max Score\t\t" <<"Min Bound\t\t"<< "Max Bound\t\t";
     outfile<<"||"<<endl;
 
     readFolder(folderInput, &outfile, preprocess);

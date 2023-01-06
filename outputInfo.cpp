@@ -6,6 +6,7 @@
 #include <string.h>
 #include <fstream>
 #include "outputInfo.hpp"
+#include "iomanip"
 
 using namespace std;
 
@@ -49,6 +50,5 @@ void outputInfo::setMinBound(double sc){
 }
 
 void outputInfo::printInfo(ofstream* outfile){
-    *outfile << "||\t" << this->minScore <<"\t"<< this->maxScore <<"\t"<< this->minBound <<"\t"<< this->maxBound <<"\t";
-
+    *outfile << "||\t" << setw(17) << left  << this->minScore <<setw(16) << left << this->maxScore <<setw(15) << left<< this->minBound <<setw(14) << left<< this->maxBound << "\t";
 }

@@ -1,7 +1,4 @@
-		||					Algorithm	1					||					Algorithm	2					||					Algorithm	3					||					Algorithm	4					||
-Size 	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||
-10		||	0	0	0	inf	||	0.311984	0.893206	0.311984	0.893206	||	0	0	0	inf	||	0	0	0	inf	||
-20		||	0	0	0	inf	||	0.690631	1.52786	0.406152	0.750706	||	0	0	0	inf	||	0	0	0	inf	||
-100		||	0	0	0	inf	||	0.76665	1.3088	0.430698	0.612578	||	0	0	0	inf	||	0	0	0	inf	||
-400		||	0	0	0	inf	||	0.77022	1.10503	0.404362	0.471311	||	0	0	0	inf	||	0	0	0	inf	||
-500		||	0	0	0	inf	||	0.405048	0.49887	0.405048	0.49887	||	0	0	0	inf	||	0	0	0	inf	||
+			||							Algorithm	1							||							Algorithm	2							||							Algorithm	3							||							Algorithm	4							||
+Size 		||	Min Score 		Max Score		Min Bound		Max Bound		||	Min Score 		Max Score		Min Bound		Max Bound		||	Min Score 		Max Score		Min Bound		Max Bound		||	Min Score 		Max Score		Min Bound		Max Bound		||
+20          ||	0.298244         0.869358        0.298244       0.869358      	||	0.276374         0.85086         0.276374       0.85086       	||	0                0               0              inf           	||	0.441748         0.605836        0.441748       0.605836      	||
+100         ||	0.593298         1.43253         0.30293        0.713122      	||	0.708762         1.19539         0.374583       0.515446      	||	0                0               0              inf           	||	0.788429         1.13798         0.422051       0.55784       	||
