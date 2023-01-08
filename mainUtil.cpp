@@ -89,7 +89,7 @@ int readFolder(string path,ofstream* outfile, int preprocess){
     DIR *dir=opendir( path.c_str() );
     vector<outputInfo*> infoCase1;//for each case(combination of algorithms we have a separate vector for its ratio statistics)
     vector<outputInfo*> infoCase2;
-    vector<outputInfo*> infoCase3;
+    //vector<outputInfo*> infoCase3;
     vector<outputInfo*> infoCase4;
     int totalSizes=0;//how many different totalPoint sizes we have
     double L;
@@ -133,7 +133,7 @@ int readFolder(string path,ofstream* outfile, int preprocess){
                 outputInfo*  newSize4 = new outputInfo(allPoints.size());
                 infoCase1.push_back(newSize1);
                 infoCase2.push_back(newSize2);
-                infoCase3.push_back(newSize3);
+                //infoCase3.push_back(newSize3);
                 infoCase4.push_back(newSize4);
                 totalSizes++;
             }
@@ -158,7 +158,7 @@ int readFolder(string path,ofstream* outfile, int preprocess){
     //sort all vectors in increasing order of size
     bubbleSort(&infoCase1, infoCase1.size());
     bubbleSort(&infoCase2, infoCase2.size());
-    bubbleSort(&infoCase3, infoCase3.size());
+    //bubbleSort(&infoCase3, infoCase3.size());
     bubbleSort(&infoCase4, infoCase4.size());
 
     //after all cases are implemented for all files we print statistics
@@ -166,7 +166,7 @@ int readFolder(string path,ofstream* outfile, int preprocess){
         *outfile << setw(12) << left <<infoCase2.at(i)->getSize() ;
         infoCase1.at(i)->printInfo(outfile);
         infoCase2.at(i)->printInfo(outfile);
-        infoCase3.at(i)->printInfo(outfile);
+        //infoCase3.at(i)->printInfo(outfile);
         infoCase4.at(i)->printInfo(outfile);
         //then print info of next case
         *outfile << "||"<<endl;
@@ -176,7 +176,7 @@ int readFolder(string path,ofstream* outfile, int preprocess){
     for (int i=0;i<infoCase1.size();i--){
         delete infoCase1.at(i);
         delete infoCase2.at(i);
-        delete infoCase3.at(i);
+        //delete infoCase3.at(i);
         delete infoCase4.at(i);
     }
     return 0;
