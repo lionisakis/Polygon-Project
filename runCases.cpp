@@ -610,14 +610,13 @@ double runCase5Min(vector<Point>* allPoints, double chArea, double L, double thr
 
     if(flagCont){
         int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
-        if(globalStep(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+        if(localMinimum(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
             flagCont=0;
         }
     }
 
     if(flagCont){
-        int initialEnergy2 = minEnergy(allPoints->size(), pArea2, chArea);
-        finalRes = localMinimum(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy2, chArea);
+        finalRes = localSearch(&pMin, 2, threshold, 10, &pArea2, allPoints->size());
     }
     if(pArea2 == 0)
         pArea2 = pArea;
@@ -648,14 +647,13 @@ double runCase5Max(vector<Point>* allPoints, double chArea, double L, double thr
     
     if(flagCont){
         int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
-        if(globalStep(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+        if(localMinimum(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
             flagCont=0;
         }
     }
 
     if(flagCont){
-        int initialEnergy2 = maxEnergy(allPoints->size(), pArea2, chArea);
-        finalRes = localMinimum(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy2, chArea);
+        finalRes = localSearch(&pMax, 1, threshold, 10, &pArea2, allPoints->size());
     }
     if(pArea2 == 0)
         pArea2 = pArea;
@@ -668,7 +666,7 @@ double runCase5Max(vector<Point>* allPoints, double chArea, double L, double thr
     return maxScore; 
 }
 
-//convexHull->
+//convexHull->localStep->localSearch
 void runCase5(vector<Point>* allPoints, vector<outputInfo *>* infoCase5, double chArea, int preprocess){
     double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
     double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
