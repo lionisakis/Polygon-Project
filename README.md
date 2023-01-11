@@ -107,5 +107,5 @@ The algorithm creates the convex hull of the polygon and initializes the polygon
 
 ### runCase
   Here you can find the implementation of the 4 different combinations we found as the most efficient. 
-  runCase1 : subdivision -> localSearch, runCase2 : incremental->localStep->localSearch, runcase3 : convexHull->globalStep->localStep, runcase4 :  incremental->localStep->globalStep. All these different cases are used for both maximization and minimization. 
+  runCase1 : subdivision -> localSearch, runCase2 : incremental->localStep->localSearch, runcase3 : convexHull->globalStep->localStep, runcase4 :  incremental->localStep->globalStep, runcase5: convexHull ->localStep->localSearch. All these different cases are used for both maximization and minimization. 
 
