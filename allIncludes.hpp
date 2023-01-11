@@ -37,7 +37,7 @@
 
 
 
-#define CASES 3
+#define CASES 5
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Point_2<K> Point;

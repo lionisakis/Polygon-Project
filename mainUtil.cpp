@@ -89,8 +89,9 @@ int readFolder(string path,ofstream* outfile, int preprocess){
     DIR *dir=opendir( path.c_str() );
     vector<outputInfo*> infoCase1;//for each case(combination of algorithms we have a separate vector for its ratio statistics)
     vector<outputInfo*> infoCase2;
-    //vector<outputInfo*> infoCase3;
+    vector<outputInfo*> infoCase3;
     vector<outputInfo*> infoCase4;
+    vector<outputInfo*> infoCase5;
     int totalSizes=0;//how many different totalPoint sizes we have
     double L;
     struct dirent *theDir;
@@ -131,10 +132,12 @@ int readFolder(string path,ofstream* outfile, int preprocess){
                 outputInfo*  newSize2 = new outputInfo(allPoints.size());
                 outputInfo*  newSize3 = new outputInfo(allPoints.size());
                 outputInfo*  newSize4 = new outputInfo(allPoints.size());
+                outputInfo*  newSize5 = new outputInfo(allPoints.size());
                 infoCase1.push_back(newSize1);
                 infoCase2.push_back(newSize2);
-                //infoCase3.push_back(newSize3);
+                infoCase3.push_back(newSize3);
                 infoCase4.push_back(newSize4);
+                infoCase5.push_back(newSize5);
                 totalSizes++;
             }
 
@@ -147,27 +150,33 @@ int readFolder(string path,ofstream* outfile, int preprocess){
             cout <<"done with case 2" << endl;
 
             //run case3
-            // runCase3(&allPoints, &infoCase3, chArea, preprocess);
-            // cout <<"done with case 3" << endl;
+            runCase3(&allPoints, &infoCase3, chArea, preprocess);
+            cout <<"done with case 3" << endl;
 
             //run case4
             runCase4(&allPoints, &infoCase4, chArea, preprocess);
             cout <<"done with case 4" << endl;
+
+            //run case5
+            runCase5(&allPoints, &infoCase5, chArea, preprocess);
+            cout <<"done with case 5" << endl;
     
     }
     //sort all vectors in increasing order of size
     bubbleSort(&infoCase1, infoCase1.size());
     bubbleSort(&infoCase2, infoCase2.size());
-    //bubbleSort(&infoCase3, infoCase3.size());
+    bubbleSort(&infoCase3, infoCase3.size());
     bubbleSort(&infoCase4, infoCase4.size());
+    bubbleSort(&infoCase5, infoCase5.size());
 
     //after all cases are implemented for all files we print statistics
     for(int i=0; i<totalSizes; i++){
         *outfile << setw(12) << left <<infoCase2.at(i)->getSize() ;
         infoCase1.at(i)->printInfo(outfile);
         infoCase2.at(i)->printInfo(outfile);
-        //infoCase3.at(i)->printInfo(outfile);
+        infoCase3.at(i)->printInfo(outfile);
         infoCase4.at(i)->printInfo(outfile);
+        infoCase5.at(i)->printInfo(outfile);
         //then print info of next case
         *outfile << "||"<<endl;
     }
@@ -176,8 +185,9 @@ int readFolder(string path,ofstream* outfile, int preprocess){
     for (int i=0;i<infoCase1.size();i--){
         delete infoCase1.at(i);
         delete infoCase2.at(i);
-        //delete infoCase3.at(i);
+        delete infoCase3.at(i);
         delete infoCase4.at(i);
+        delete infoCase5.at(i);
     }
     return 0;
     

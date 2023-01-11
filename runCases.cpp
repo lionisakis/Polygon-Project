@@ -589,3 +589,128 @@ void runCase4(vector<Point>* allPoints, vector<outputInfo *>* infoCase4, double 
         }
     }
 }
+
+
+double runCase5Min(vector<Point>* allPoints, double chArea, double L, double threshold){
+    Polygon pMin;
+    int finalRes=0, flagCont=1;
+    double minScore;
+    double ourArea=0;
+    int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
+
+    int res=5;
+    while(res == 5){
+        pMin.clear();
+        if((res=convexHull(&pMin, allPoints, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
+
+    pArea = abs(pMin.area());
+
+    if(flagCont){
+        int initialEnergy = minEnergy(allPoints->size(), pArea, chArea);
+        if(globalStep(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+            flagCont=0;
+        }
+    }
+
+    if(flagCont){
+        int initialEnergy2 = minEnergy(allPoints->size(), pArea2, chArea);
+        finalRes = localMinimum(&pMin, 2, L, &pArea2, allPoints->size(), initialEnergy2, chArea);
+    }
+    if(pArea2 == 0)
+        pArea2 = pArea;
+
+    if(flagCont == 0 || finalRes == -10)
+        minScore = 1;
+    else
+        minScore = (double)pArea2/(double)chArea;
+    
+    return minScore;
+}
+
+double runCase5Max(vector<Point>* allPoints, double chArea, double L, double threshold){
+    Polygon pMax;
+    int finalRes=0, flagCont=1;
+    double maxScore;
+    double ourArea=0;
+    int pArea=0, pArea2=0;//in this variable we store the area calculated by our algorithm
+    
+    int res=5;
+    while(res == 5){
+        pMax.clear();
+        if((res=convexHull(&pMax, allPoints, 1, &ourArea)) == -10){//4th argument either 2 or 1 (min or random edge selection)
+            flagCont=0;
+        }
+    }
+    pArea = abs(pMax.area());
+    
+    if(flagCont){
+        int initialEnergy = maxEnergy(allPoints->size(), pArea, chArea);
+        if(globalStep(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy, chArea)== -10){
+            flagCont=0;
+        }
+    }
+
+    if(flagCont){
+        int initialEnergy2 = maxEnergy(allPoints->size(), pArea2, chArea);
+        finalRes = localMinimum(&pMax, 1, L, &pArea2, allPoints->size(), initialEnergy2, chArea);
+    }
+    if(pArea2 == 0)
+        pArea2 = pArea;
+
+    if(flagCont == 0 || finalRes == -10)
+        maxScore = 0;
+    else
+        maxScore = (double)pArea2/(double)chArea;
+
+    return maxScore; 
+}
+
+//convexHull->
+void runCase5(vector<Point>* allPoints, vector<outputInfo *>* infoCase5, double chArea, int preprocess){
+    double minScore=1;//is initializes to 1 in case the algorithm exceeds cutoff
+    double maxScore=0;//is initializes to 0 in case the algorithm exceeds cutoff
+    //first for minimization
+    double L=10000, L2=10,LMax;
+    double threshold=1;
+    
+    //preprocess 
+    if(preprocess){
+        //first find best parameters for subdivision, L and m
+        vector<double> LValues{1000, 5000, 10000, 15000};
+        vector<int> mValues{25, 50, 75, 100};
+        vector<double> minAllTemp;
+        vector<double> maxAllTemp;
+
+        for(int i=0; i<LValues.size(); i++){
+            minAllTemp.push_back(runCase5Min(allPoints, chArea, LValues.at(i), threshold));
+            maxAllTemp.push_back(runCase5Max(allPoints, chArea, LValues.at(i), threshold));
+        }
+
+        findL(&minAllTemp,&maxAllTemp,&L,&LMax);
+    }
+    
+    initializeTime(allPoints->size());
+    minScore = runCase5Min(allPoints, chArea, L, threshold);
+    
+    //then for maximization
+    if(preprocess){
+        L=LMax;
+    }
+    
+    initializeTime(allPoints->size());
+    maxScore = runCase5Max(allPoints, chArea, L, threshold);
+
+    //update info case vector with the new scores/bounds
+    for(int i=0; i<infoCase5->size(); i++){
+        if(infoCase5->at(i)->getSize() == allPoints->size()){
+            infoCase5->at(i)->setMinScore(minScore);
+            infoCase5->at(i)->setMinBound(minScore);
+            infoCase5->at(i)->setMaxScore(maxScore);
+            infoCase5->at(i)->setMaxBound(maxScore);
+            break;
+        }
+    }
+}
