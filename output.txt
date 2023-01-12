@@ -1,2 +1,0 @@
-		||					Algorithm	1					||					Algorithm	2					||					Algorithm	3					||					Algorithm	4					||
-Size 	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||	Min Score 	Max Score	Min Bound	Max Bound	||
