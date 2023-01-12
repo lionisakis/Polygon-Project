@@ -7,3 +7,5 @@ instances
 *.a
 *.cmake
 main
+build
+Makefile
